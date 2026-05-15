@@ -9,5 +9,5 @@ npm run storybook
 ```bash
 npm run dev
 ```
-# cocheck-design-system
+
 # cocheck-design-system
