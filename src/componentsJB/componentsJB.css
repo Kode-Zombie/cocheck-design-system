@@ -309,3 +309,33 @@
   background: #ffffff;
   border-radius: 50%;
 }
+
+/* TextLink Custom Styles */
+.sb-text-link {
+  display: inline-block;
+  font-size: inherit;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  padding: 0;
+  transition: opacity 160ms ease, color 160ms ease;
+}
+
+.sb-text-link:hover {
+  opacity: 0.7;
+  text-decoration: underline;
+}
+
+.sb-text-link--blue {
+  color: #3b82f6;
+}
+
+.sb-text-link--yellow {
+  color: #facc15;
+}
+
+.sb-text-link--underline {
+  text-decoration: underline;
+}
