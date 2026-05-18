@@ -216,9 +216,9 @@
   color: #ffffff;
 }
 
-.sb-selection-label--required::after {
+.sb-selection-label--required::before {
   content: '*';
-  margin-left: 2px;
+  margin-right: 2px;
   color: #ef4444;
 }
 
