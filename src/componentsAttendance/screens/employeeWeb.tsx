@@ -451,7 +451,7 @@ export function EmployeeScheduleWeb({ theme = 'calm' }: AttendanceScreenProps) {
             >
               <div style={{ alignItems: 'center', display: 'flex', gap: 8 }}>
                 {row.today ? <span style={{ background: 'var(--att-primary)', borderRadius: 999, height: 8, width: 8 }} /> : null}
-                <strong style={{ color: row.today ? 'var(--att-primary)' : 'var(--att-text-muted)', fontSize: 13 }}>
+                <strong style={{ color: row.today ? 'var(--att-primary-readable)' : 'var(--att-text-muted)', fontSize: 13 }}>
                   {row.day} {row.date}
                 </strong>
               </div>
@@ -625,7 +625,7 @@ export function EmployeeMemoWeb({ theme = 'calm' }: AttendanceScreenProps) {
               <footer>
                 <span><MessageCircle size={13} /> 댓글 {memo.comments}</span>
                 <span><CheckCircle2 size={13} /> 읽음 확인</span>
-                <span style={{ marginLeft: 'auto', color: 'var(--att-primary)', fontWeight: 800 }}>자세히</span>
+                <span style={{ marginLeft: 'auto', color: 'var(--att-primary-readable)', fontWeight: 800 }}>자세히</span>
               </footer>
             </article>
           ))}
@@ -706,9 +706,9 @@ export function EmployeeMemoDetailWeb({ theme = 'calm' }: AttendanceScreenProps)
                 <div key={`${comment.author}-${comment.time}`} style={{ display: 'flex', gap: 12 }}>
                   <span
                     style={{
-                      background: 'var(--att-primary-soft)',
+                      background: 'var(--att-primary)',
                       borderRadius: 999,
-                      color: 'var(--att-primary)',
+                      color: 'var(--att-primary-text)',
                       display: 'grid',
                       flex: '0 0 auto',
                       fontSize: 13,

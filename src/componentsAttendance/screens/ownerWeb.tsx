@@ -510,7 +510,7 @@ function RosterContent({ compact = false }: { compact?: boolean }) {
               style={{
                 background: 'var(--att-surface-muted)',
                 borderLeft: '1px solid var(--att-border)',
-                color: day.startsWith('월') ? 'var(--att-primary)' : 'var(--att-text-muted)',
+                color: day.startsWith('월') ? 'var(--att-primary-readable)' : 'var(--att-text-muted)',
                 fontSize: 12,
                 fontWeight: 800,
                 padding: 12,
@@ -546,7 +546,17 @@ function RosterContent({ compact = false }: { compact?: boolean }) {
                       padding: '6px 8px',
                     }}
                   >
-                    <strong className="att-mono" style={{ color: `var(--att-${shift.tone === 'warning' ? 'warn' : shift.tone})`, fontSize: 11 }}>{shift.time}</strong>
+                    <strong
+                      className="att-mono"
+                      style={{
+                        color: shift.tone === 'primary'
+                          ? 'var(--att-primary-readable)'
+                          : `var(--att-${shift.tone === 'warning' ? 'warn' : shift.tone})`,
+                        fontSize: 11,
+                      }}
+                    >
+                      {shift.time}
+                    </strong>
                     <span style={{ color: 'var(--att-text-muted)', display: 'block', fontSize: 10, marginTop: 2 }}>{shift.store}</span>
                   </div>
                 ) : (
@@ -1312,7 +1322,7 @@ export function OwnerPaymentCheckoutWeb({ theme = 'calm' }: AttendanceScreenProp
           <DetailRow label="VAT (10%)" value="3,900원" />
           <DetailRow label="현재 플랜 잔여분 공제" value={<span style={{ color: 'var(--att-success)' }}>-25,500원</span>} />
           <div style={{ borderTop: '1px solid var(--att-border)', paddingTop: 16 }}>
-            <DetailRow label="오늘 결제 금액" value={<span style={{ color: 'var(--att-primary)', fontSize: 18 }}>17,400원</span>} />
+            <DetailRow label="오늘 결제 금액" value={<span style={{ color: 'var(--att-primary-readable)', fontSize: 18 }}>17,400원</span>} />
           </div>
           <ActionCard
             caption="다음달부터 매월 1일 42,900원(VAT 포함)이 자동 결제됩니다."

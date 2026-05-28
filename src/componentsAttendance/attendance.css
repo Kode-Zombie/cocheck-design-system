@@ -174,6 +174,10 @@
   line-height: 1.55;
 }
 
+.att-copy strong {
+  color: var(--att-primary-readable);
+}
+
 .att-stack {
   display: grid;
   gap: 12px;
@@ -1061,8 +1065,8 @@
   padding: 16px;
   border: 1px solid var(--att-primary);
   border-radius: 8px;
-  color: var(--att-primary);
-  background: var(--att-primary-soft);
+  color: var(--att-primary-text);
+  background: var(--att-primary);
 }
 
 .att-code-card__label {
@@ -1098,8 +1102,8 @@
 
 .att-code-cell--filled {
   border-color: var(--att-primary);
-  color: var(--att-primary);
-  background: var(--att-primary-soft);
+  color: var(--att-primary-text);
+  background: var(--att-primary);
 }
 
 .att-web-split {
@@ -1244,8 +1248,8 @@
 }
 
 .att-status-badge--primary {
-  color: var(--att-primary);
-  background: var(--att-primary-soft);
+  color: var(--att-primary-text);
+  background: var(--att-primary);
 }
 
 .att-status-badge--success {
@@ -1475,7 +1479,7 @@
 }
 
 .att-empty-join-card strong {
-  color: var(--att-primary);
+  color: var(--att-primary-readable);
   font-size: 13px;
 }
 
@@ -1533,7 +1537,12 @@
 }
 
 .att-proposal-board__header span {
-  color: var(--att-primary);
+  display: inline-flex;
+  width: fit-content;
+  padding: 4px 8px;
+  border-radius: 999px;
+  color: var(--att-primary-text);
+  background: var(--att-primary);
   font-size: 12px;
   font-weight: 900;
   text-transform: uppercase;
@@ -1739,7 +1748,7 @@
 
 .att-mobile-tab-bar__item:hover:not(:disabled),
 .att-owner-tab-bar__item:hover:not(:disabled) {
-  color: var(--att-primary);
+  color: var(--att-primary-readable);
   background: var(--att-primary-soft);
 }
 
@@ -1764,7 +1773,7 @@
 
 .att-mobile-tab-bar__item--active,
 .att-owner-tab-bar__item--active {
-  color: var(--att-primary);
+  color: var(--att-primary-readable);
   background: var(--att-primary-soft);
 }
 
@@ -1807,7 +1816,7 @@
 }
 
 .att-sidebar__item:hover:not(:disabled) {
-  color: var(--att-primary);
+  color: var(--att-primary-readable);
   background: var(--att-primary-soft);
 }
 
@@ -1817,7 +1826,7 @@
 }
 
 .att-sidebar__item--active {
-  color: var(--att-primary);
+  color: var(--att-primary-readable);
   background: var(--att-primary-soft);
 }
 

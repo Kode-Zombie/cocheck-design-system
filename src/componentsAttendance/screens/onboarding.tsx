@@ -229,7 +229,7 @@ export function OwnerSignupWeb({ theme = 'calm' }: AttendanceScreenProps) {
         <section className="att-web-form">
           <div className="att-web-form__inner">
             <p className="att-copy">
-              이미 계정이 있다면 <strong style={{ color: 'var(--att-primary)' }}>로그인</strong>
+              이미 계정이 있다면 <strong style={{ color: 'var(--att-primary-readable)' }}>로그인</strong>
             </p>
             <FormPanel
               description="기본 계정 정보를 입력하면 바로 매장 등록으로 이어집니다."
@@ -295,7 +295,7 @@ export function LoginMobile({ theme = 'calm' }: AttendanceScreenProps) {
           로그인
         </button>
         <p className="att-copy" style={{ textAlign: 'center', marginTop: 18 }}>
-          처음이신가요? <strong style={{ color: 'var(--att-primary)' }}>회원가입</strong>
+          처음이신가요? <strong style={{ color: 'var(--att-primary-readable)' }}>회원가입</strong>
         </p>
       </main>
     </MobileFrame>
@@ -348,7 +348,7 @@ export function StoreRegisterMobile({ theme = 'calm' }: AttendanceScreenProps) {
                   className={`att-field__value${kind === '편의점' ? ' att-field__value--focus' : ''}`}
                   key={kind}
                   style={{
-                    color: kind === '편의점' ? 'var(--att-primary)' : undefined,
+                    color: kind === '편의점' ? 'var(--att-primary-readable)' : undefined,
                     textAlign: 'center',
                     fontWeight: 800,
                   }}
@@ -399,7 +399,7 @@ export function StaffInviteMobile({ theme = 'calm' }: AttendanceScreenProps) {
         <section className="att-code-card" style={{ marginBottom: 20 }}>
           <div className="att-code-card__label">매장 초대 코드</div>
           <div className="att-code-card__code att-mono">7K3-82X</div>
-          <p className="att-copy" style={{ color: 'var(--att-primary)' }}>
+          <p className="att-copy" style={{ color: 'var(--att-primary-text)' }}>
             직원이 앱에서 이 코드를 입력하면 바로 연결됩니다.
           </p>
         </section>
@@ -637,7 +637,7 @@ export function PasswordResetMobile({ theme = 'calm' }: AttendanceScreenProps) {
         </div>
         <p className="att-copy" style={{ marginBottom: 28 }}>
           코드를 못 받으셨나요?{' '}
-          <strong style={{ color: 'var(--att-primary)' }}>재전송 (55초)</strong>
+          <strong style={{ color: 'var(--att-primary-readable)' }}>재전송 (55초)</strong>
         </p>
         <div className="att-stack">
           <button className="att-button att-button--full" type="button">

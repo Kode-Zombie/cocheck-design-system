@@ -14,6 +14,7 @@ export type AttendanceTheme = {
   textSubtle: string;
   primary: string;
   primaryHover: string;
+  primaryReadable: string;
   primarySoft: string;
   primaryText: string;
   success: string;
@@ -26,7 +27,7 @@ export type AttendanceTheme = {
 
 export const attendanceThemes: Record<AttendanceThemeName, AttendanceTheme> = {
   calm: {
-    name: '차분한 블루',
+    name: '브랜드 옐로',
     bg: '#FAFAF9',
     surface: '#FFFFFF',
     surfaceMuted: '#F5F5F4',
@@ -35,10 +36,11 @@ export const attendanceThemes: Record<AttendanceThemeName, AttendanceTheme> = {
     text: '#1C1917',
     textMuted: '#57534E',
     textSubtle: '#6B625C',
-    primary: '#2563EB',
-    primaryHover: '#1D4ED8',
-    primarySoft: '#EFF6FF',
-    primaryText: '#FFFFFF',
+    primary: '#FDC62C',
+    primaryHover: '#E6B01F',
+    primaryReadable: '#8A5D00',
+    primarySoft: '#FFF6D6',
+    primaryText: '#111827',
     success: '#047857',
     successSoft: '#ECFDF5',
     warn: '#92400E',
@@ -56,10 +58,11 @@ export const attendanceThemes: Record<AttendanceThemeName, AttendanceTheme> = {
     text: '#2A2520',
     textMuted: '#6B5F50',
     textSubtle: '#756957',
-    primary: '#7C5E3C',
-    primaryHover: '#614826',
-    primarySoft: '#F4EBDE',
-    primaryText: '#FFFFFF',
+    primary: '#FDC62C',
+    primaryHover: '#E6B01F',
+    primaryReadable: '#8A5D00',
+    primarySoft: '#FFF6D6',
+    primaryText: '#111827',
     success: '#3E7C3A',
     successSoft: '#EDF6EC',
     warn: '#92400E',
@@ -77,10 +80,11 @@ export const attendanceThemes: Record<AttendanceThemeName, AttendanceTheme> = {
     text: '#F5F5F4',
     textMuted: '#D6D3D1',
     textSubtle: '#C7C2BC',
-    primary: '#60A5FA',
-    primaryHover: '#93C5FD',
-    primarySoft: '#1E293B',
-    primaryText: '#0F172A',
+    primary: '#FDC62C',
+    primaryHover: '#E6B01F',
+    primaryReadable: '#FDC62C',
+    primarySoft: '#332A10',
+    primaryText: '#111827',
     success: '#34D399',
     successSoft: '#0F2A1F',
     warn: '#FBBF24',
@@ -106,6 +110,7 @@ export const getAttendanceThemeStyle = (
     '--att-text-subtle': theme.textSubtle,
     '--att-primary': theme.primary,
     '--att-primary-hover': theme.primaryHover,
+    '--att-primary-readable': theme.primaryReadable,
     '--att-primary-soft': theme.primarySoft,
     '--att-primary-text': theme.primaryText,
     '--att-success': theme.success,
