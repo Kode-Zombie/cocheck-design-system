@@ -42,23 +42,17 @@ function VariantTile({ title, description, wide, children }: VariantTileProps) {
   )
 }
 
-const progressGraphData = [
-  { label: '비활성 1', value: 58, status: 'inactive' as const },
-  { label: '진행중', value: 65, status: 'progress' as const },
-  { label: '비활성 2', value: 86, status: 'inactive' as const },
-  { label: '비활성 3', value: 50, status: 'inactive' as const },
-  { label: '정보 없음 1', value: null, status: 'empty' as const },
-  { label: '정보 없음 2', value: null, status: 'empty' as const },
-  { label: '정보 없음 3', value: null, status: 'empty' as const },
-]
+const progressGraphData = {
+  label: '진행중',
+  value: 65,
+  status: 'progress' as const,
+}
 
-const activeGraphData = [
-  { label: '월', value: 42, status: 'inactive' as const },
-  { label: '화', value: 78, status: 'active' as const },
-  { label: '수', value: 64, status: 'progress' as const },
-  { label: '목', value: 30, status: 'inactive' as const },
-  { label: '금', value: null, status: 'empty' as const },
-]
+const activeGraphData = {
+  label: '화',
+  value: 78,
+  status: 'active' as const,
+}
 
 const tableRows: DataTableRow[] = [
   {
@@ -335,7 +329,7 @@ function App() {
           <div className="showcase-grid">
             <VariantTile
               title="BarGraph"
-              description="비활성, 진행중, 정보 없음 상태를 한 그래프에 표시합니다."
+              description="진행중 상태의 막대 하나만 표시합니다."
               wide
             >
               <BarGraph max={100} height={210} data={progressGraphData} />
@@ -343,7 +337,7 @@ function App() {
 
             <VariantTile
               title="BarGraph"
-              description="활성 상태와 낮은 높이의 압축형 그래프입니다."
+              description="활성 상태의 막대 하나만 표시합니다."
               wide
             >
               <BarGraph max={100} height={170} data={activeGraphData} />

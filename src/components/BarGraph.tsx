@@ -10,7 +10,7 @@ export type BarGraphItem = {
 };
 
 export type BarGraphProps = {
-  data: BarGraphItem[];
+  data: BarGraphItem;
   max?: number;
   height?: number;
   showValues?: boolean;
@@ -45,55 +45,46 @@ export function BarGraph({
   height = 250,
   className = '',
 }: BarGraphProps) {
-  const values = data.flatMap((item) =>
-    typeof item.value === 'number' ? [item.value] : [],
-  );
-  const maxValue = max ?? Math.max(100, ...values);
+  const item = data;
+  const status = getItemStatus(item);
+  const numericValue = typeof item.value === 'number' ? item.value : undefined;
+  const hasValue = numericValue !== undefined;
+  const maxValue = max ?? Math.max(100, numericValue ?? 0);
+  const percentage =
+    numericValue !== undefined && maxValue > 0
+      ? (numericValue / maxValue) * 100
+      : 0;
+  const normalizedPercentage = Math.min(100, Math.max(0, percentage));
+  const statusLabel =
+    status === 'empty'
+      ? statusLabels.empty
+      : `${Math.round(normalizedPercentage)}% ${statusLabels[status]}`;
 
   return (
     <div className={`sb-bar-graph ${className}`} role="list">
-      {data.map((item) => {
-        const status = getItemStatus(item);
-        const numericValue =
-          typeof item.value === 'number' ? item.value : undefined;
-        const hasValue = numericValue !== undefined;
-        const percentage =
-          numericValue !== undefined && maxValue > 0
-            ? (numericValue / maxValue) * 100
-            : 0;
-        const normalizedPercentage = Math.min(100, Math.max(0, percentage));
-        const statusLabel =
-          status === 'empty'
-            ? statusLabels.empty
-            : `${Math.round(normalizedPercentage)}% ${statusLabels[status]}`;
-
-        return (
+      <div
+        aria-label={`${item.label}: ${statusLabel}`}
+        className={`sb-bar-graph__item sb-bar-graph__item--${status}`}
+        role="listitem"
+        style={{ '--bar-height': `${height}px` } as BarGraphStyle}
+        title={`${item.label}: ${statusLabel}`}
+      >
+        <div className="sb-bar-graph__track">
           <div
-            aria-label={`${item.label}: ${statusLabel}`}
-            className={`sb-bar-graph__item sb-bar-graph__item--${status}`}
-            key={item.label}
-            role="listitem"
-            style={{ '--bar-height': `${height}px` } as BarGraphStyle}
-            title={`${item.label}: ${statusLabel}`}
-          >
-            <div className="sb-bar-graph__track">
-              <div
-                className="sb-bar-graph__bar"
-                style={
-                  {
-                    '--bar-value': `${normalizedPercentage}%`,
-                    '--bar-color': item.color,
-                  } as BarGraphStyle
-                }
-              />
-            </div>
-            <span className="sb-visually-hidden">
-              {item.label}
-              {hasValue ? ` ${numericValue}` : ''}
-            </span>
-          </div>
-        );
-      })}
+            className="sb-bar-graph__bar"
+            style={
+              {
+                '--bar-value': `${normalizedPercentage}%`,
+                '--bar-color': item.color,
+              } as BarGraphStyle
+            }
+          />
+        </div>
+        <span className="sb-visually-hidden">
+          {item.label}
+          {hasValue ? ` ${numericValue}` : ''}
+        </span>
+      </div>
     </div>
   );
 }
