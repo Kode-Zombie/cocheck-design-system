@@ -28,6 +28,7 @@ const getDaysInMonth = (year: number, month: number) =>
 const now = new Date();
 const monthDayCalendarYear = 2024;
 const weekLabels = ['일', '월', '화', '수', '목', '금', '토'];
+const monthOptions = Array.from({ length: 12 }, (_, index) => index + 1);
 
 const padPart = (value: number) => value.toString().padStart(2, '0');
 
@@ -300,6 +301,11 @@ export function DateTimeSelect({
     year: currentYear,
     month: currentValue.month,
   }));
+  const yearOptions = useMemo(
+    () =>
+      Array.from({ length: maxYear - minYear + 1 }, (_, index) => minYear + index),
+    [maxYear, minYear],
+  );
   const calendarDays = useMemo(
     () =>
       buildCalendarDays(
@@ -404,6 +410,24 @@ export function DateTimeSelect({
     });
   };
 
+  const changeCalendarYear = (event: ChangeEvent<HTMLSelectElement>) => {
+    const nextYear = clamp(Number(event.target.value), minYear, maxYear);
+
+    setViewMonth((currentMonth) => ({
+      year: nextYear,
+      month: currentMonth.month,
+    }));
+  };
+
+  const changeCalendarMonth = (event: ChangeEvent<HTMLSelectElement>) => {
+    const nextMonth = clamp(Number(event.target.value), 1, 12);
+
+    setViewMonth((currentMonth) => ({
+      year: mode === 'ymd' ? currentMonth.year : monthDayCalendarYear,
+      month: nextMonth,
+    }));
+  };
+
   const selectCalendarDay = (day: (typeof calendarDays)[number]) => {
     if (day.disabled) {
       return;
@@ -480,11 +504,34 @@ export function DateTimeSelect({
             >
               <ChevronLeft aria-hidden="true" size={18} />
             </button>
-            <span className="sb-date-time-select__calendar-title">
-              {mode === 'ymd'
-                ? `${viewMonth.year}년 ${viewMonth.month}월`
-                : `${viewMonth.month}월`}
-            </span>
+            <div className="sb-date-time-select__calendar-title">
+              {mode === 'ymd' ? (
+                <select
+                  aria-label="연도 선택"
+                  className="sb-date-time-select__calendar-select"
+                  value={viewMonth.year}
+                  onChange={changeCalendarYear}
+                >
+                  {yearOptions.map((year) => (
+                    <option key={year} value={year}>
+                      {year}년
+                    </option>
+                  ))}
+                </select>
+              ) : null}
+              <select
+                aria-label="월 선택"
+                className="sb-date-time-select__calendar-select"
+                value={viewMonth.month}
+                onChange={changeCalendarMonth}
+              >
+                {monthOptions.map((month) => (
+                  <option key={month} value={month}>
+                    {month}월
+                  </option>
+                ))}
+              </select>
+            </div>
             <button
               aria-label="다음 달"
               className="sb-date-time-select__nav-button"

@@ -614,10 +614,41 @@
 }
 
 .sb-date-time-select__calendar-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sb-date-time-select__calendar-select {
+  min-width: 76px;
+  height: 32px;
+  padding: 0 28px 0 10px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  appearance: none;
   color: #172033;
-  font-size: 14px;
+  background:
+    linear-gradient(45deg, transparent 50%, #64748b 50%) right 12px top 13px /
+      5px 5px no-repeat,
+    linear-gradient(135deg, #64748b 50%, transparent 50%) right 7px top 13px /
+      5px 5px no-repeat,
+    #ffffff;
+  font: inherit;
+  font-size: 13px;
   font-weight: 800;
-  line-height: 1.2;
+  letter-spacing: 0;
+  outline: none;
+  cursor: pointer;
+}
+
+.sb-date-time-select__calendar-select:hover {
+  border-color: var(--theme-color-border);
+  background-color: #fff9df;
+}
+
+.sb-date-time-select__calendar-select:focus {
+  border-color: var(--theme-color-border);
+  box-shadow: 0 0 0 3px var(--theme-color-focus);
 }
 
 .sb-date-time-select__nav-button {

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, userEvent, within } from 'storybook/test';
 import {
   DateTimeSelect,
   type DateTimeSelectProps,
@@ -57,6 +58,27 @@ type Story = StoryObj<typeof meta>;
 export const YearMonthDay: Story = {
   name: '연월일',
   render: (args) => <ControlledDateTimeSelect {...args} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(canvas.getByLabelText('날짜'));
+
+    const calendar = await canvas.findByRole('dialog', { name: '날짜 달력' });
+    const yearSelect = within(calendar).getByLabelText('연도 선택');
+    const monthSelect = within(calendar).getByLabelText('월 선택');
+
+    await userEvent.selectOptions(yearSelect, '2028');
+    await userEvent.selectOptions(monthSelect, '12');
+
+    await expect(yearSelect).toHaveValue('2028');
+    await expect(monthSelect).toHaveValue('12');
+
+    await userEvent.click(
+      within(calendar).getByRole('gridcell', { name: '2028년 12월 25일' }),
+    );
+
+    await expect(canvas.getByLabelText('날짜')).toHaveValue('2028-12-25');
+  },
 };
 
 export const MonthDay: Story = {
