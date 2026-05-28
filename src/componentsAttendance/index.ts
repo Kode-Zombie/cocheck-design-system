@@ -27,6 +27,8 @@ export {
   type AttendanceTheme,
   type AttendanceThemeName,
 } from './attendance-theme';
+export * from './data/attendanceSampleData';
+export * from './screens/allScreens';
 export type {
   AttendanceScreen,
   AttendanceScreenProps,
