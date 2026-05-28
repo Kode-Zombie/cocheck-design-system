@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { StandardButton } from './StandardButton';
-import { Mail, ArrowRight } from 'lucide-react';
+import { Mail } from 'lucide-react';
 
 const meta: Meta<typeof StandardButton> = {
   title: 'JB/StandardButton',
