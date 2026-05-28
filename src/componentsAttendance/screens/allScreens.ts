@@ -1,12 +1,13 @@
 import type { AttendanceScreen } from './screenTypes';
 import { employeeMobileScreens } from './employeeMobile';
+import { employeeWebScreens } from './employeeWeb';
 import { onboardingScreens } from './onboarding';
 import { ownerMobileScreens } from './ownerMobile';
 
 export { employeeMobileScreens };
+export { employeeWebScreens };
 export { onboardingScreens };
 export { ownerMobileScreens };
-export const employeeWebScreens: AttendanceScreen[] = [];
 export const ownerWebScreens: AttendanceScreen[] = [];
 export const emptyStateScreens: AttendanceScreen[] = [];
 export const proposalScreens: AttendanceScreen[] = [];
