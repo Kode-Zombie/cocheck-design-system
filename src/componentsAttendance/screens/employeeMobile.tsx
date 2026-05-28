@@ -280,9 +280,9 @@ function PrimaryStatusCard() {
   );
 }
 
-function IconButton({ children }: { children: ReactNode }) {
+function IconButton({ children, label }: { children: ReactNode; label: string }) {
   return (
-    <button className="att-icon-button" type="button">
+    <button aria-label={label} className="att-icon-button" type="button">
       {children}
     </button>
   );
@@ -343,7 +343,7 @@ export function EmployeeHomeMobile({ theme = 'calm' }: AttendanceScreenProps) {
         <PageHeader
           eyebrow="2026년 4월 21일 화요일"
           right={
-            <IconButton>
+            <IconButton label="알림 보기">
               <Bell size={18} />
               <span className="att-notification-dot" />
             </IconButton>
@@ -453,8 +453,8 @@ export function EmployeeScheduleMobile({ theme = 'calm' }: AttendanceScreenProps
         eyebrow="2026년 4월"
         right={
           <>
-            <IconButton><CalendarDays size={18} /></IconButton>
-            <IconButton><MoreVertical size={18} /></IconButton>
+            <IconButton label="날짜 선택"><CalendarDays size={18} /></IconButton>
+            <IconButton label="스케줄 더보기"><MoreVertical size={18} /></IconButton>
           </>
         }
         title="스케줄"
@@ -671,7 +671,7 @@ export function EmployeeMemoDetailMobile({ theme = 'calm' }: AttendanceScreenPro
       </main>
       <footer className="att-comment-composer">
         <span>댓글을 입력하세요...</span>
-        <button className="att-button" type="button"><Send size={16} /></button>
+        <button aria-label="댓글 전송" className="att-button" type="button"><Send size={16} /></button>
       </footer>
     </MobileShell>
   );
