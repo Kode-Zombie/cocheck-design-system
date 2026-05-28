@@ -3,12 +3,13 @@ import { employeeMobileScreens } from './employeeMobile';
 import { employeeWebScreens } from './employeeWeb';
 import { onboardingScreens } from './onboarding';
 import { ownerMobileScreens } from './ownerMobile';
+import { ownerWebScreens } from './ownerWeb';
 
 export { employeeMobileScreens };
 export { employeeWebScreens };
 export { onboardingScreens };
 export { ownerMobileScreens };
-export const ownerWebScreens: AttendanceScreen[] = [];
+export { ownerWebScreens };
 export const emptyStateScreens: AttendanceScreen[] = [];
 export const proposalScreens: AttendanceScreen[] = [];
 
