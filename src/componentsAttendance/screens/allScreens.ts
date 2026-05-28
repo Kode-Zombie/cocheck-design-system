@@ -1,9 +1,9 @@
 import type { AttendanceScreen } from './screenTypes';
-import { employeeMobileScreens } from './employeeMobile';
-import { employeeWebScreens } from './employeeWeb';
-import { onboardingScreens } from './onboarding';
-import { ownerMobileScreens } from './ownerMobile';
-import { ownerWebScreens } from './ownerWeb';
+import { employeeMobileScreens } from './employeeMobile.registry';
+import { employeeWebScreens } from './employeeWeb.registry';
+import { onboardingScreens } from './onboarding.registry';
+import { ownerMobileScreens } from './ownerMobile.registry';
+import { ownerWebScreens } from './ownerWeb.registry';
 
 export { employeeMobileScreens };
 export { employeeWebScreens };
