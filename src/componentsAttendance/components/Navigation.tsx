@@ -10,17 +10,24 @@ function NavButton({
   item,
   activeId,
   className,
+  onSelect,
 }: {
   item: NavItem;
   activeId?: string;
   className: string;
+  onSelect?: (id: string) => void;
 }) {
   const isActive = item.id === activeId;
+  const isStatic = !onSelect;
 
   return (
     <button
       aria-current={isActive ? 'page' : undefined}
-      className={`${className}${isActive ? ` ${className}--active` : ''}`}
+      className={`${className}${isActive ? ` ${className}--active` : ''}${
+        isStatic ? ` ${className}--static` : ''
+      }`}
+      disabled={isStatic}
+      onClick={onSelect ? () => onSelect(item.id) : undefined}
       type="button"
     >
       {item.icon ? <span className={`${className}__icon`}>{item.icon}</span> : null}
@@ -52,9 +59,11 @@ export function TopBar({
 export function MobileTabBar({
   items,
   activeId,
+  onSelect,
 }: {
   items: NavItem[];
   activeId?: string;
+  onSelect?: (id: string) => void;
 }) {
   return (
     <nav aria-label="모바일 하단 메뉴" className="att-mobile-tab-bar">
@@ -64,6 +73,7 @@ export function MobileTabBar({
           className="att-mobile-tab-bar__item"
           item={item}
           key={item.id}
+          onSelect={onSelect}
         />
       ))}
     </nav>
@@ -73,9 +83,11 @@ export function MobileTabBar({
 export function OwnerTabBar({
   items,
   activeId,
+  onSelect,
 }: {
   items: NavItem[];
   activeId?: string;
+  onSelect?: (id: string) => void;
 }) {
   return (
     <nav aria-label="사장님 하단 메뉴" className="att-owner-tab-bar">
@@ -85,6 +97,7 @@ export function OwnerTabBar({
           className="att-owner-tab-bar__item"
           item={item}
           key={item.id}
+          onSelect={onSelect}
         />
       ))}
     </nav>
@@ -96,11 +109,13 @@ export function Sidebar({
   items,
   activeId,
   footer,
+  onSelect,
 }: {
   title: string;
   items: NavItem[];
   activeId?: string;
   footer?: ReactNode;
+  onSelect?: (id: string) => void;
 }) {
   return (
     <aside className="att-sidebar">
@@ -112,6 +127,7 @@ export function Sidebar({
             className="att-sidebar__item"
             item={item}
             key={item.id}
+            onSelect={onSelect}
           />
         ))}
       </nav>
@@ -127,6 +143,8 @@ export function WebAppShell({
   navItems,
   activeId,
   right,
+  sidebarFooter,
+  onSelect,
   children,
 }: {
   title: string;
@@ -135,11 +153,19 @@ export function WebAppShell({
   navItems: NavItem[];
   activeId?: string;
   right?: ReactNode;
+  sidebarFooter?: ReactNode;
+  onSelect?: (id: string) => void;
   children: ReactNode;
 }) {
   return (
     <div className="att-web-app-shell">
-      <Sidebar activeId={activeId} items={navItems} title={navTitle} />
+      <Sidebar
+        activeId={activeId}
+        footer={sidebarFooter}
+        items={navItems}
+        onSelect={onSelect}
+        title={navTitle}
+      />
       <main className="att-web-app-shell__main">
         <TopBar right={right} subtitle={subtitle} title={title} />
         <div className="att-web-app-shell__content">{children}</div>

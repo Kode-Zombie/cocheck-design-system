@@ -358,6 +358,26 @@
   background: transparent;
   font-size: 11px;
   font-weight: 700;
+  cursor: pointer;
+}
+
+.att-mobile-tab-bar__item:hover:not(:disabled),
+.att-owner-tab-bar__item:hover:not(:disabled) {
+  color: var(--att-primary);
+  background: var(--att-primary-soft);
+}
+
+.att-mobile-tab-bar__item:focus-visible,
+.att-owner-tab-bar__item:focus-visible,
+.att-sidebar__item:focus-visible {
+  outline: 2px solid var(--att-primary);
+  outline-offset: 2px;
+}
+
+.att-mobile-tab-bar__item:disabled,
+.att-owner-tab-bar__item:disabled,
+.att-sidebar__item:disabled {
+  opacity: 1;
   cursor: default;
 }
 
@@ -407,7 +427,12 @@
   font-size: 13px;
   font-weight: 700;
   text-align: left;
-  cursor: default;
+  cursor: pointer;
+}
+
+.att-sidebar__item:hover:not(:disabled) {
+  color: var(--att-primary);
+  background: var(--att-primary-soft);
 }
 
 .att-sidebar__item__icon {
@@ -546,6 +571,11 @@
   display: grid;
   gap: 10px;
   margin: 0;
+}
+
+.att-artboard::after {
+  display: none;
+  content: var(--att-artboard-height);
 }
 
 .att-artboard figcaption {

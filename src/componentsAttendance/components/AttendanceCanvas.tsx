@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import type { AttendanceScreen } from '../screens/screenTypes';
 
 export function AttendanceCanvas({ children }: { children: ReactNode }) {
@@ -33,7 +33,15 @@ export function AttendanceArtboard({
   children: ReactNode;
 }) {
   return (
-    <figure className="att-artboard" style={{ width: screen.width }}>
+    <figure
+      className="att-artboard"
+      style={
+        {
+          '--att-artboard-height': `${screen.height}px`,
+          width: screen.width,
+        } as CSSProperties
+      }
+    >
       <figcaption>{screen.label}</figcaption>
       {children}
     </figure>
