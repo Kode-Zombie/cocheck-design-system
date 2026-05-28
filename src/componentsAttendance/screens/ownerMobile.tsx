@@ -246,7 +246,7 @@ export function OwnerHomeMobile({ theme = 'calm' }: AttendanceScreenProps) {
         }
         title={`${owner.name} 님`}
       />
-      <main className="att-mobile-content att-mobile-content--flush-top">
+      <main className="att-mobile-content att-mobile-content--flush-top" tabIndex={0}>
         <OwnerHeroCard label="오늘 출근" value="6 / 9">
           <DetailRow label="지각" value="1명" />
           <DetailRow label="결근" value="0명" />
@@ -300,7 +300,7 @@ export function OwnerRosterMobile({ theme = 'calm' }: AttendanceScreenProps) {
         right={<button className="att-button" type="button"><Plus size={15} /> 편성</button>}
         title="스케줄 편성"
       />
-      <main className="att-mobile-content att-mobile-content--flush-top">
+      <main className="att-mobile-content att-mobile-content--flush-top" tabIndex={0}>
         <div className="att-segmented" style={{ marginBottom: 16 }}>
           <button className="att-segmented__item att-segmented__item--warning" type="button">주간</button>
           <button className="att-segmented__item" type="button">월간</button>
@@ -358,7 +358,7 @@ export function OwnerPayrollMobile({ theme = 'calm' }: AttendanceScreenProps) {
         right={<button className="att-button" type="button">일괄 지급</button>}
         title="급여 관리"
       />
-      <main className="att-mobile-content att-mobile-content--flush-top">
+      <main className="att-mobile-content att-mobile-content--flush-top" tabIndex={0}>
         <OwnerHeroCard label="이번 달 총 인건비" value="5,244,000원">
           <DetailRow label="기본급" value="4,370K" />
           <DetailRow label="수당" value="612K" />
@@ -404,7 +404,7 @@ export function OwnerPayrollPublishMobile({ theme = 'calm' }: AttendanceScreenPr
         right={<button className="att-button" type="button"><Check size={15} /> 전체 발행</button>}
         title="급여 발행"
       />
-      <main className="att-mobile-content">
+      <main className="att-mobile-content" tabIndex={0}>
         <EmptyState
           description="발행 후 직원이 급여 명세를 확인할 수 있습니다. 발행된 내역은 수정 잠금 상태로 표시됩니다."
           icon={<FileText size={20} />}
@@ -442,7 +442,7 @@ export function OwnerStoresMobile({ theme = 'calm' }: AttendanceScreenProps) {
         right={<IconButton label="매장 추가"><Plus size={18} /></IconButton>}
         title="매장 관리"
       />
-      <main className="att-mobile-content att-mobile-content--flush-top">
+      <main className="att-mobile-content att-mobile-content--flush-top" tabIndex={0}>
         <div className="att-stack">
           {ownerStoreStatus.map((store) => (
             <section className="att-card-section" key={store.id}>
@@ -473,7 +473,7 @@ export function OwnerAttendanceMobile({ theme = 'calm' }: AttendanceScreenProps)
         right={<IconButton label="직원 검색"><Search size={18} /></IconButton>}
         title="출퇴근 현황"
       />
-      <main className="att-mobile-content att-mobile-content--flush-top">
+      <main className="att-mobile-content att-mobile-content--flush-top" tabIndex={0}>
         <div className="att-metric-grid att-metric-grid--two">
           <MetricCard icon={<CheckCircle2 size={18} />} label="근무중" value="2명" />
           <MetricCard icon={<CalendarDays size={18} />} label="지각" value="1명" />
@@ -511,7 +511,7 @@ export function OwnerTodoMobile({ theme = 'calm' }: AttendanceScreenProps) {
         right={<button className="att-button" type="button"><Plus size={15} /> 추가</button>}
         title="할 일 관리"
       />
-      <main className="att-mobile-content att-mobile-content--flush-top">
+      <main className="att-mobile-content att-mobile-content--flush-top" tabIndex={0}>
         <section className="att-card-section">
           <div className="att-section-heading">
             <h2>전체 진행률</h2>
@@ -548,7 +548,7 @@ export function OwnerTodoCreateMobile({ theme = 'calm' }: AttendanceScreenProps)
         right={<button className="att-button" type="button">저장</button>}
         title="할 일 추가"
       />
-      <main className="att-mobile-content">
+      <main className="att-mobile-content" tabIndex={0}>
         <FormPanel description="직원에게 보이는 오늘 체크리스트로 추가됩니다." title="할 일 정보">
           <Field focus label="할 일 내용 *" value="신상품 POP 교체" />
           <div>
@@ -607,7 +607,7 @@ export function OwnerMeMobile({ theme = 'calm' }: AttendanceScreenProps) {
   return (
     <MobileShell activeTab="me" height={844} theme={theme} title="OM7 · 나 탭 (사장 마이페이지)" width={390}>
       <PageHeader title="나" />
-      <main className="att-mobile-content att-mobile-content--flush-top">
+      <main className="att-mobile-content att-mobile-content--flush-top" tabIndex={0}>
         <section className="att-card-section">
           <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
             <div style={{ display: 'grid', width: 56, height: 56, placeItems: 'center', borderRadius: 28, color: 'var(--att-primary-text)', background: 'var(--att-primary)', fontSize: 22, fontWeight: 800 }}>

@@ -480,7 +480,7 @@ export function EmployeeShiftSwapMobile({ theme = 'calm' }: AttendanceScreenProp
     <MobileFrame height={874} theme={theme} title="06 · 스케줄 교환 신청 (모바일)" width={402}>
       <div className="att-mobile-screen">
         <MobileBackHeader>스케줄 교환 신청</MobileBackHeader>
-        <main className="att-mobile-content">
+        <main className="att-mobile-content" tabIndex={0}>
           <div className="att-stack att-stack--loose">
             <FormPanel title="내 근무 (교환할 날)">
               <ActionCard

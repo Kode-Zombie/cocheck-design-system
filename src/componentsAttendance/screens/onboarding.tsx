@@ -265,7 +265,7 @@ export function OwnerSignupWeb({ theme = 'calm' }: AttendanceScreenProps) {
 export function LoginMobile({ theme = 'calm' }: AttendanceScreenProps) {
   return (
     <MobileFrame height={874} theme={theme} title="02 · 로그인 (모바일)" width={402}>
-      <main className="att-mobile-content att-mobile-content--centered">
+      <main className="att-mobile-content att-mobile-content--centered" tabIndex={0}>
         <BrandMark />
         <MobilePrimaryTitle
           copy="계정 정보를 입력하고 로그인하세요"
@@ -305,7 +305,7 @@ export function LoginMobile({ theme = 'calm' }: AttendanceScreenProps) {
 export function RoleSelectMobile({ theme = 'calm' }: AttendanceScreenProps) {
   return (
     <MobileFrame height={874} theme={theme} title="03 · 역할 선택" width={402}>
-      <main className="att-mobile-content">
+      <main className="att-mobile-content" tabIndex={0}>
         <MobilePrimaryTitle
           copy="나중에 변경하거나 두 역할 모두 사용할 수 있어요."
           eyebrow="회원가입 · 2 / 4"
@@ -334,7 +334,7 @@ export function StoreRegisterMobile({ theme = 'calm' }: AttendanceScreenProps) {
   return (
     <MobileFrame height={874} theme={theme} title="04 · 매장 등록" width={402}>
       <BackHeader>매장 등록 · 1 / 3</BackHeader>
-      <main className="att-mobile-content">
+      <main className="att-mobile-content" tabIndex={0}>
         <h1 className="att-mobile-title att-mobile-title--compact" style={{ marginBottom: 24 }}>
           어떤 매장을 등록할까요?
         </h1>
@@ -391,7 +391,7 @@ export function StaffInviteMobile({ theme = 'calm' }: AttendanceScreenProps) {
   return (
     <MobileFrame height={874} theme={theme} title="05 · 직원 초대" width={402}>
       <BackHeader>매장 등록 · 3 / 3</BackHeader>
-      <main className="att-mobile-content">
+      <main className="att-mobile-content" tabIndex={0}>
         <MobilePrimaryTitle
           copy="나중에 언제든 추가할 수 있어요. 지금은 건너뛰어도 괜찮아요."
           title="직원을 초대해 보세요"
@@ -540,7 +540,7 @@ export function StoreRegisterStep2Mobile({ theme = 'calm' }: AttendanceScreenPro
       width={402}
     >
       <BackHeader>매장 등록 · 2 / 3</BackHeader>
-      <main className="att-mobile-content">
+      <main className="att-mobile-content" tabIndex={0}>
         <MobilePrimaryTitle title="영업 및 인증 설정" />
         <div className="att-stack att-stack--loose">
           <div className="att-field">
@@ -585,7 +585,7 @@ export function StaffJoinMobile({ theme = 'calm' }: AttendanceScreenProps) {
   return (
     <MobileFrame height={874} theme={theme} title="07 · 직원 - 매장 코드 입력" width={402}>
       <BackHeader>직원 가입 · 3 / 4</BackHeader>
-      <main className="att-mobile-content">
+      <main className="att-mobile-content" tabIndex={0}>
         <MobilePrimaryTitle
           copy="사장님한테 받은 8자리 코드를 입력하세요."
           title="매장 코드를 입력해주세요"
@@ -617,7 +617,7 @@ export function PasswordResetMobile({ theme = 'calm' }: AttendanceScreenProps) {
 
   return (
     <MobileFrame height={874} theme={theme} title="08 · 비밀번호 찾기 (인증 단계)" width={402}>
-      <main className="att-mobile-content att-mobile-content--centered">
+      <main className="att-mobile-content att-mobile-content--centered" tabIndex={0}>
         <BrandMark />
         <MobilePrimaryTitle
           copy="010-1234-5678 으로 6자리 코드를 보냈어요."

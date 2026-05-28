@@ -411,7 +411,7 @@ function ModalOverlay({
   return (
     <OwnerWebShell activeId={activeId} subtitle={subtitle} theme={theme} title={title}>
       <div style={{ minHeight: 612, position: 'relative' }}>
-        <div style={{ opacity: 0.38, pointerEvents: 'none' }}>
+        <div aria-hidden="true" inert style={{ opacity: 0.38, pointerEvents: 'none' }}>
           {activeId === 'schedule' ? <RosterContent compact /> : activeId === 'staff' ? <StaffContent compact /> : <MemoContent compact />}
         </div>
         <div
@@ -446,7 +446,10 @@ function ModalCard({
 }) {
   return (
     <section
+      aria-label={title}
+      aria-modal="true"
       className="att-form-panel"
+      role="dialog"
       style={{ boxShadow: '0 20px 60px rgba(15, 23, 42, 0.24)', maxHeight: 690, overflow: 'auto', width }}
     >
       <header className="att-form-panel__header" style={{ alignItems: 'start', display: 'flex', justifyContent: 'space-between' }}>
@@ -1309,7 +1312,7 @@ export function OwnerPaymentCheckoutWeb({ theme = 'calm' }: AttendanceScreenProp
           <DetailRow label="VAT (10%)" value="3,900원" />
           <DetailRow label="현재 플랜 잔여분 공제" value={<span style={{ color: 'var(--att-success)' }}>-25,500원</span>} />
           <div style={{ borderTop: '1px solid var(--att-border)', paddingTop: 16 }}>
-            <DetailRow label="오늘 결제 금액" value={<span style={{ color: '#0064ff', fontSize: 18 }}>17,400원</span>} />
+            <DetailRow label="오늘 결제 금액" value={<span style={{ color: 'var(--att-primary)', fontSize: 18 }}>17,400원</span>} />
           </div>
           <ActionCard
             caption="다음달부터 매월 1일 42,900원(VAT 포함)이 자동 결제됩니다."
@@ -1321,7 +1324,7 @@ export function OwnerPaymentCheckoutWeb({ theme = 'calm' }: AttendanceScreenProp
           ))}
         </FormPanel>
         <FormPanel
-          footer={<button className="att-button att-button--full" style={{ background: '#0064ff' }} type="button">17,400원 결제하기</button>}
+          footer={<button className="att-button att-button--full" type="button">17,400원 결제하기</button>}
           title="토스페이먼츠"
           description="카드 · 계좌이체 · 가상계좌"
         >

@@ -307,7 +307,7 @@ function ContractDocument() {
 
 function ContractListContent() {
   return (
-    <main className="att-mobile-content att-mobile-content--flush-top">
+    <main className="att-mobile-content att-mobile-content--flush-top" tabIndex={0}>
       <div className="att-stack">
         {attendanceContracts.map((contract) => (
           <section className="att-contract-card" key={contract.id}>
@@ -339,7 +339,7 @@ function ContractListContent() {
 export function EmployeeHomeMobile({ theme = 'calm' }: AttendanceScreenProps) {
   return (
     <MobileShell activeTab="home" theme={theme} title="01 · 홈">
-      <main className="att-mobile-content">
+      <main className="att-mobile-content" tabIndex={0}>
         <PageHeader
           eyebrow="2026년 4월 21일 화요일"
           right={
@@ -396,7 +396,7 @@ export function EmployeePunchMobile({ theme = 'calm' }: AttendanceScreenProps) {
   return (
     <MobileShell activeTab="punch" theme={theme} title="02 · 출퇴근">
       <PageHeader eyebrow="2026년 4월 21일 · 화요일" title="출퇴근" />
-      <main className="att-mobile-content att-mobile-content--flush-top">
+      <main className="att-mobile-content att-mobile-content--flush-top" tabIndex={0}>
         <ActionCard
           caption={`${currentShift.time} · 버튼 태그`}
           icon={<Store size={17} />}
@@ -468,7 +468,7 @@ export function EmployeeScheduleMobile({ theme = 'calm' }: AttendanceScreenProps
           </div>
         ))}
       </div>
-      <main className="att-mobile-content att-mobile-content--flush-top">
+      <main className="att-mobile-content att-mobile-content--flush-top" tabIndex={0}>
         <div className="att-schedule-list">
           {scheduleRows.map((row) => (
             <div className="att-schedule-row" key={`${row.day}-${row.date}`}>
@@ -500,7 +500,7 @@ export function EmployeeLateMobile({ theme = 'calm' }: AttendanceScreenProps) {
   return (
     <MobileShell height={844} theme={theme} title="M4 · 지각·결근 보고 (직원)" width={390}>
       <PageHeader back title="지각 · 결근 보고" />
-      <main className="att-mobile-content">
+      <main className="att-mobile-content" tabIndex={0}>
         <ActionCard caption={`오늘 ${currentShift.time} (예정)`} icon={<BriefcaseBusiness size={16} />} title={store.name} />
         <section className="att-stack att-stack--loose" style={{ marginTop: 20 }}>
           <div>
@@ -540,7 +540,7 @@ export function EmployeeTodoMobile({ theme = 'calm' }: AttendanceScreenProps) {
         right={<button className="att-button" type="button"><Plus size={15} /> 추가</button>}
         title="할 일"
       />
-      <main className="att-mobile-content att-mobile-content--flush-top">
+      <main className="att-mobile-content att-mobile-content--flush-top" tabIndex={0}>
         <section className="att-card-section">
           <div className="att-section-heading">
             <h2>전체 진행률</h2>
@@ -578,7 +578,7 @@ export function EmployeeTodoCreateMobile({ theme = 'calm' }: AttendanceScreenPro
         right={<button className="att-button" type="button">저장</button>}
         title="내 할일 추가"
       />
-      <main className="att-mobile-content">
+      <main className="att-mobile-content" tabIndex={0}>
         <FormPanel description="내가 볼 개인 체크리스트로 저장됩니다." title="할 일 정보">
           <Field focus label="제목 *" value="신상품 POP 교체" />
           <Field label="기한" value="오늘 11:00" />
@@ -607,7 +607,7 @@ export function EmployeeMemoMobile({ theme = 'calm' }: AttendanceScreenProps) {
         right={<button className="att-button" type="button"><Plus size={15} /> 작성</button>}
         title="메모 · 인수인계"
       />
-      <main className="att-mobile-content att-mobile-content--flush-top">
+      <main className="att-mobile-content att-mobile-content--flush-top" tabIndex={0}>
         <div className="att-inline-actions" style={{ marginBottom: 14 }}>
           <Chip active>전체</Chip>
           <Chip>이슈</Chip>
@@ -642,7 +642,7 @@ export function EmployeeMemoDetailMobile({ theme = 'calm' }: AttendanceScreenPro
   return (
     <MobileShell height={844} theme={theme} title="M6b · 메모 상세·댓글 (직원)" width={390}>
       <PageHeader back right={<MoreVertical size={19} />} title="메모 상세" />
-      <main className="att-mobile-content att-mobile-content--with-input">
+      <main className="att-mobile-content att-mobile-content--with-input" tabIndex={0}>
         <article className="att-memo-detail">
           <div className="att-memo-card__meta">
             <StatusBadge tone={memo.tone}>{memo.tag}</StatusBadge>
@@ -685,7 +685,7 @@ export function EmployeeMemoCreateMobile({ theme = 'calm' }: AttendanceScreenPro
         right={<button className="att-button" type="button">올리기</button>}
         title="새 메모"
       />
-      <main className="att-mobile-content">
+      <main className="att-mobile-content" tabIndex={0}>
         <FormPanel title="게시글 작성">
           <div>
             <span className="att-field__label">유형 *</span>
@@ -722,7 +722,7 @@ export function EmployeeSalaryMobile({ theme = 'calm' }: AttendanceScreenProps) 
   return (
     <MobileShell activeTab="salary" theme={theme} title="06 · 월급 계산">
       <PageHeader eyebrow="2026년 4월 예상" title="월급 계산" />
-      <main className="att-mobile-content att-mobile-content--flush-top">
+      <main className="att-mobile-content att-mobile-content--flush-top" tabIndex={0}>
         <section className="att-salary-hero">
           <span>예상 실수령액</span>
           <strong>{payroll.amount}</strong>

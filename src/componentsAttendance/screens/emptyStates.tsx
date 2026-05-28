@@ -83,7 +83,7 @@ export function EmptyEmployeeMobile({ theme = 'calm' }: AttendanceScreenProps) {
   return (
     <MobileFrame height={874} theme={theme} title="E2 · 직원 홈 (근무 없음)" width={402}>
       <div className="att-mobile-screen">
-        <main className="att-mobile-content">
+        <main className="att-mobile-content" tabIndex={0}>
           <header className="att-empty-mobile-header att-empty-mobile-header--flush">
             <div>
               <p>2026년 4월 21일 화요일</p>

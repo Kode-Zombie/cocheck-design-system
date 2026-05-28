@@ -127,6 +127,11 @@
   flex: 1;
 }
 
+.att-mobile-content:focus-visible {
+  outline: 2px solid var(--att-primary);
+  outline-offset: -4px;
+}
+
 .att-mobile-content--flush-top {
   padding-top: 8px;
 }
@@ -441,7 +446,7 @@
 .att-primary-status-card p,
 .att-primary-status-card small,
 .att-primary-status-card__top > span {
-  opacity: 0.82;
+  opacity: 1;
 }
 
 .att-primary-status-card h2 {
@@ -453,7 +458,7 @@
 .att-primary-status-card__top > span {
   padding: 6px 10px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.18);
+  background: transparent;
   font-size: 11px;
   font-weight: 800;
   white-space: nowrap;
@@ -468,7 +473,7 @@
   border: 0;
   border-radius: 12px;
   color: inherit;
-  background: rgba(255, 255, 255, 0.14);
+  background: rgba(15, 23, 42, 0.14);
   text-align: left;
 }
 
@@ -619,7 +624,7 @@
 
 .att-date-pill span {
   font-size: 10px;
-  opacity: 0.75;
+  opacity: 1;
 }
 
 .att-date-pill strong {
@@ -810,6 +815,7 @@
 .att-contract-card {
   border: 1px solid var(--att-border);
   border-radius: 8px;
+  color: var(--att-text);
   background: var(--att-surface);
 }
 
