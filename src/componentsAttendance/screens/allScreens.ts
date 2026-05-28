@@ -1,8 +1,9 @@
 import type { AttendanceScreen } from './screenTypes';
+import { employeeMobileScreens } from './employeeMobile';
 import { onboardingScreens } from './onboarding';
 
+export { employeeMobileScreens };
 export { onboardingScreens };
-export const employeeMobileScreens: AttendanceScreen[] = [];
 export const ownerMobileScreens: AttendanceScreen[] = [];
 export const employeeWebScreens: AttendanceScreen[] = [];
 export const ownerWebScreens: AttendanceScreen[] = [];
