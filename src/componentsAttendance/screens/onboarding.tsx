@@ -283,7 +283,7 @@ export function LoginMobile({ theme = 'calm' }: AttendanceScreenProps) {
           또는
         </div>
         <div className="att-stack">
-          <Field label="전화번호" mono value="010-1234-5678" />
+          <Field label="이메일" value="kimceo@example.com" />
           <Field focus label="비밀번호" value="••••••••" />
         </div>
         <div style={{ display: 'flex', justifyContent: 'flex-end', margin: '10px 0 18px' }}>
