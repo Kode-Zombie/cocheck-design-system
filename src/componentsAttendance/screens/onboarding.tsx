@@ -15,7 +15,6 @@ import {
   Store,
   User,
   Users,
-  Wifi,
 } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { ActionCard } from '../components/ActionCard';
@@ -36,26 +35,6 @@ const ownerNavItems: NavItem[] = [
   { id: 'staff', label: '직원 관리', icon: <Users size={16} /> },
   { id: 'payroll', label: '급여 설정', icon: <CreditCard size={16} /> },
   { id: 'auth', label: '출퇴근 인증', icon: <ShieldCheck size={16} /> },
-];
-
-const authMethods = [
-  {
-    icon: <CheckCircle2 size={18} />,
-    title: '버튼 태그',
-    caption: '가장 간단. 직원이 앱에서 버튼만 누름',
-    selected: true,
-  },
-  {
-    icon: <MapPin size={18} />,
-    title: 'GPS 위치',
-    caption: '매장 반경 50m 이내에서만 가능',
-  },
-  { icon: <QrCode size={18} />, title: 'QR 코드', caption: '매장에 붙인 QR을 스캔' },
-  {
-    icon: <Wifi size={18} />,
-    title: 'Wi-Fi SSID',
-    caption: '매장 Wi-Fi에 연결된 상태에서만 가능',
-  },
 ];
 
 const storeCards = [
@@ -359,7 +338,7 @@ export function StoreRegisterMobile({ theme = 'calm' }: AttendanceScreenProps) {
             </div>
           </div>
           <ActionCard
-            caption="GPS 인증 시 이 좌표를 기준으로 반경을 설정합니다."
+            caption="직원이 확인할 매장 위치 정보로 사용됩니다."
             icon={<MapPin size={16} />}
             title="서울 강남구 강남대로 396"
           />
@@ -368,18 +347,12 @@ export function StoreRegisterMobile({ theme = 'calm' }: AttendanceScreenProps) {
             right={<StatusBadge tone="success">ON</StatusBadge>}
             title="24시간 영업"
           />
-          <div className="att-stack">
-            <span className="att-field__label">출퇴근 인증 방식</span>
-            {authMethods.map((method) => (
-              <RoleCard
-                body={method.caption}
-                icon={method.icon}
-                key={method.title}
-                selected={method.selected}
-                title={method.title}
-              />
-            ))}
-          </div>
+          <ActionCard
+            caption="GPS, QR, Wi-Fi는 나중에 매장 설정에서 추가할 수 있어요."
+            icon={<CheckCircle2 size={16} />}
+            right={<StatusBadge tone="primary">기본</StatusBadge>}
+            title="출퇴근은 버튼 태그로 기본 등록"
+          />
         </div>
       </main>
       <BottomActions primary="다음" secondary="이전" />
@@ -536,12 +509,12 @@ export function StoreRegisterStep2Mobile({ theme = 'calm' }: AttendanceScreenPro
     <MobileFrame
       height={874}
       theme={theme}
-      title="04-B · 매장 등록 2/3 (영업시간·인증)"
+      title="04-B · 매장 등록 2/3 (영업시간)"
       width={402}
     >
       <BackHeader>매장 등록 · 2 / 3</BackHeader>
       <main className="att-mobile-content" tabIndex={0}>
-        <MobilePrimaryTitle title="영업 및 인증 설정" />
+        <MobilePrimaryTitle title="영업시간 설정" />
         <div className="att-stack att-stack--loose">
           <div className="att-field">
             <span className="att-field__label">영업 요일</span>
@@ -561,16 +534,11 @@ export function StoreRegisterStep2Mobile({ theme = 'calm' }: AttendanceScreenPro
             <Field label="시작" mono value="09:00" />
             <Field focus label="종료" mono value="22:00" />
           </div>
-          <RoleCard
-            body="매장에 비치된 버튼을 누르면 출퇴근이 기록됩니다. 별도 앱 없이 태그 하나로 동작해요."
-            icon={<CheckCircle2 size={22} />}
-            selected
-            title="버튼 태그"
-          />
           <ActionCard
-            caption="GPS 반경과 Wi-Fi 인증은 매장 설정에서 나중에 추가할 수 있어요."
+            caption="GPS, QR, Wi-Fi는 나중에 매장 설정에서 추가할 수 있어요."
             icon={<ShieldCheck size={16} />}
-            title="직원 부정 출퇴근 방지"
+            right={<StatusBadge tone="primary">기본</StatusBadge>}
+            title="출퇴근은 버튼 태그로 기본 등록"
           />
         </div>
       </main>

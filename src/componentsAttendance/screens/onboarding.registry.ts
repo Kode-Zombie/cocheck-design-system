@@ -18,7 +18,7 @@ export const onboardingScreens: AttendanceScreen[] = [
   { id: 'store-register-mobile', label: '04 · 매장 등록', group: '가입 · 온보딩', width: 402, height: 874, viewport: 'mobile', Component: StoreRegisterMobile },
   { id: 'staff-invite-mobile', label: '05 · 직원 초대', group: '가입 · 온보딩', width: 402, height: 874, viewport: 'mobile', Component: StaffInviteMobile },
   { id: 'store-manage-web', label: '06 · 매장 관리 (웹)', group: '가입 · 온보딩', width: 1280, height: 800, viewport: 'web', Component: StoreManageWeb },
-  { id: 'store-register-step2-mobile', label: '04-B · 매장 등록 2/3 (영업시간·인증)', group: '가입 · 온보딩', width: 402, height: 874, viewport: 'mobile', Component: StoreRegisterStep2Mobile },
+  { id: 'store-register-step2-mobile', label: '04-B · 매장 등록 2/3 (영업시간)', group: '가입 · 온보딩', width: 402, height: 874, viewport: 'mobile', Component: StoreRegisterStep2Mobile },
   { id: 'staff-join-mobile', label: '07 · 직원 - 매장 코드 입력', group: '가입 · 온보딩', width: 402, height: 874, viewport: 'mobile', Component: StaffJoinMobile },
   { id: 'password-reset-mobile', label: '08 · 비밀번호 찾기 (인증 단계)', group: '가입 · 온보딩', width: 402, height: 874, viewport: 'mobile', Component: PasswordResetMobile },
 ];

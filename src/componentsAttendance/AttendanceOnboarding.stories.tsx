@@ -68,7 +68,7 @@ export const StoreManageWeb: Story = {
 };
 
 export const StoreRegisterStep2Mobile: Story = {
-  name: '04-B · 매장 등록 2/3 (영업시간·인증)',
+  name: '04-B · 매장 등록 2/3 (영업시간)',
   args: { screenId: 'store-register-step2-mobile' },
 };
 

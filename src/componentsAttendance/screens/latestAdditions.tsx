@@ -18,7 +18,6 @@ import {
   Mail,
   MessageCircle,
   Plus,
-  QrCode,
   ReceiptText,
   RefreshCw,
   Search,
@@ -30,7 +29,6 @@ import {
   User,
   Users,
   WalletCards,
-  Wifi,
 } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { ActionCard } from '../components/ActionCard';
@@ -497,7 +495,7 @@ export function RoleSelectWeb({ theme = 'calm' }: AttendanceScreenProps) {
 export function StoreRegisterWeb({ theme = 'calm' }: AttendanceScreenProps) {
   return (
     <AuthWebLayout
-      heroCopy="매장 기본 정보를 등록하면 직원 초대와 출퇴근 인증 설정으로 이어집니다."
+      heroCopy="매장 기본 정보를 등록하면 영업시간 설정과 직원 초대로 이어집니다."
       heroTitle="첫 매장을 등록하세요"
       theme={theme}
       title="04-C · 매장 등록 1/3 (웹)"
@@ -509,7 +507,12 @@ export function StoreRegisterWeb({ theme = 'calm' }: AttendanceScreenProps) {
         <Field focus label="매장 이름" value={store.name} />
         <Field label="업종" value="편의점" />
         <Field label="주소" value={store.address} />
-        <ActionCard caption="GPS 인증 반경은 다음 단계에서 설정합니다." icon={<QrCode size={16} />} title="출퇴근 인증 준비" />
+        <ActionCard
+          caption="GPS, QR, Wi-Fi는 나중에 매장 설정에서 추가할 수 있어요."
+          icon={<CheckCircle2 size={16} />}
+          right={<StatusBadge tone="primary">기본</StatusBadge>}
+          title="출퇴근은 버튼 태그로 기본 등록"
+        />
       </FormPanel>
     </AuthWebLayout>
   );
@@ -518,19 +521,24 @@ export function StoreRegisterWeb({ theme = 'calm' }: AttendanceScreenProps) {
 export function StoreRegisterStep2Web({ theme = 'calm' }: AttendanceScreenProps) {
   return (
     <AuthWebLayout
-      heroCopy="영업시간, 휴게시간, GPS·QR·Wi-Fi 인증 방식을 매장 운영 방식에 맞춥니다."
+      heroCopy="영업시간과 휴게시간을 매장 운영 방식에 맞춥니다."
       heroTitle="운영 기준을 정하세요"
       theme={theme}
       title="04-D · 매장 등록 2/3 (웹)"
     >
       <FormPanel
         footer={<button className="att-button att-button--full" type="button">직원 초대하기</button>}
-        title="영업시간·인증 방식"
+        title="영업시간 설정"
       >
         <Field label="영업시간" value="24시간" />
-        <Field focus label="출퇴근 인증" value="GPS · 매장 반경 50m" />
+        <Field focus label="영업 요일" value="월-일" />
         <Field label="휴게시간 기본값" value="1시간" />
-        <ActionCard caption="GPS, QR, Wi-Fi를 복수로 켤 수 있습니다." icon={<Wifi size={16} />} title="인증 방식" />
+        <ActionCard
+          caption="GPS, QR, Wi-Fi는 나중에 매장 설정에서 추가할 수 있어요."
+          icon={<ShieldCheck size={16} />}
+          right={<StatusBadge tone="primary">기본</StatusBadge>}
+          title="출퇴근은 버튼 태그로 기본 등록"
+        />
       </FormPanel>
     </AuthWebLayout>
   );
