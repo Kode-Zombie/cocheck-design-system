@@ -12,18 +12,18 @@ import {
   Edit3,
   FileText,
   Home,
-  ListChecks,
   LogOut,
   MoreVertical,
   Plus,
   Search,
+  Send,
   Settings,
   Store,
   User,
   Users,
   WalletCards,
 } from 'lucide-react';
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { ActionCard } from '../components/ActionCard';
 import { EmptyState } from '../components/EmptyState';
 import { FormPanel } from '../components/FormPanel';
@@ -83,12 +83,113 @@ const ownerAttendanceRows = [
   { name: attendanceEmployees[2].name, sched: '15:00-22:00', actual: '14:55-', status: '근무중', tone: 'primary' },
 ] satisfies { name: string; sched: string; actual: string; status: string; tone: StatusTone }[];
 
-const ownerTodoRows = [
-  { title: 'POS 전원 켜고 현금 시재 확인', owner: '공통', done: true },
-  { title: attendanceTodos[1].title, owner: attendanceTodos[1].owner, done: attendanceTodos[1].done },
-  { title: '매장 외부 청소 (입구·쓰레기통)', owner: '오픈조', done: false, due: '09:00' },
-  { title: '신상품 POP 교체', owner: attendanceEmployees[0].name, done: false, due: '11:00' },
-  { title: attendanceTodos[0].title, owner: attendanceTodos[0].owner, done: false },
+type BranchScheduleTodo = {
+  category: string;
+  done: boolean;
+  exampleImage: string;
+  guideLine: string;
+  title: string;
+};
+
+type BranchScheduleRow = {
+  attendance: string;
+  attendanceTone: StatusTone;
+  branch: string;
+  content: string;
+  date: string;
+  employee: string;
+  id: string;
+  name: string;
+  position: string;
+  time: string;
+  todos: BranchScheduleTodo[];
+};
+
+const branchScheduleRows: BranchScheduleRow[] = [
+  {
+    id: 'schedule-open',
+    name: '오픈 근무',
+    employee: attendanceEmployees[0].name,
+    position: attendanceEmployees[0].role,
+    branch: selectedStore.name,
+    date: '2026.04.29',
+    time: '09:00-18:00',
+    attendance: '근무 예정',
+    attendanceTone: 'primary',
+    content: '오픈 전 시재 확인 후 행사 매대와 냉장 설비를 점검합니다.',
+    todos: [
+      {
+        title: 'POS 전원 켜고 현금 시재 확인',
+        category: '오픈',
+        guideLine: '출근 직후 금고와 POS 시재 금액을 맞춥니다.',
+        exampleImage: '시재 확인표 사진',
+        done: true,
+      },
+      {
+        title: attendanceTodos[0].title,
+        category: '위생',
+        guideLine: '냉장고 상단 온도계를 촬영하고 기준 온도 이탈 여부를 남깁니다.',
+        exampleImage: '냉장고 온도계 사진',
+        done: false,
+      },
+    ],
+  },
+  {
+    id: 'schedule-mid',
+    name: '피크 타임 지원',
+    employee: attendanceEmployees[2].name,
+    position: attendanceEmployees[2].role,
+    branch: selectedStore.name,
+    date: '2026.04.29',
+    time: '12:00-17:00',
+    attendance: '출근 확인',
+    attendanceTone: 'success',
+    content: '점심 피크 시간대 계산대와 재고 보충을 지원합니다.',
+    todos: [
+      {
+        title: '행사 매대 정리',
+        category: '진열',
+        guideLine: '행사 상품은 정면 라벨이 보이도록 같은 방향으로 맞춥니다.',
+        exampleImage: '행사 매대 정면 사진',
+        done: false,
+      },
+    ],
+  },
+  {
+    id: 'schedule-close',
+    name: '마감 근무',
+    employee: attendanceEmployees[1].name,
+    position: attendanceEmployees[1].role,
+    branch: selectedStore.name,
+    date: '2026.04.29',
+    time: '18:00-23:00',
+    attendance: '대기',
+    attendanceTone: 'warning',
+    content: '마감 전 폐기 상품과 매장 외부 청결 상태를 확인합니다.',
+    todos: [
+      {
+        title: attendanceTodos[1].title,
+        category: '마감',
+        guideLine: '유통기한 임박 상품을 폐기 기준표와 대조합니다.',
+        exampleImage: '폐기 상품 집계표 사진',
+        done: attendanceTodos[1].done,
+      },
+      {
+        title: '입구 매트와 쓰레기통 정리',
+        category: '청결',
+        guideLine: '입구 매트 먼지를 털고 외부 쓰레기통 적재 상태를 확인합니다.',
+        exampleImage: '입구 정리 완료 사진',
+        done: false,
+      },
+      {
+        title: '마감 로그 사진 업로드',
+        category: '마감',
+        guideLine: 'POS 마감 화면과 매장 정면 사진을 함께 남깁니다.',
+        exampleImage: '마감 로그 예시 사진',
+        done: false,
+      },
+    ],
+  },
 ];
 
 const payrollPublishRows = attendancePayrollRows.map((row, index) => ({
@@ -196,14 +297,6 @@ function DetailRow({ label, value }: { label: string; value: ReactNode }) {
   );
 }
 
-function ProgressBar({ value }: { value: number }) {
-  return (
-    <div className="att-progress">
-      <div style={{ width: `${value}%` }} />
-    </div>
-  );
-}
-
 function OwnerHeroCard({
   label,
   value,
@@ -252,6 +345,17 @@ export function OwnerHomeMobile({ theme = 'calm' }: AttendanceScreenProps) {
           <DetailRow label="결근" value="0명" />
           <DetailRow label="오늘 인건비" value="842K" />
         </OwnerHeroCard>
+        <section className="att-stack" style={{ marginTop: 16 }}>
+          <div className="att-section-heading"><h2>빠른 실행</h2></div>
+          <button aria-label="직원 알림 보내기" className="att-button att-button--full" type="button">
+            <Send size={16} />
+            직원 알림 보내기
+          </button>
+          <button className="att-button att-button--secondary att-button--full" type="button">
+            <CalendarDays size={16} />
+            일정 추가
+          </button>
+        </section>
         <div className="att-metric-grid att-metric-grid--two" style={{ marginTop: 16 }}>
           {attendanceDashboardMetrics.map((metric, index) => (
             <MetricCard
@@ -501,92 +605,258 @@ export function OwnerAttendanceMobile({ theme = 'calm' }: AttendanceScreenProps)
   );
 }
 
-export function OwnerTodoMobile({ theme = 'calm' }: AttendanceScreenProps) {
-  const doneCount = ownerTodoRows.filter((todo) => todo.done).length;
+export function OwnerScheduleManagementMobile({ theme = 'calm' }: AttendanceScreenProps) {
+  const [expandedScheduleIds, setExpandedScheduleIds] = useState<string[]>([]);
+  const todoCount = branchScheduleRows.reduce((sum, schedule) => sum + schedule.todos.length, 0);
+  const doneTodoCount = branchScheduleRows.reduce(
+    (sum, schedule) => sum + schedule.todos.filter((todo) => todo.done).length,
+    0,
+  );
+  const toggleScheduleChecklist = (scheduleId: string) => {
+    setExpandedScheduleIds((current) => (
+      current.includes(scheduleId)
+        ? current.filter((id) => id !== scheduleId)
+        : [...current, scheduleId]
+    ));
+  };
 
   return (
-    <MobileShell activeTab="home" theme={theme} title="06 · 할 일 관리">
+    <MobileShell activeTab="schedule" theme={theme} title="06 · 일정 관리">
       <PageHeader
         eyebrow={`${selectedStore.name} · 오늘`}
-        right={<button className="att-button" type="button"><Plus size={15} /> 추가</button>}
-        title="할 일 관리"
+        right={<button className="att-button" type="button"><Plus size={15} /> 일정 추가</button>}
+        title="일정 관리"
       />
       <main className="att-mobile-content att-mobile-content--flush-top" tabIndex={0}>
         <section className="att-card-section">
           <div className="att-section-heading">
-            <h2>전체 진행률</h2>
-            <span className="att-mono">{doneCount} / {ownerTodoRows.length}</span>
+            <h2>오늘 일정</h2>
+            <span className="att-mono">{branchScheduleRows.length}개</span>
           </div>
-          <ProgressBar value={(doneCount / ownerTodoRows.length) * 100} />
+          <div className="att-metric-grid att-metric-grid--two" style={{ marginBottom: 0 }}>
+            <MetricCard icon={<CalendarDays size={18} />} label="근무 일정" value={`${branchScheduleRows.length}건`} />
+            <MetricCard icon={<ClipboardList size={18} />} label="체크리스트" value={`${doneTodoCount}/${todoCount}`} />
+          </div>
         </section>
         <section className="att-stack" style={{ marginTop: 18 }}>
-          {ownerTodoRows.map((todo) => (
-            <ActionCard
-              caption={`${todo.owner}${todo.due ? ` · ~${todo.due}` : ''}`}
-              icon={todo.done ? <CheckCircle2 size={16} /> : <Circle size={16} />}
-              key={todo.title}
-              right={
-                <div style={{ display: 'inline-flex', gap: 6 }}>
-                  <button className="att-button att-button--ghost" type="button">수정</button>
-                  <button className="att-button att-button--secondary" type="button">삭제</button>
+          <div className="att-section-heading">
+            <h2>일정별 할 일</h2>
+            <StatusBadge tone="primary">{doneTodoCount}/{todoCount} 완료</StatusBadge>
+          </div>
+          {branchScheduleRows.map((schedule) => {
+            const scheduleDoneCount = schedule.todos.filter((todo) => todo.done).length;
+            const isFoldable = schedule.todos.length >= 3;
+            const isExpanded = !isFoldable || expandedScheduleIds.includes(schedule.id);
+
+            return (
+              <section className="att-card-section" key={schedule.id}>
+                <div className="att-section-heading">
+                  <h2>{schedule.name}</h2>
+                  <StatusBadge tone={schedule.attendanceTone}>{schedule.attendance}</StatusBadge>
                 </div>
-              }
-              title={todo.title}
-            />
-          ))}
+                <DetailRow label="직원" value={`${schedule.employee} · ${schedule.position}`} />
+                <DetailRow label="근무 시간" value={schedule.time} />
+                <DetailRow label="지점" value={schedule.branch} />
+                <p className="att-subtitle">{schedule.content}</p>
+                <div style={{ display: 'grid', gap: 8, marginTop: 12 }}>
+                  <div className="att-section-heading" style={{ marginBottom: 0 }}>
+                    <h2>체크리스트</h2>
+                    <span className="att-mono">{scheduleDoneCount}/{schedule.todos.length}</span>
+                  </div>
+                  {isExpanded ? (
+                    <>
+                      {schedule.todos.map((todo) => (
+                        <div
+                          key={`${schedule.id}-${todo.title}`}
+                          style={{
+                            alignItems: 'flex-start',
+                            border: '1px solid var(--att-border)',
+                            borderRadius: 8,
+                            display: 'flex',
+                            gap: 10,
+                            padding: 10,
+                          }}
+                        >
+                          <span style={{ color: todo.done ? 'var(--att-success)' : 'var(--att-text-muted)', display: 'inline-flex', marginTop: 2 }}>
+                            {todo.done ? <CheckCircle2 size={16} /> : <Circle size={16} />}
+                          </span>
+                          <div style={{ minWidth: 0 }}>
+                            <strong style={{ display: 'block', fontSize: 13 }}>{todo.title}</strong>
+                            <span className="att-subtitle" style={{ display: 'block' }}>{todo.category} · {todo.guideLine}</span>
+                          </div>
+                        </div>
+                      ))}
+                      {isFoldable ? (
+                        <button
+                          aria-expanded
+                          className="att-button att-button--ghost att-button--full"
+                          onClick={() => toggleScheduleChecklist(schedule.id)}
+                          type="button"
+                        >
+                          체크리스트 접기
+                        </button>
+                      ) : null}
+                    </>
+                  ) : (
+                    <div
+                      style={{
+                        alignItems: 'center',
+                        border: '1px solid var(--att-border)',
+                        borderRadius: 8,
+                        display: 'flex',
+                        gap: 10,
+                        justifyContent: 'space-between',
+                        padding: 10,
+                      }}
+                    >
+                      <div style={{ minWidth: 0 }}>
+                        <strong style={{ display: 'block', fontSize: 13 }}>체크리스트 {schedule.todos.length}개 접힘</strong>
+                        <span className="att-subtitle" style={{ display: 'block' }}>
+                          {scheduleDoneCount}/{schedule.todos.length} 완료 · 펼치면 전체 항목을 볼 수 있습니다.
+                        </span>
+                      </div>
+                      <button
+                        aria-expanded={false}
+                        className="att-button att-button--secondary"
+                        onClick={() => toggleScheduleChecklist(schedule.id)}
+                        type="button"
+                      >
+                        체크리스트 펼치기
+                      </button>
+                    </div>
+                  )}
+                </div>
+                <div className="att-inline-actions" style={{ marginTop: 12 }}>
+                  <button className="att-button att-button--ghost" type="button">일정 수정</button>
+                  <button className="att-button att-button--secondary" type="button">직원 알림</button>
+                </div>
+              </section>
+            );
+          })}
         </section>
       </main>
     </MobileShell>
   );
 }
 
-export function OwnerTodoCreateMobile({ theme = 'calm' }: AttendanceScreenProps) {
+export function OwnerScheduleEditMobile({ theme = 'calm' }: AttendanceScreenProps) {
+  const schedule = branchScheduleRows[0];
+
   return (
-    <MobileShell theme={theme} title="F1 · 할 일 추가 (모바일)">
+    <MobileShell theme={theme} title="F1 · 일정 수정 (모바일)">
       <PageHeader
         back
-        right={<button className="att-button" type="button">저장</button>}
-        title="할 일 추가"
+        right={<button className="att-button" type="button">변경 저장</button>}
+        title="일정 수정"
       />
       <main className="att-mobile-content" tabIndex={0}>
-        <FormPanel description="직원에게 보이는 오늘 체크리스트로 추가됩니다." title="할 일 정보">
-          <Field focus label="할 일 내용 *" value="신상품 POP 교체" />
+        <FormPanel description="직원 근무 일정 안에서 체크리스트를 함께 관리합니다." title="근무 정보">
+          <Field focus label="일정명 *" value={schedule.name} />
+          <div className="att-action-row">
+            <Field label="근무일" value={schedule.date} />
+            <Field label="근무 시간" value={schedule.time} />
+          </div>
+          <div className="att-action-row">
+            <Field label="직원 *" value={schedule.employee} />
+            <Field label="직책" value={schedule.position} />
+          </div>
+          <Field label="근무 지점" value={schedule.branch} />
+          <Field label="근무 내용" tall value={schedule.content} />
+        </FormPanel>
+        <FormPanel title="일정별 할 일">
+          {schedule.todos.map((todo, index) => (
+            <section
+              key={`${schedule.id}-edit-${todo.title}`}
+              style={{
+                border: '1px solid var(--att-border)',
+                borderRadius: 8,
+                display: 'grid',
+                gap: 10,
+                padding: 12,
+              }}
+            >
+              <div className="att-section-heading" style={{ alignItems: 'flex-start', marginBottom: 0 }}>
+                <h2 style={{ minWidth: 0 }}>{index + 1}. {todo.title}</h2>
+                <StatusBadge tone={todo.done ? 'success' : 'warning'}>{todo.done ? '완료' : '대기'}</StatusBadge>
+              </div>
+              <div>
+                <span className="att-field__label">카테고리</span>
+                <p className="att-copy" style={{ margin: '4px 0 0' }}>{todo.category}</p>
+              </div>
+              <div>
+                <span className="att-field__label">가이드라인</span>
+                <p className="att-copy" style={{ margin: '4px 0 0' }}>{todo.guideLine}</p>
+              </div>
+              <div>
+                <span className="att-field__label">예시 이미지</span>
+                <p className="att-copy" style={{ margin: '4px 0 0' }}>{todo.exampleImage}</p>
+              </div>
+            </section>
+          ))}
+          <button className="att-button att-button--secondary att-button--full" type="button">
+            <Plus size={15} />
+            체크리스트 항목 추가
+          </button>
+        </FormPanel>
+      </main>
+    </MobileShell>
+  );
+}
+
+export function OwnerPushMessageCreateMobile({ theme = 'calm' }: AttendanceScreenProps) {
+  return (
+    <MobileShell height={844} theme={theme} title="F2 · 직원 알림 보내기 (모바일)" width={390}>
+      <PageHeader
+        back
+        right={<button className="att-button" type="button"><Send size={15} /> 푸시 보내기</button>}
+        title="직원 알림 보내기"
+      />
+      <main className="att-mobile-content" tabIndex={0}>
+        <FormPanel description="직원 앱 푸시와 알림함으로 즉시 전달됩니다." title="수신 대상">
           <div>
-            <span className="att-field__label">담당자</span>
+            <span className="att-field__label">대상 범위</span>
             <div className="att-inline-actions" style={{ marginTop: 8 }}>
-              <Chip>공통</Chip>
-              <Chip>오픈조</Chip>
-              <Chip active>{attendanceEmployees[0].name}</Chip>
-              <Chip>{attendanceEmployees[1].name}</Chip>
+              <Chip active>전체 직원</Chip>
+              <Chip>지점 선택</Chip>
+              <Chip>직원 선택</Chip>
             </div>
           </div>
-          <div>
-            <span className="att-field__label">마감 시각</span>
-            <div className="att-inline-actions" style={{ marginTop: 8 }}>
-              <Chip>설정 안 함</Chip>
-              <Chip>09:00</Chip>
-              <Chip active>11:00</Chip>
-              <Chip>18:00</Chip>
-            </div>
-          </div>
-          <div>
-            <span className="att-field__label">반복</span>
-            <div className="att-inline-actions" style={{ marginTop: 8 }}>
-              <Chip active tone="success">반복 없음</Chip>
-              <Chip>매일</Chip>
-              <Chip>주중</Chip>
-            </div>
-          </div>
-          <Field
-            label="메모"
-            tall
-            value="행사 매대 왼쪽 첫 번째 줄에 부착하고 완료 후 사진으로 확인해 주세요."
-          />
           <ActionCard
-            caption="직원 앱 할 일 탭에 즉시 표시됩니다."
-            icon={<ListChecks size={16} />}
-            right={<StatusBadge tone="primary">미리보기</StatusBadge>}
-            title="신상품 POP 교체"
+            caption="전체 매장 · 직원 12명"
+            icon={<Users size={16} />}
+            right={<StatusBadge tone="primary">12명</StatusBadge>}
+            title="수신 대상 미리보기"
+          />
+        </FormPanel>
+        <FormPanel title="메시지 내용">
+          <div>
+            <span className="att-field__label">메시지 유형</span>
+            <div className="att-inline-actions" style={{ marginTop: 8 }}>
+              <Chip>일반</Chip>
+              <Chip active tone="success">공지</Chip>
+              <Chip tone="danger">긴급</Chip>
+            </div>
+          </div>
+          <Field focus label="제목 *" value="오늘 행사 매대 확인 요청" />
+          <Field
+            label="내용 *"
+            tall
+            value="오후 근무 시작 전 행사 POP와 재고 수량을 확인해 주세요. 완료 후 메모에 사진을 남겨주세요."
+          />
+        </FormPanel>
+        <FormPanel title="발송 옵션">
+          <div>
+            <span className="att-field__label">발송 시점</span>
+            <div className="att-inline-actions" style={{ marginTop: 8 }}>
+              <Chip active>즉시 발송</Chip>
+              <Chip>예약 발송</Chip>
+            </div>
+          </div>
+          <ActionCard
+            caption="메모·인수인계에도 남김"
+            icon={<CheckCircle2 size={16} />}
+            right={<span className="att-toggle att-toggle--on" />}
+            title="공지로도 남기기"
           />
         </FormPanel>
       </main>

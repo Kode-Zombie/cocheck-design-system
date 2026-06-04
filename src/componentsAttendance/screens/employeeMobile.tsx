@@ -581,18 +581,7 @@ export function EmployeeTodoCreateMobile({ theme = 'calm' }: AttendanceScreenPro
       <main className="att-mobile-content" tabIndex={0}>
         <FormPanel description="내가 볼 개인 체크리스트로 저장됩니다." title="할 일 정보">
           <Field focus label="제목 *" value="신상품 POP 교체" />
-          <Field label="기한" value="오늘 11:00" />
-          <Field label="매장" value={store.name} />
           <Field tall label="메모" value="행사 매대 왼쪽 첫 번째 줄에 부착하고 사진으로 확인하기" />
-          <div>
-            <span className="att-field__label">반복</span>
-            <div className="att-inline-actions" style={{ marginTop: 8 }}>
-              <Chip active>오늘만</Chip>
-              <Chip>매 근무일</Chip>
-              <Chip>매주</Chip>
-            </div>
-          </div>
-          <ActionCard caption="완료 전 10분 전에 알려줍니다." right={<span className="att-toggle att-toggle--on" />} title="알림 받기" />
         </FormPanel>
       </main>
     </MobileShell>

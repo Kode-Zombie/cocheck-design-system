@@ -210,6 +210,10 @@ function OwnerWebShell({
           right ?? (
             <>
               <StatusBadge tone="primary">3개 매장 운영중</StatusBadge>
+              <button aria-label="직원 알림 보내기" className="att-button" type="button">
+                <Send size={15} />
+                직원 알림 보내기
+              </button>
               <IconButton label="알림 보기">
                 <Bell size={17} />
                 <span className="att-notification-dot" />
@@ -434,12 +438,14 @@ function ModalOverlay({
 function ModalCard({
   children,
   footer,
+  maxHeight = 600,
   subtitle,
   title,
   width = 520,
 }: {
   children: ReactNode;
   footer: ReactNode;
+  maxHeight?: number;
   subtitle?: string;
   title: string;
   width?: number;
@@ -450,7 +456,13 @@ function ModalCard({
       aria-modal="true"
       className="att-form-panel"
       role="dialog"
-      style={{ boxShadow: '0 20px 60px rgba(15, 23, 42, 0.24)', maxHeight: 690, overflow: 'auto', width }}
+      style={{
+        boxShadow: '0 20px 60px rgba(15, 23, 42, 0.24)',
+        display: 'grid',
+        gridTemplateRows: 'auto minmax(0, 1fr) auto',
+        maxHeight,
+        width,
+      }}
     >
       <header className="att-form-panel__header" style={{ alignItems: 'start', display: 'flex', justifyContent: 'space-between' }}>
         <div>
@@ -461,8 +473,8 @@ function ModalCard({
           <X size={17} />
         </IconButton>
       </header>
-      <div className="att-form-panel__body">{children}</div>
-      <footer className="att-form-panel__footer">{footer}</footer>
+      <div className="att-form-panel__body" style={{ overflow: 'auto' }}>{children}</div>
+      <footer className="att-form-panel__footer" style={{ background: 'var(--att-surface)' }}>{footer}</footer>
     </section>
   );
 }
@@ -497,7 +509,7 @@ function RosterContent({ compact = false }: { compact?: boolean }) {
             <ChevronLeft size={15} /> 4월 14일-20일
           </button>
           <button className="att-button att-button--ghost" type="button">복사하기</button>
-          <button className="att-button" type="button"><Plus size={15} /> 근무 추가</button>
+          <button className="att-button" type="button"><Plus size={15} /> 일정 추가</button>
         </PageActions>
         <span>총 668시간 편성 · 예상 인건비 3,847,500원</span>
       </div>
@@ -723,36 +735,98 @@ export function OwnerScheduleWeb({ theme = 'calm' }: AttendanceScreenProps) {
 
 export function OwnerScheduleCreateWeb({ theme = 'calm' }: AttendanceScreenProps) {
   const days = ['월', '화', '수', '목', '금', '토', '일'];
+  const checklistItems = [
+    {
+      title: 'POS 전원 켜고 현금 시재 확인',
+      category: '오픈',
+      guideLine: '출근 직후 금고와 POS 시재 금액을 맞춥니다.',
+      exampleImage: '시재 확인표 사진',
+    },
+    {
+      title: '냉장고 온도 확인',
+      category: '위생',
+      guideLine: '냉장고 상단 온도계를 촬영하고 기준 온도 이탈 여부를 남깁니다.',
+      exampleImage: '냉장고 온도계 사진',
+    },
+  ];
 
   return (
-    <ModalOverlay activeId="schedule" subtitle="웹 모달 · 새 근무를 추가합니다." theme={theme} title="스케줄 편성">
+    <ModalOverlay activeId="schedule" subtitle="웹 모달 · 지점 일정과 일정별 할 일을 함께 추가합니다." theme={theme} title="스케줄 편성">
       <ModalCard
         footer={
           <>
             <button className="att-button att-button--secondary" type="button">취소</button>
-            <button className="att-button" type="button"><Plus size={15} /> 추가하기</button>
+            <button className="att-button" type="button"><Plus size={15} /> 일정 추가</button>
           </>
         }
-        title="새 근무 추가"
-        width={440}
+        maxHeight={680}
+        subtitle="TODO는 일정 안의 체크리스트로 저장됩니다."
+        title="일정 추가"
+        width={760}
       >
-        <Field focus label="직원 *" value={attendanceEmployees[0].name} />
-        <Field label="매장 *" value={selectedStore.name} />
-        <div>
-          <span className="att-field__label">날짜</span>
-          <div className="att-inline-actions" style={{ marginTop: 8 }}>
-            {days.map((day, index) => <Chip active={index === 4} key={day}>{day}</Chip>)}
-          </div>
+        <div style={{ display: 'grid', gap: 16, gridTemplateColumns: 'minmax(0, 1fr) 300px' }}>
+          <FormPanel title="일정 정보">
+            <Field focus label="일정명 *" value="오픈 근무" />
+            <div style={{ display: 'grid', gap: 12, gridTemplateColumns: '1fr 1fr' }}>
+              <Field label="직원 *" value={attendanceEmployees[0].name} />
+              <Field label="직책" value={attendanceEmployees[0].role} />
+              <Field label="근무 지점 *" value={selectedStore.name} />
+              <Field label="출근 상태" value="근무 예정" />
+            </div>
+            <div>
+              <span className="att-field__label">근무일</span>
+              <div className="att-inline-actions" style={{ marginTop: 8 }}>
+                {days.map((day, index) => <Chip active={index === 4} key={day}>{day}</Chip>)}
+              </div>
+            </div>
+            <div className="att-action-row">
+              <Field label="시작" value="09:00" />
+              <Field focus label="종료" value="18:00" />
+            </div>
+            <Field
+              label="근무 내용"
+              tall
+              value="오픈 전 시재 확인 후 행사 매대와 냉장 설비를 점검합니다."
+            />
+          </FormPanel>
+          <FormPanel title="일정별 할 일">
+            {checklistItems.map((todo, index) => (
+              <section
+                key={todo.title}
+                style={{
+                  border: '1px solid var(--att-border)',
+                  borderRadius: 8,
+                  display: 'grid',
+                  gap: 8,
+                  padding: 12,
+                }}
+              >
+                <div className="att-section-heading" style={{ alignItems: 'flex-start', marginBottom: 0 }}>
+                  <h2 style={{ minWidth: 0 }}>{index + 1}. {todo.title}</h2>
+                  <StatusBadge tone="warning">대기</StatusBadge>
+                </div>
+                <DetailRow label="카테고리" value={todo.category} />
+                <div>
+                  <span className="att-field__label">가이드라인</span>
+                  <p className="att-copy" style={{ margin: '4px 0 0' }}>{todo.guideLine}</p>
+                </div>
+                <div>
+                  <span className="att-field__label">예시 이미지</span>
+                  <p className="att-copy" style={{ margin: '4px 0 0' }}>{todo.exampleImage}</p>
+                </div>
+              </section>
+            ))}
+            <button className="att-button att-button--secondary att-button--full" type="button">
+              <Plus size={15} />
+              체크리스트 항목 추가
+            </button>
+            <ActionCard
+              caption="체크리스트는 직원 일정 상세에 같이 표시됩니다."
+              icon={<ClipboardList size={16} />}
+              title="일정에 포함되는 할 일"
+            />
+          </FormPanel>
         </div>
-        <div className="att-action-row">
-          <Field label="시작" value="09:00" />
-          <Field focus label="종료" value="18:00" />
-        </div>
-        <ActionCard
-          caption="주휴수당과 예상 인건비에 자동 반영됩니다."
-          icon={<AlertTriangle size={16} />}
-          title="예상 근무 8시간 · 휴게 1시간"
-        />
       </ModalCard>
     </ModalOverlay>
   );
@@ -928,6 +1002,69 @@ export function OwnerMemoCreateWeb({ theme = 'calm' }: AttendanceScreenProps) {
         <div className="att-action-row">
           <ActionCard icon={<Bell size={16} />} title="직원 알림 보내기" right={<span className="att-toggle att-toggle--on" />} />
           <ActionCard icon={<CheckCircle2 size={16} />} title="상단 고정" right={<span className="att-toggle" />} />
+        </div>
+      </ModalCard>
+    </ModalOverlay>
+  );
+}
+
+export function OwnerPushMessageCreateWeb({ theme = 'calm' }: AttendanceScreenProps) {
+  return (
+    <ModalOverlay activeId="memo" subtitle="웹 모달 · 직원에게 푸시 메시지를 보냅니다." theme={theme} title="직원 알림 보내기">
+      <ModalCard
+        footer={
+          <>
+            <button className="att-button att-button--secondary" type="button">취소</button>
+            <button className="att-button" type="button"><Send size={15} /> 푸시 보내기</button>
+          </>
+        }
+        subtitle="자주 쓰는 공지와 긴급 안내를 직원 앱으로 바로 전송합니다."
+        title="직원 알림 보내기"
+        width={620}
+      >
+        <div>
+          <span className="att-field__label">대상 범위</span>
+          <div className="att-inline-actions" style={{ marginTop: 8 }}>
+            <Chip active>전체 직원</Chip>
+            <Chip>지점 선택</Chip>
+            <Chip>직원 선택</Chip>
+          </div>
+        </div>
+        <Field label="대상 매장" value="전체 매장 · 직원 12명" />
+        <div>
+          <span className="att-field__label">메시지 유형</span>
+          <div className="att-inline-actions" style={{ marginTop: 8 }}>
+            <Chip>일반</Chip>
+            <Chip active tone="success">공지</Chip>
+            <Chip tone="danger">긴급</Chip>
+          </div>
+        </div>
+        <Field focus label="제목 *" value="오늘 행사 매대 확인 요청" />
+        <Field
+          label="내용 *"
+          tall
+          value="오후 근무 시작 전 행사 POP와 재고 수량을 확인해 주세요. 완료 후 메모에 사진을 남겨주세요."
+        />
+        <div>
+          <span className="att-field__label">발송 시점</span>
+          <div className="att-inline-actions" style={{ marginTop: 8 }}>
+            <Chip active>즉시 발송</Chip>
+            <Chip>예약 발송</Chip>
+          </div>
+        </div>
+        <div className="att-action-row">
+          <ActionCard
+            caption="앱 푸시 · 알림함 저장"
+            icon={<Bell size={16} />}
+            right={<StatusBadge tone="primary">12명</StatusBadge>}
+            title="수신 대상 미리보기"
+          />
+          <ActionCard
+            caption="메모·인수인계에도 남김"
+            icon={<CheckCircle2 size={16} />}
+            right={<span className="att-toggle att-toggle--on" />}
+            title="공지로도 남기기"
+          />
         </div>
       </ModalCard>
     </ModalOverlay>
