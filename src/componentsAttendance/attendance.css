@@ -425,6 +425,135 @@
   background: var(--att-danger);
 }
 
+.att-notification-filter-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+  padding-bottom: 2px;
+  overflow-x: auto;
+}
+
+.att-notification-filter-row .att-chip {
+  flex: 0 0 auto;
+}
+
+.att-notification-list {
+  gap: 8px;
+}
+
+.att-notification-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--att-border);
+  border-radius: 8px;
+  background: var(--att-surface);
+}
+
+.att-notification-card--unread {
+  border-color: var(--att-primary);
+  box-shadow: inset 3px 0 0 var(--att-primary);
+}
+
+.att-notification-card__icon {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border-radius: 7px;
+  flex: 0 0 auto;
+}
+
+.att-notification-card__icon--neutral {
+  color: var(--att-text-muted);
+  background: var(--att-surface-muted);
+}
+
+.att-notification-card__icon--primary {
+  color: var(--att-primary-readable);
+  background: var(--att-primary-soft);
+}
+
+.att-notification-card__icon--success {
+  color: var(--att-success);
+  background: var(--att-success-soft);
+}
+
+.att-notification-card__icon--warning {
+  color: var(--att-warn);
+  background: var(--att-warn-soft);
+}
+
+.att-notification-card__icon--danger {
+  color: var(--att-danger);
+  background: var(--att-danger-soft);
+}
+
+.att-notification-card__body {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+  flex: 1;
+}
+
+.att-notification-card__top,
+.att-notification-card__meta {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: 6px;
+}
+
+.att-notification-card__top {
+  justify-content: space-between;
+}
+
+.att-notification-card__top > span {
+  overflow: hidden;
+  color: var(--att-primary-readable);
+  font-size: 11px;
+  font-weight: 900;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.att-notification-card h2,
+.att-notification-card p {
+  margin: 0;
+}
+
+.att-notification-card h2 {
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+.att-notification-card p {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--att-text-muted);
+  font-size: 12px;
+  line-height: 1.35;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+
+.att-notification-card__meta {
+  flex-wrap: wrap;
+  color: var(--att-text-subtle);
+  font-size: 11px;
+  line-height: 1.25;
+}
+
+.att-notification-card__meta span {
+  min-width: 0;
+}
+
+.att-notification-card__meta span + span::before {
+  margin-right: 6px;
+  content: "·";
+}
+
 .att-primary-status-card {
   display: grid;
   gap: 18px;

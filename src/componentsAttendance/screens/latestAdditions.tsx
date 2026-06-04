@@ -45,6 +45,12 @@ import {
   attendancePlans,
   attendanceStores,
 } from '../data/attendanceSampleData';
+import {
+  buildNotificationRows,
+  employeeNotificationPushes,
+  employeeNotificationUserId,
+  type NotificationCategory,
+} from './notifications';
 import type { AttendanceScreenProps } from './screenTypes';
 
 const owner = {
@@ -590,25 +596,64 @@ export function StaffJoinWeb({ theme = 'calm' }: AttendanceScreenProps) {
   );
 }
 
+function getNotificationCategoryIcon(category: NotificationCategory) {
+  switch (category) {
+    case 'COMMENT':
+      return <MessageCircle size={16} />;
+    case 'NOTICE':
+      return <Bell size={16} />;
+    case 'DIRECT_MESSAGE':
+      return <Mail size={16} />;
+    case 'INVITATION':
+      return <Send size={16} />;
+    case 'SALARY_BILL_PUBLISHED':
+      return <ReceiptText size={16} />;
+    case 'SCHEDULE_CHANGE_REQUEST':
+    case 'SCHEDULE_UPDATE':
+      return <CalendarDays size={16} />;
+    case 'ATTENDANCE':
+      return <CheckCircle2 size={16} />;
+    case 'ALARM':
+      return <Clock3 size={16} />;
+  }
+}
+
 export function EmployeeNotificationMobile({ theme = 'calm' }: AttendanceScreenProps) {
-  const notifications = [
-    { title: '오늘 14:00 근무 시작 예정', caption: `${store.name} · 1시간 전 알림`, tone: 'primary' as StatusTone },
-    { title: '스케줄 교환 승인됨', caption: '박민아 님과 금요일 근무 교환', tone: 'success' as StatusTone },
-    { title: '새 인수인계 메모', caption: '3번 냉장고 온도 체크 요청', tone: 'warning' as StatusTone },
-  ];
+  const notifications = buildNotificationRows(employeeNotificationPushes, employeeNotificationUserId);
+  const unreadCount = notifications.filter((item) => item.readStateLabel === '새 알림').length;
+  const readCount = notifications.length - unreadCount;
+
   return (
     <EmployeeMobileShell activeTab="home" theme={theme} title="M10 · 알림 (모바일)">
       <MobileHeader back right={<button className="att-button att-button--ghost" type="button">모두 읽음</button>} title="알림" />
       <main className="att-mobile-content">
-        <div className="att-stack">
+        <div aria-label="알림 필터" className="att-notification-filter-row">
+          <span className="att-chip att-chip--primary">전체 {notifications.length}</span>
+          <span className="att-chip">새 알림 {unreadCount}</span>
+          <span className="att-chip">읽음 {readCount}</span>
+        </div>
+        <div className="att-stack att-notification-list">
           {notifications.map((item) => (
-            <ActionCard
-              caption={item.caption}
-              icon={<Bell size={16} />}
-              key={item.title}
-              right={<StatusBadge tone={item.tone}>새 알림</StatusBadge>}
-              title={item.title}
-            />
+            <article
+              className={`att-notification-card${item.readStateLabel === '새 알림' ? ' att-notification-card--unread' : ''}`}
+              key={item.notificationId}
+            >
+              <div className={`att-notification-card__icon att-notification-card__icon--${item.categoryTone}`}>
+                {getNotificationCategoryIcon(item.category)}
+              </div>
+              <div className="att-notification-card__body">
+                <div className="att-notification-card__top">
+                  <span>{item.categoryLabel}</span>
+                  <StatusBadge tone={item.readStateTone}>{item.readStateLabel}</StatusBadge>
+                </div>
+                <h2>{item.title}</h2>
+                <p>{item.content}</p>
+                <div className="att-notification-card__meta">
+                  <span>{item.senderLabel}</span>
+                  <span>{item.createdAtLabel}</span>
+                </div>
+              </div>
+            </article>
           ))}
         </div>
       </main>
