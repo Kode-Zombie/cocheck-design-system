@@ -84,6 +84,70 @@ const scheduleRows = [
   today?: boolean;
 }[];
 
+type EmployeeScheduleTodo = {
+  title: string;
+  owner: string;
+  due?: string;
+  done: boolean;
+  checkedAt?: string;
+};
+
+type EmployeeScheduleDetail = {
+  date: string;
+  title: string;
+  store: string;
+  role: string;
+  scheduledTime: string;
+  status: string;
+  tone: StatusTone;
+  memo: string;
+  todos: EmployeeScheduleTodo[];
+  actual?: {
+    checkIn: string;
+    checkOut: string;
+    breakTime: string;
+    totalHours: string;
+  };
+};
+
+const futureScheduleDetail: EmployeeScheduleDetail = {
+  date: '2026년 4월 23일 목요일',
+  title: '오픈 근무',
+  store: store.name,
+  role: `${employee.role} 타임`,
+  scheduledTime: '09:00-18:00',
+  status: '예정 일정',
+  tone: 'primary',
+  memo: '오픈 전 신상품 POP와 포스 시재를 먼저 확인하세요.',
+  todos: [
+    { title: '포스기 점검 및 시재 확인', owner: employee.name, due: '09:10', done: false },
+    { title: '냉장고 온도 확인 (2-5도)', owner: '공통', due: '09:20', done: false },
+    { title: '신상품 POP 교체', owner: employee.name, due: '11:00', done: false },
+  ],
+};
+
+const completedScheduleDetail: EmployeeScheduleDetail = {
+  date: '2026년 4월 20일 월요일',
+  title: '오픈 근무',
+  store: store.name,
+  role: `${employee.role} 타임`,
+  scheduledTime: '09:00-18:00',
+  status: '완료 일정',
+  tone: 'success',
+  memo: '냉장고 온도 이슈는 메모로 인수인계했습니다.',
+  actual: {
+    checkIn: '08:58:42',
+    checkOut: '18:03:10',
+    breakTime: '12:30-13:01',
+    totalHours: '8시간 32분',
+  },
+  todos: [
+    { title: '매장 청소 및 바닥 쓸기', owner: employee.name, due: '09:05', done: true, checkedAt: '09:04' },
+    { title: '냉장고 온도 확인 (2-5도)', owner: '공통', due: '09:20', done: true, checkedAt: '09:18' },
+    { title: '포스기 점검 및 시재 확인', owner: employee.name, due: '09:10', done: true, checkedAt: '09:08' },
+  ],
+};
+
 const todoGroups = [
   {
     title: '오픈 체크리스트',
@@ -274,6 +338,29 @@ function TodoCheck({ done }: { done: boolean }) {
   );
 }
 
+function ScheduleTodoRow({
+  mode,
+  todo,
+}: {
+  mode: 'future' | 'completed';
+  todo: EmployeeScheduleTodo;
+}) {
+  return (
+    <div className={`att-choice-card${todo.done ? ' att-choice-card--selected' : ''}`}>
+      <TodoCheck done={todo.done} />
+      <div className="att-choice-card__body">
+        <strong>{todo.title}</strong>
+        <span>
+          {todo.owner}
+          {todo.due ? ` · 목표 ${todo.due}` : ''}
+          {mode === 'completed' && todo.checkedAt ? ` · 체크 ${todo.checkedAt}` : ''}
+        </span>
+      </div>
+      {mode === 'future' ? <Pencil size={15} /> : <CheckCircle2 size={16} />}
+    </div>
+  );
+}
+
 function MobileBackHeader({ children }: { children: ReactNode }) {
   return (
     <header className="att-mobile-page-header att-mobile-page-header--bordered">
@@ -445,7 +532,7 @@ export function EmployeeScheduleWeb({ theme = 'calm' }: AttendanceScreenProps) {
                 borderBottom: index < scheduleRows.length - 1 ? '1px solid var(--att-border)' : 0,
                 display: 'grid',
                 gap: 16,
-                gridTemplateColumns: '120px 1fr auto',
+                gridTemplateColumns: '120px 1fr auto auto',
                 minHeight: 62,
                 padding: '12px 18px',
               }}
@@ -468,12 +555,117 @@ export function EmployeeScheduleWeb({ theme = 'calm' }: AttendanceScreenProps) {
                 <span style={{ color: 'var(--att-text-subtle)', fontSize: 13 }}>근무 없음</span>
               )}
               {row.status ? <StatusBadge tone={row.tone}>{row.status}</StatusBadge> : null}
+              {row.store ? (
+                <button className="att-button att-button--ghost" type="button">
+                  상세 <ChevronRight size={14} />
+                </button>
+              ) : <span />}
             </div>
           ))}
         </section>
       </div>
     </EmployeeWebShell>
   );
+}
+
+function EmployeeScheduleDetailWebView({
+  detail,
+  mode,
+  theme,
+}: {
+  detail: EmployeeScheduleDetail;
+  mode: 'future' | 'completed';
+  theme: AttendanceScreenProps['theme'];
+}) {
+  const isFuture = mode === 'future';
+  const visibleTodos = isFuture ? detail.todos : detail.todos.filter((todo) => todo.done);
+
+  return (
+    <EmployeeWebShell
+      activeId="schedule"
+      subtitle={isFuture ? '예정 근무의 시각과 할 일을 확인하고 수정 요청을 저장합니다.' : '수행한 근무의 출퇴근 기록과 완료한 할 일을 확인합니다.'}
+      theme={theme}
+      title={isFuture ? '일정 상세·수정' : '수행 일정 상세'}
+    >
+      <div className="att-stack att-stack--loose">
+        <div className="att-section-heading">
+          <div>
+            <h2>{detail.date}</h2>
+            <span>{detail.store} · {detail.role}</span>
+          </div>
+          <div className="att-inline-actions">
+            <StatusBadge tone={detail.tone}>{detail.status}</StatusBadge>
+            {isFuture ? (
+              <button className="att-button att-button--secondary" type="button">
+                <RefreshCw size={15} /> 교대 요청
+              </button>
+            ) : null}
+          </div>
+        </div>
+
+        <div style={{ display: 'grid', gap: 16, gridTemplateColumns: 'minmax(0, 1.05fr) minmax(320px, .95fr)' }}>
+          <div className="att-stack att-stack--loose">
+            <FormPanel
+              description={isFuture ? '미래 일정은 근무 시각, 메모, 할 일을 수정 요청할 수 있습니다.' : '완료된 일정은 실제 출퇴근 기록과 근무 시간을 함께 보여줍니다.'}
+              title="일정 정보"
+            >
+              {isFuture ? (
+                <>
+                  <Field focus label="근무 시각" value={detail.scheduledTime} />
+                  <Field label="매장" value={detail.store} />
+                  <Field label="직무" value={detail.role} />
+                  <Field label="요청 메모" tall value={detail.memo} />
+                </>
+              ) : (
+                <>
+                  <DetailRow label="근무 시각" value={detail.scheduledTime} />
+                  <DetailRow label="출근 시각" value={detail.actual?.checkIn} />
+                  <DetailRow label="퇴근 시각" value={detail.actual?.checkOut} />
+                  <DetailRow label="휴게" value={detail.actual?.breakTime} />
+                  <DetailRow label="총 근무" value={detail.actual?.totalHours} />
+                </>
+              )}
+            </FormPanel>
+
+            {isFuture ? (
+              <FormPanel title="수정 요청" description="저장하면 경영주에게 검토 알림이 전송됩니다.">
+                <Field label="요청 내용" tall value="근무 시각이나 할 일을 조정해야 할 때 내용을 남깁니다." />
+              </FormPanel>
+            ) : (
+              <ActionCard
+                caption="출퇴근 시간이 실제와 다르면 기록 정정 요청을 보낼 수 있습니다."
+                icon={<MessageCircle size={16} />}
+                title="기록 정정 요청"
+              />
+            )}
+          </div>
+
+          <FormPanel
+            description={isFuture ? '근무 전에 확인해야 할 항목입니다.' : '근무 중 체크 완료한 항목입니다.'}
+            footer={isFuture ? (
+              <div className="att-inline-actions">
+                <button className="att-button att-button--ghost" type="button">취소</button>
+                <button className="att-button" type="button">저장</button>
+              </div>
+            ) : null}
+            title={isFuture ? '할 일' : '체크된 할 일'}
+          >
+            {visibleTodos.map((todo) => (
+              <ScheduleTodoRow key={todo.title} mode={mode} todo={todo} />
+            ))}
+          </FormPanel>
+        </div>
+      </div>
+    </EmployeeWebShell>
+  );
+}
+
+export function EmployeeScheduleDetailFutureWeb({ theme = 'calm' }: AttendanceScreenProps) {
+  return <EmployeeScheduleDetailWebView detail={futureScheduleDetail} mode="future" theme={theme} />;
+}
+
+export function EmployeeScheduleDetailCompletedWeb({ theme = 'calm' }: AttendanceScreenProps) {
+  return <EmployeeScheduleDetailWebView detail={completedScheduleDetail} mode="completed" theme={theme} />;
 }
 
 export function EmployeeShiftSwapMobile({ theme = 'calm' }: AttendanceScreenProps) {

@@ -1487,6 +1487,116 @@
   flex: 0 0 auto;
 }
 
+.att-invite-completed-at {
+  color: var(--att-text-muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.att-invite-card {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid var(--att-border);
+  border-radius: 8px;
+  background: var(--att-surface);
+  box-shadow: 0 10px 24px rgb(28 25 23 / 6%);
+}
+
+.att-invite-card__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.att-invite-card__person {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  align-items: center;
+  min-width: 0;
+  gap: 10px;
+}
+
+.att-invite-card__avatar {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  color: var(--att-primary-readable);
+  background: var(--att-primary-soft);
+}
+
+.att-invite-card__identity {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.att-invite-card__identity strong {
+  color: var(--att-text);
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.att-invite-card__identity span {
+  color: var(--att-text-muted);
+  font-size: 12px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.att-invite-card__details {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+}
+
+.att-invite-card__detail {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+  padding: 9px 10px;
+  border: 1px solid var(--att-border);
+  border-radius: 8px;
+  background: var(--att-surface-muted);
+}
+
+.att-invite-card__detail--full {
+  grid-column: 1 / -1;
+}
+
+.att-invite-card__detail dt,
+.att-invite-card__detail dd {
+  margin: 0;
+}
+
+.att-invite-card__detail dt {
+  color: var(--att-text-subtle);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.att-invite-card__detail dd {
+  color: var(--att-text);
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.att-invite-card__actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.att-invite-card__actions .att-button {
+  min-height: 34px;
+  padding: 0 12px;
+}
+
 .att-empty-state,
 .att-form-panel {
   padding: 20px;

@@ -67,6 +67,24 @@ const employee = {
 
 const store = attendanceStores[0];
 
+type OwnerInviteStatus = '초대대기' | '가입완료' | '만료';
+
+type OwnerInviteRow = {
+  name: string;
+  contact: string;
+  store: string;
+  status: OwnerInviteStatus;
+  tone: StatusTone;
+  invitedAt: string;
+  completedAt?: string;
+};
+
+const ownerInviteRows: OwnerInviteRow[] = [
+  { name: '정지훈', contact: '010-3333-1212', store: store.name, status: '초대대기', tone: 'warning', invitedAt: '06.08 10:20' },
+  { name: '한유진', contact: '010-9999-0000', store: attendanceStores[1].name, status: '가입완료', tone: 'success', invitedAt: '06.05 14:12', completedAt: '06.07 09:15' },
+  { name: '강도현', contact: '010-2222-3333', store: attendanceStores[2].name, status: '만료', tone: 'neutral', invitedAt: '06.01 09:30' },
+];
+
 const employeeTabs: NavItem[] = [
   { id: 'home', label: '홈', icon: <Home size={18} /> },
   { id: 'punch', label: '출퇴근', icon: <Clock3 size={18} /> },
@@ -155,6 +173,82 @@ function DetailRow({ label, value }: { label: string; value: ReactNode }) {
 
 function PageActions({ children }: { children: ReactNode }) {
   return <div className="att-inline-actions">{children}</div>;
+}
+
+function OwnerInviteActionButton({ invite }: { invite: OwnerInviteRow }) {
+  if (invite.status === '초대대기') {
+    return <button className="att-button att-button--ghost" type="button"><Trash2 size={14} /> 취소</button>;
+  }
+
+  if (invite.status === '만료') {
+    return <button className="att-button att-button--ghost" type="button"><RefreshCw size={14} /> 재전송</button>;
+  }
+
+  return null;
+}
+
+function hasOwnerInviteAction(invite: OwnerInviteRow) {
+  return invite.status === '초대대기' || invite.status === '만료';
+}
+
+function OwnerInviteWebActions({ invite }: { invite: OwnerInviteRow }) {
+  if (hasOwnerInviteAction(invite)) {
+    return (
+      <PageActions>
+        <StatusBadge tone={invite.tone}>{invite.status}</StatusBadge>
+        <OwnerInviteActionButton invite={invite} />
+      </PageActions>
+    );
+  }
+
+  return (
+    <PageActions>
+      <StatusBadge tone={invite.tone}>{invite.status}</StatusBadge>
+      {invite.completedAt ? <span className="att-invite-completed-at">완료일시 {invite.completedAt}</span> : null}
+    </PageActions>
+  );
+}
+
+function OwnerInviteMobileCard({ invite }: { invite: OwnerInviteRow }) {
+  return (
+    <article className="att-invite-card">
+      <div className="att-invite-card__top">
+        <div className="att-invite-card__person">
+          <div className="att-invite-card__avatar">
+            <User size={16} />
+          </div>
+          <div className="att-invite-card__identity">
+            <strong>{invite.name}</strong>
+            <span>{invite.store}</span>
+          </div>
+        </div>
+        <StatusBadge tone={invite.tone}>{invite.status}</StatusBadge>
+      </div>
+
+      <dl className="att-invite-card__details">
+        <div className="att-invite-card__detail">
+          <dt>전화번호</dt>
+          <dd>{invite.contact}</dd>
+        </div>
+        <div className="att-invite-card__detail">
+          <dt>초대일시</dt>
+          <dd>{invite.invitedAt}</dd>
+        </div>
+        {invite.completedAt ? (
+          <div className="att-invite-card__detail att-invite-card__detail--full">
+            <dt>완료일시</dt>
+            <dd>{invite.completedAt}</dd>
+          </div>
+        ) : null}
+      </dl>
+
+      {hasOwnerInviteAction(invite) ? (
+        <div className="att-invite-card__actions">
+          <OwnerInviteActionButton invite={invite} />
+        </div>
+      ) : null}
+    </article>
+  );
 }
 
 function IconButton({ children, label }: { children: ReactNode; label: string }) {
@@ -662,24 +756,13 @@ export function EmployeeNotificationMobile({ theme = 'calm' }: AttendanceScreenP
 }
 
 export function OwnerInviteListMobile({ theme = 'calm' }: AttendanceScreenProps) {
-  const invites = [
-    { name: '정지훈', phone: '010-3333-1212', status: '초대대기', tone: 'warning' as StatusTone },
-    { name: '한유진', phone: '010-9999-0000', status: '가입완료', tone: 'success' as StatusTone },
-    { name: '강도현', phone: '010-2222-3333', status: '만료', tone: 'neutral' as StatusTone },
-  ];
   return (
     <OwnerMobileShell activeTab="stores" theme={theme} title="OM4b · 초대 인원 목록 (사장 모바일)">
       <MobileHeader back right={<button className="att-button" type="button"><Plus size={14} /> 초대</button>} title="초대 인원" />
       <main className="att-mobile-content">
         <div className="att-stack">
-          {invites.map((invite) => (
-            <ActionCard
-              caption={invite.phone}
-              icon={<User size={16} />}
-              key={invite.phone}
-              right={<StatusBadge tone={invite.tone}>{invite.status}</StatusBadge>}
-              title={invite.name}
-            />
+          {ownerInviteRows.map((invite) => (
+            <OwnerInviteMobileCard invite={invite} key={invite.contact} />
           ))}
         </div>
       </main>
@@ -1046,11 +1129,6 @@ export function OwnerTodoWeb({ theme = 'calm' }: AttendanceScreenProps) {
 }
 
 export function OwnerInviteManageWeb({ theme = 'calm' }: AttendanceScreenProps) {
-  const invites = [
-    { name: '정지훈', contact: '010-3333-1212', store: store.name, status: '초대대기', tone: 'warning' as StatusTone },
-    { name: '한유진', contact: '010-9999-0000', store: attendanceStores[1].name, status: '가입완료', tone: 'success' as StatusTone },
-    { name: '강도현', contact: '010-2222-3333', store: attendanceStores[2].name, status: '만료', tone: 'neutral' as StatusTone },
-  ];
   return (
     <OwnerWebShell activeId="invite" subtitle="직원 초대 현황과 재전송 이력을 관리합니다." theme={theme} title="초대 관리">
       <div className="att-section-heading">
@@ -1060,17 +1138,13 @@ export function OwnerInviteManageWeb({ theme = 'calm' }: AttendanceScreenProps) 
         </PageActions>
       </div>
       <div className="att-card-section">
-        {invites.map((invite) => (
+        {ownerInviteRows.map((invite) => (
           <ActionCard
             caption={`${invite.store} · ${invite.contact}`}
             icon={<User size={16} />}
             key={invite.contact}
-            right={
-              <PageActions>
-                <StatusBadge tone={invite.tone}>{invite.status}</StatusBadge>
-                <button className="att-button att-button--ghost" type="button"><Trash2 size={14} /> 취소</button>
-              </PageActions>
-            }
+            meta={`초대일시 ${invite.invitedAt}`}
+            right={<OwnerInviteWebActions invite={invite} />}
             title={invite.name}
           />
         ))}

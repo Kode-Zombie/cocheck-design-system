@@ -93,13 +93,19 @@ export const attendanceFeatureStoryGroups: AttendanceFeatureStoryGroup[] = [
   {
     feature: '직원 일정관리',
     platform: '웹',
-    screens: pickScreens('employee-schedule-web'),
+    screens: pickScreens(
+      'employee-schedule-web',
+      'employee-schedule-detail-future-web',
+      'employee-schedule-detail-completed-web',
+    ),
   },
   {
     feature: '직원 일정관리',
     platform: '앱',
     screens: pickScreens(
       'employee-schedule-mobile',
+      'employee-schedule-detail-future-mobile',
+      'employee-schedule-detail-completed-mobile',
       'employee-shift-swap-mobile',
       'latest-employee-shift-swap-mobile',
     ),

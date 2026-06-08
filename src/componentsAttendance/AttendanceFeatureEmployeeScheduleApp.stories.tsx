@@ -27,5 +27,7 @@ const story = (screenId: string): Story => ({
 });
 
 export const EmployeeScheduleMobile = story('employee-schedule-mobile');
+export const EmployeeScheduleDetailFutureMobile = story('employee-schedule-detail-future-mobile');
+export const EmployeeScheduleDetailCompletedMobile = story('employee-schedule-detail-completed-mobile');
 export const EmployeeShiftSwapMobile = story('employee-shift-swap-mobile');
 export const LatestEmployeeShiftSwapMobile = story('latest-employee-shift-swap-mobile');

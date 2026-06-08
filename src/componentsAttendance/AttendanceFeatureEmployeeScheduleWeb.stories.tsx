@@ -27,3 +27,5 @@ const story = (screenId: string): Story => ({
 });
 
 export const EmployeeScheduleWeb = story('employee-schedule-web');
+export const EmployeeScheduleDetailFutureWeb = story('employee-schedule-detail-future-web');
+export const EmployeeScheduleDetailCompletedWeb = story('employee-schedule-detail-completed-web');
