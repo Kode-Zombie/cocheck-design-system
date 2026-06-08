@@ -90,7 +90,7 @@ export function OwnerTabBar({
   onSelect?: (id: string) => void;
 }) {
   return (
-    <nav aria-label="사장님 하단 메뉴" className="att-owner-tab-bar">
+    <nav aria-label="경영주 하단 메뉴" className="att-owner-tab-bar">
       {items.map((item) => (
         <NavButton
           activeId={activeId}

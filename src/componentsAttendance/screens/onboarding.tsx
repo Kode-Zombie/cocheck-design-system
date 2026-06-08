@@ -169,7 +169,7 @@ function BottomActions({
 
 export function OwnerSignupWeb({ theme = 'calm' }: AttendanceScreenProps) {
   return (
-    <WebFrame height={800} theme={theme} title="01 · 사장님 회원가입 (웹)" width={1280}>
+    <WebFrame height={800} theme={theme} title="01 · 경영주 회원가입 (웹)" width={1280}>
       <div className="att-web-split">
         <section className="att-web-hero">
           <div className="att-brand-row">
@@ -178,7 +178,7 @@ export function OwnerSignupWeb({ theme = 'calm' }: AttendanceScreenProps) {
           </div>
           <div className="att-web-hero__inner" style={{ marginTop: 'auto', marginBottom: 'auto' }}>
             <h1 className="att-web-title">
-              사장님의 하루가
+              경영주의 하루가
               <br />더 단순해집니다.
             </h1>
             <p className="att-copy" style={{ fontSize: 14, marginTop: 16 }}>
@@ -295,7 +295,7 @@ export function RoleSelectMobile({ theme = 'calm' }: AttendanceScreenProps) {
             body="매장을 등록하고 직원의 근무·급여를 관리합니다."
             icon={<Store size={22} />}
             selected
-            title="사장님으로 시작"
+            title="경영주으로 시작"
           />
           <RoleCard
             body="초대받은 매장에 출근하고 스케줄을 확인합니다."
@@ -555,7 +555,7 @@ export function StaffJoinMobile({ theme = 'calm' }: AttendanceScreenProps) {
       <BackHeader>직원 가입 · 3 / 4</BackHeader>
       <main className="att-mobile-content" tabIndex={0}>
         <MobilePrimaryTitle
-          copy="사장님한테 받은 8자리 코드를 입력하세요."
+          copy="경영주한테 받은 8자리 코드를 입력하세요."
           title="매장 코드를 입력해주세요"
         />
         <div className="att-code-grid" style={{ marginBottom: 16 }}>

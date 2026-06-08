@@ -45,11 +45,13 @@ describe('attendance feature story sidebar', () => {
         { screenId: 'latest-login-web', title: 'Attendance/기능별/온보딩/웹' },
         { screenId: 'latest-employee-notification-mobile', title: 'Attendance/기능별/직원 알림/앱' },
         { screenId: 'latest-employee-notification-web', title: 'Attendance/기능별/직원 알림/웹' },
-        { screenId: 'latest-owner-schedule-edit-web', title: 'Attendance/기능별/사장님 일정관리/웹' },
-        { screenId: 'owner-schedule-management-mobile', title: 'Attendance/기능별/사장님 일정관리/앱' },
-        { screenId: 'latest-owner-profile-edit-mobile', title: 'Attendance/기능별/사장님 프로필/앱' },
-        { screenId: 'latest-owner-profile-web', title: 'Attendance/기능별/사장님 프로필/웹' },
-        { screenId: 'latest-owner-payment-mobile', title: 'Attendance/기능별/사장님 결제구독/앱' },
+        { screenId: 'employee-profile-mobile', title: 'Attendance/기능별/직원 프로필/앱' },
+        { screenId: 'employee-profile-web', title: 'Attendance/기능별/직원 프로필/웹' },
+        { screenId: 'latest-owner-schedule-edit-web', title: 'Attendance/기능별/경영주 일정관리/웹' },
+        { screenId: 'owner-schedule-management-mobile', title: 'Attendance/기능별/경영주 일정관리/앱' },
+        { screenId: 'latest-owner-profile-edit-mobile', title: 'Attendance/기능별/경영주 프로필/앱' },
+        { screenId: 'latest-owner-profile-web', title: 'Attendance/기능별/경영주 프로필/웹' },
+        { screenId: 'latest-owner-payment-mobile', title: 'Attendance/기능별/경영주 결제구독/앱' },
       ]),
     );
   });

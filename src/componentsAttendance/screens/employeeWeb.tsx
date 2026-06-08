@@ -54,6 +54,7 @@ const employeeWebNavItems: NavItem[] = [
   { id: 'salary', label: '내 급여', icon: <WalletCards size={17} /> },
   { id: 'schedule', label: '스케줄', icon: <CalendarDays size={17} /> },
   { id: 'contract', label: '근로계약서', icon: <FileText size={17} /> },
+  { id: 'profile', label: '내 정보', icon: <User size={17} /> },
 ];
 
 const weekShifts = [
@@ -508,9 +509,9 @@ export function EmployeeShiftSwapMobile({ theme = 'calm' }: AttendanceScreenProp
               ))}
             </FormPanel>
             <ActionCard
-              caption="교환 신청 후 사장님의 승인이 필요합니다. 승인되면 양쪽 근무가 자동으로 바뀌고 급여에 반영돼요."
+              caption="교환 신청 후 경영주의 승인이 필요합니다. 승인되면 양쪽 근무가 자동으로 바뀌고 급여에 반영돼요."
               icon={<AlertTriangle size={16} />}
-              title="사장님 승인 후 확정"
+              title="경영주 승인 후 확정"
             />
           </div>
         </main>
@@ -595,7 +596,7 @@ export function EmployeeMemoWeb({ theme = 'calm' }: AttendanceScreenProps) {
   return (
     <EmployeeWebShell
       activeId="memo"
-      subtitle="매장 게시판 · 이슈는 자동으로 사장님께 알림이 갑니다."
+      subtitle="매장 게시판 · 이슈는 자동으로 경영주께 알림이 갑니다."
       theme={theme}
       title="메모 · 인수인계"
     >
@@ -646,10 +647,10 @@ export function EmployeeMemoWeb({ theme = 'calm' }: AttendanceScreenProps) {
               <StatusBadge>일반</StatusBadge>
             </div>
             <Field focus label="제목" value="제목을 입력하세요" />
-            <Field label="내용" tall value="내용을 입력하세요. 이슈로 표시하면 사장님께 자동 알림." />
+            <Field label="내용" tall value="내용을 입력하세요. 이슈로 표시하면 경영주께 자동 알림." />
           </FormPanel>
           <ActionCard
-            caption="다음 근무자에게 자동 표시되고 중요한 이슈는 사장님께 푸시됩니다."
+            caption="다음 근무자에게 자동 표시되고 중요한 이슈는 경영주께 푸시됩니다."
             icon={<Bell size={16} />}
             title="인수인계 알림"
           />
@@ -798,6 +799,60 @@ export function EmployeeSalaryWeb({ theme = 'calm' }: AttendanceScreenProps) {
   );
 }
 
+export function EmployeeProfileWeb({ theme = 'calm' }: AttendanceScreenProps) {
+  const supportItems = [
+    { icon: <Bell size={16} />, title: '공지사항', caption: '서비스 업데이트와 운영 안내' },
+    { icon: <MessageCircle size={16} />, title: '1:1 문의', caption: '앱 사용과 계정 문의 접수' },
+    { icon: <FileText size={16} />, title: '문의 내역', caption: '최근 답변 1건' },
+  ];
+
+  return (
+    <EmployeeWebShell
+      activeId="profile"
+      subtitle="프로필, 알림, 고객지원 항목을 관리합니다."
+      theme={theme}
+      title="내 정보"
+    >
+      <div style={{ display: 'grid', gap: 20, gridTemplateColumns: 'minmax(0, 1fr) 320px' }}>
+        <div className="att-stack">
+          <FormPanel title="기본 정보">
+            <Field focus label="이름" value={employee.name} />
+            <Field label="전화번호" value={employee.phone} />
+            <Field label="이메일" value="jiwoo@example.com" />
+            <button className="att-button" type="button">프로필 저장</button>
+          </FormPanel>
+          <FormPanel title="근무 정보">
+            <DetailRow label="소속 매장" value={store.name} />
+            <DetailRow label="직무" value={employee.role} />
+            <DetailRow label="오늘 근무" value={currentShift.time} />
+            <DetailRow label="계약 상태" value={<StatusBadge tone="success">서명완료</StatusBadge>} />
+          </FormPanel>
+        </div>
+        <aside className="att-stack">
+          <WebHeroCard label="현재 상태" value={employee.status}>
+            <DetailRow label="최근 출근" value="오늘 09:00" />
+            <DetailRow label="이번 달 근무" value="88h" />
+          </WebHeroCard>
+          <FormPanel title="고객지원">
+            {supportItems.map((item) => (
+              <ActionCard
+                caption={item.caption}
+                icon={item.icon}
+                key={item.title}
+                right={<ChevronRight size={16} />}
+                title={item.title}
+              />
+            ))}
+          </FormPanel>
+          <button className="att-button att-button--secondary" type="button">
+            <LogOut size={15} /> 로그아웃
+          </button>
+        </aside>
+      </div>
+    </EmployeeWebShell>
+  );
+}
+
 export function EmployeeContractWeb({ theme = 'calm' }: AttendanceScreenProps) {
   const [selected, setSelected] = useState(0);
   const contract = contractRows[selected];
@@ -864,7 +919,7 @@ export function EmployeeContractWeb({ theme = 'calm' }: AttendanceScreenProps) {
             <DetailRow label="근무 요일" value={contract.days} />
           </FormPanel>
           <button className="att-button att-button--secondary" type="button">
-            사장님께 문의
+            경영주께 문의
           </button>
         </aside>
       </div>

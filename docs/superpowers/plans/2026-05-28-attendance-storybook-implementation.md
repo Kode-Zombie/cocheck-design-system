@@ -68,7 +68,7 @@ All source artboards must appear in the registry below.
 
 Onboarding and store entry:
 
-1. `owner-signup-web`: `01 · 사장님 회원가입 (웹)`, 1280x800
+1. `owner-signup-web`: `01 · 경영주 회원가입 (웹)`, 1280x800
 2. `login-mobile`: `02 · 로그인 (모바일)`, 402x874
 3. `role-select-mobile`: `03 · 역할 선택`, 402x874
 4. `store-register-mobile`: `04 · 매장 등록`, 402x874
@@ -95,7 +95,7 @@ Employee mobile:
 
 Owner mobile:
 
-1. `owner-home-mobile`: `01 · 사장님 홈`, 402x874
+1. `owner-home-mobile`: `01 · 경영주 홈`, 402x874
 2. `owner-roster-mobile`: `02 · 스케줄 편성`, 402x874
 3. `owner-payroll-mobile`: `03 · 급여 관리`, 402x874
 4. `owner-payroll-publish-mobile`: `OM3b · 급여 발행`, 390x844
@@ -139,9 +139,9 @@ Owner web:
 
 Empty states and proposals:
 
-1. `empty-owner-mobile`: `E1 · 사장님 홈 (매장 없음)`, 402x874
+1. `empty-owner-mobile`: `E1 · 경영주 홈 (매장 없음)`, 402x874
 2. `empty-employee-mobile`: `E2 · 직원 홈 (근무 없음)`, 402x874
-3. `empty-owner-web`: `E3 · 사장님 웹 대시보드 (직원 없음)`, 1280x800
+3. `empty-owner-web`: `E3 · 경영주 웹 대시보드 (직원 없음)`, 1280x800
 4. `proposal-summary`: `기능 제안 요약`, 720x600
 
 ## Task 1: Source Inventory Helper
@@ -1013,9 +1013,9 @@ export const proposalScreens: AttendanceScreen[] = [];
 export const attendanceScreenGroups = [
   { title: '가입 · 로그인 · 매장 등록', screens: onboardingScreens },
   { title: '직원용 · 모바일 앱', screens: employeeMobileScreens },
-  { title: '사장님용 · 모바일 앱', screens: ownerMobileScreens },
+  { title: '경영주용 · 모바일 앱', screens: ownerMobileScreens },
   { title: '직원용 · 웹 버전', screens: employeeWebScreens },
-  { title: '사장님용 · 웹 대시보드', screens: ownerWebScreens },
+  { title: '경영주용 · 웹 대시보드', screens: ownerWebScreens },
   { title: '첫 가입 · Empty States', screens: emptyStateScreens },
   { title: '제안한 추가 기능', screens: proposalScreens },
 ];
@@ -1078,7 +1078,7 @@ At the bottom of `onboarding.tsx`, export:
 
 ```tsx
 export const onboardingScreens: AttendanceScreen[] = [
-  { id: 'owner-signup-web', label: '01 · 사장님 회원가입 (웹)', group: '가입 · 온보딩', width: 1280, height: 800, viewport: 'web', Component: OwnerSignupWeb },
+  { id: 'owner-signup-web', label: '01 · 경영주 회원가입 (웹)', group: '가입 · 온보딩', width: 1280, height: 800, viewport: 'web', Component: OwnerSignupWeb },
   { id: 'login-mobile', label: '02 · 로그인 (모바일)', group: '가입 · 온보딩', width: 402, height: 874, viewport: 'mobile', Component: LoginMobile },
   { id: 'role-select-mobile', label: '03 · 역할 선택', group: '가입 · 온보딩', width: 402, height: 874, viewport: 'mobile', Component: RoleSelectMobile },
   { id: 'store-register-mobile', label: '04 · 매장 등록', group: '가입 · 온보딩', width: 402, height: 874, viewport: 'mobile', Component: StoreRegisterMobile },
@@ -1516,7 +1516,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const OwnerSignupWeb: Story = {
-  name: '01 · 사장님 회원가입 (웹)',
+  name: '01 · 경영주 회원가입 (웹)',
   args: { screenId: 'owner-signup-web' },
 };
 ```
@@ -1566,12 +1566,12 @@ Expected:
 Open these stories and verify they are not blank and have no severe text overlap:
 
 - `Attendance/00 전체 갤러리`
-- `Attendance/01 가입·온보딩/01 · 사장님 회원가입 (웹)`
+- `Attendance/01 가입·온보딩/01 · 경영주 회원가입 (웹)`
 - `Attendance/02 직원 모바일/01 · 홈`
-- `Attendance/03 사장님 모바일/01 · 사장님 홈`
+- `Attendance/03 경영주 모바일/01 · 경영주 홈`
 - `Attendance/04 직원 웹/00 · 홈`
-- `Attendance/05 사장님 웹/01 · 대시보드`
-- `Attendance/06 Empty States/E3 · 사장님 웹 대시보드 (직원 없음)`
+- `Attendance/05 경영주 웹/01 · 대시보드`
+- `Attendance/06 Empty States/E3 · 경영주 웹 대시보드 (직원 없음)`
 
 - [ ] **Step 3: Fix CSS issues**
 

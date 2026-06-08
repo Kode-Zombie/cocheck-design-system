@@ -12,7 +12,7 @@ import {
 import type { AttendanceScreen } from './screenTypes';
 
 export const onboardingScreens: AttendanceScreen[] = [
-  { id: 'owner-signup-web', label: '01 · 사장님 회원가입 (웹)', group: '가입 · 온보딩', width: 1280, height: 800, viewport: 'web', Component: OwnerSignupWeb },
+  { id: 'owner-signup-web', label: '01 · 경영주 회원가입 (웹)', group: '가입 · 온보딩', width: 1280, height: 800, viewport: 'web', Component: OwnerSignupWeb },
   { id: 'login-mobile', label: '02 · 로그인 (모바일)', group: '가입 · 온보딩', width: 402, height: 874, viewport: 'mobile', Component: LoginMobile },
   { id: 'role-select-mobile', label: '03 · 역할 선택', group: '가입 · 온보딩', width: 402, height: 874, viewport: 'mobile', Component: RoleSelectMobile },
   { id: 'store-register-mobile', label: '04 · 매장 등록', group: '가입 · 온보딩', width: 402, height: 874, viewport: 'mobile', Component: StoreRegisterMobile },

@@ -7,13 +7,13 @@ import {
 import { getFeatureStoryGroup } from './screens/featureStoryGroups';
 import './attendance.css';
 
-const group = getFeatureStoryGroup('경영주 알림', '앱');
+const group = getFeatureStoryGroup('직원 프로필', '웹');
 const ScreenStory = createScreenStory(group.screens);
 
 const meta = {
-  title: 'Attendance/기능별/경영주 알림/앱',
+  title: 'Attendance/기능별/직원 프로필/웹',
   component: ScreenStory,
-  args: { screenId: 'owner-push-message-create-mobile', theme: 'calm' },
+  args: { screenId: 'employee-profile-web', theme: 'calm' },
   argTypes: attendanceStoryArgTypes,
   parameters: { layout: 'centered' },
 } satisfies Meta<typeof ScreenStory>;
@@ -26,5 +26,4 @@ const story = (screenId: string): Story => ({
   args: { screenId },
 });
 
-export const OwnerPushMessageCreateMobile = story('owner-push-message-create-mobile');
-export const OwnerNotificationMobile = story('latest-owner-notification-mobile');
+export const EmployeeProfileWeb = story('employee-profile-web');

@@ -101,11 +101,11 @@ Expose the rebuilt screens under `Attendance/`:
   - Owner signup web, mobile login, role selection, store registration, invite, store management web, store registration step 2, employee join code, password reset.
 - `Attendance/02 직원 모바일`
   - Home, punch, schedule, late/absence report, todo, todo create, memo, memo detail, memo create, salary, my contract, contract detail sheet.
-- `Attendance/03 사장님 모바일`
+- `Attendance/03 경영주 모바일`
   - Owner home, roster/schedule, payroll, payroll publish, stores, attendance, todo, todo create, owner profile.
 - `Attendance/04 직원 웹`
   - Home, punch, schedule, shift swap mobile reference, todo, memo, memo detail, salary, contract.
-- `Attendance/05 사장님 웹`
+- `Attendance/05 경영주 웹`
   - Dashboard, schedule, schedule-create modal, payroll, staff, staff-add modal, attendance, memo, memo-create modal, leave, stats, taxation, labor contract, labor create, labor preview, payment/subscription, checkout widget.
 - `Attendance/06 Empty States`
   - Owner mobile no store, employee mobile no shift, owner web no staff.

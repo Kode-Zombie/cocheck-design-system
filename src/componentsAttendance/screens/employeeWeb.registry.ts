@@ -4,6 +4,7 @@ import {
   EmployeeMemoDetailWeb,
   EmployeeMemoWeb,
   EmployeePunchWeb,
+  EmployeeProfileWeb,
   EmployeeSalaryWeb,
   EmployeeScheduleWeb,
   EmployeeShiftSwapMobile,
@@ -21,4 +22,5 @@ export const employeeWebScreens: AttendanceScreen[] = [
   { id: 'employee-memo-detail-web', label: 'EW5b · 메모 상세·댓글 (직원웹)', group: '직원 웹', width: 1280, height: 800, viewport: 'web', Component: EmployeeMemoDetailWeb },
   { id: 'employee-salary-web', label: '04 · 내 급여', group: '직원 웹', width: 1280, height: 800, viewport: 'web', Component: EmployeeSalaryWeb },
   { id: 'employee-contract-web', label: 'EW8 · 내 근로계약서 (직원웹)', group: '직원 웹', width: 1280, height: 800, viewport: 'web', Component: EmployeeContractWeb },
+  { id: 'employee-profile-web', label: 'EW13 · 내 정보 (직원웹)', group: '직원 웹', width: 1280, height: 800, viewport: 'web', Component: EmployeeProfileWeb },
 ];

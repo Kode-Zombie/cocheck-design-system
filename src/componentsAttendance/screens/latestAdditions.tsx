@@ -300,7 +300,7 @@ function OwnerWebShell({
       <WebAppShell
         activeId={activeId}
         navItems={ownerWebNavItems}
-        navTitle="사장님 포털"
+        navTitle="경영주 포털"
         right={
           right ?? (
             <>
@@ -316,7 +316,7 @@ function OwnerWebShell({
           <ActionCard
             caption={`${owner.email} · ${owner.phone}`}
             icon={<User size={16} />}
-            title={`${owner.name} 사장님`}
+            title={`${owner.name} 경영주`}
           />
         }
         subtitle={subtitle}
@@ -430,7 +430,7 @@ export function ThemePreviewMinimal({ theme = 'calm' }: AttendanceScreenProps) {
 export function LoginWeb({ theme = 'calm' }: AttendanceScreenProps) {
   return (
     <AuthWebLayout
-      heroCopy="사장님은 웹에서 매장을 관리하고, 직원은 모바일에서 출퇴근과 스케줄을 확인합니다."
+      heroCopy="경영주은 웹에서 매장을 관리하고, 직원은 모바일에서 출퇴근과 스케줄을 확인합니다."
       heroTitle="다시 만나서 반가워요"
       theme={theme}
       title="09 · 로그인 (웹)"
@@ -482,7 +482,7 @@ export function PasswordResetWeb({ theme = 'calm' }: AttendanceScreenProps) {
 export function RoleSelectWeb({ theme = 'calm' }: AttendanceScreenProps) {
   return (
     <AuthWebLayout
-      heroCopy="역할은 나중에 추가할 수 있고, 사장님과 직원 화면을 모두 사용할 수도 있습니다."
+      heroCopy="역할은 나중에 추가할 수 있고, 경영주과 직원 화면을 모두 사용할 수도 있습니다."
       heroTitle="어떻게 시작할까요?"
       theme={theme}
       title="03-B · 역할 선택 (웹)"
@@ -491,7 +491,7 @@ export function RoleSelectWeb({ theme = 'calm' }: AttendanceScreenProps) {
         footer={<button className="att-button att-button--full" type="button">다음</button>}
         title="역할 선택"
       >
-        <ListItem caption="매장을 등록하고 직원·급여·스케줄을 관리합니다." icon={<Store size={16} />} right={<StatusBadge tone="primary">선택</StatusBadge>} title="사장님으로 시작" />
+        <ListItem caption="매장을 등록하고 직원·급여·스케줄을 관리합니다." icon={<Store size={16} />} right={<StatusBadge tone="primary">선택</StatusBadge>} title="경영주으로 시작" />
         <ListItem caption="초대받은 매장에 합류해 근무를 관리합니다." icon={<User size={16} />} title="직원으로 시작" />
       </FormPanel>
     </AuthWebLayout>
@@ -590,7 +590,7 @@ export function StaffJoinWeb({ theme = 'calm' }: AttendanceScreenProps) {
             <div className="att-code-cell att-code-cell--filled" key={char}>{char}</div>
           ))}
         </div>
-        <ActionCard caption="GS25 강남역점 · 김성호 사장님" icon={<Store size={16} />} right={<StatusBadge tone="success">확인됨</StatusBadge>} title="초대된 매장" />
+        <ActionCard caption="GS25 강남역점 · 김성호 경영주" icon={<Store size={16} />} right={<StatusBadge tone="success">확인됨</StatusBadge>} title="초대된 매장" />
       </FormPanel>
     </AuthWebLayout>
   );
@@ -855,7 +855,7 @@ export function EmployeeNotificationWeb({ theme = 'calm' }: AttendanceScreenProp
 
 export function EmployeeLateReportWeb({ theme = 'calm' }: AttendanceScreenProps) {
   return (
-    <EmployeeWebShell activeId="schedule" subtitle="지각·결근 사유를 남기고 사장님에게 알립니다." theme={theme} title="지각·결근 보고">
+    <EmployeeWebShell activeId="schedule" subtitle="지각·결근 사유를 남기고 경영주에게 알립니다." theme={theme} title="지각·결근 보고">
       <div style={{ display: 'grid', gap: 20, gridTemplateColumns: 'minmax(0, 1fr) 320px' }}>
         <FormPanel
           footer={
@@ -872,7 +872,7 @@ export function EmployeeLateReportWeb({ theme = 'calm' }: AttendanceScreenProps)
           <Field label="사유" tall value="지하철 지연으로 20분 정도 늦을 예정입니다." />
         </FormPanel>
         <FormPanel title="안내">
-          <ActionCard caption="보고 즉시 사장님에게 푸시 알림이 전송됩니다." icon={<AlertTriangle size={16} />} title="자동 알림" />
+          <ActionCard caption="보고 즉시 경영주에게 푸시 알림이 전송됩니다." icon={<AlertTriangle size={16} />} title="자동 알림" />
           <ActionCard caption="증빙 사진을 함께 남길 수 있습니다." icon={<Camera size={16} />} title="사진 첨부" />
         </FormPanel>
       </div>
@@ -927,7 +927,7 @@ export function EmployeeContractDetailWeb({ theme = 'calm' }: AttendanceScreenPr
           <DetailRow label="시급" value="10,030원/h" />
           <DetailRow label="근무 요일" value="월·수·금·토" />
           <DetailRow label="파일" value={attendanceContracts[0].file} />
-          <ActionCard caption="내용이 실제와 다르면 사장님께 문의하세요." icon={<MessageCircle size={16} />} title="문의하기" />
+          <ActionCard caption="내용이 실제와 다르면 경영주께 문의하세요." icon={<MessageCircle size={16} />} title="문의하기" />
         </FormPanel>
       </div>
     </EmployeeWebShell>

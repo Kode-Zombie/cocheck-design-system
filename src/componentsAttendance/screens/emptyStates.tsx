@@ -44,11 +44,11 @@ const ownerWebNavItems: NavItem[] = [
 
 export function EmptyOwnerMobile({ theme = 'calm' }: AttendanceScreenProps) {
   return (
-    <MobileFrame height={874} theme={theme} title="E1 · 사장님 홈 (매장 없음)" width={402}>
+    <MobileFrame height={874} theme={theme} title="E1 · 경영주 홈 (매장 없음)" width={402}>
       <div className="att-mobile-screen">
         <header className="att-empty-mobile-header">
           <div>
-            <p>사장님</p>
+            <p>경영주</p>
             <h1>김성호 님</h1>
           </div>
           <div className="att-empty-avatar" aria-hidden="true">
@@ -96,7 +96,7 @@ export function EmptyEmployeeMobile({ theme = 'calm' }: AttendanceScreenProps) {
           <EmptyState
             description={
               <>
-                사장님이 스케줄을 등록하면 여기에 표시됩니다.
+                경영주이 스케줄을 등록하면 여기에 표시됩니다.
               </>
             }
             icon={<CalendarDays size={26} />}
@@ -104,7 +104,7 @@ export function EmptyEmployeeMobile({ theme = 'calm' }: AttendanceScreenProps) {
           />
           <section className="att-empty-join-card">
             <strong>매장에 합류하셨나요?</strong>
-            <p>사장님한테 받은 코드를 입력하면 바로 연결돼요.</p>
+            <p>경영주한테 받은 코드를 입력하면 바로 연결돼요.</p>
             <button className="att-button att-button--full" type="button">
               <KeyRound size={15} />
               매장 코드 입력하기
@@ -119,7 +119,7 @@ export function EmptyEmployeeMobile({ theme = 'calm' }: AttendanceScreenProps) {
 
 export function EmptyOwnerWeb({ theme = 'calm' }: AttendanceScreenProps) {
   return (
-    <WebFrame height={800} theme={theme} title="E3 · 사장님 웹 대시보드 (직원 없음)" width={1280}>
+    <WebFrame height={800} theme={theme} title="E3 · 경영주 웹 대시보드 (직원 없음)" width={1280}>
       <WebAppShell
         activeId="dashboard"
         navItems={ownerWebNavItems}

@@ -57,7 +57,7 @@ export const notificationUserLabels: Record<number, string> = {
   101: '최지우 직원',
   102: '박민아 직원',
   103: '이도윤 직원',
-  501: '김성호 사장님',
+  501: '김성호 경영주',
 };
 
 export const employeeNotificationPushes: Push[] = [
@@ -107,7 +107,7 @@ export const employeeNotificationPushes: Push[] = [
     id: 1207,
     createdAt: new Date('2026-05-18T11:15:00+09:00'),
     category: 'DIRECT_MESSAGE',
-    title: '사장님 메시지',
+    title: '경영주 메시지',
     content: '오늘 발주 물품 도착하면 냉장 진열대 먼저 확인해 주세요.',
     writtenByUserId: 501,
     recipientIds: [101],
@@ -116,7 +116,7 @@ export const employeeNotificationPushes: Push[] = [
         id: 3007,
         userId: 101,
         puId: 1207,
-        title: '사장님 메시지',
+        title: '경영주 메시지',
         content: '오늘 발주 물품 도착하면 냉장 진열대 먼저 확인해 주세요.',
         category: 'DIRECT_MESSAGE',
         readAt: null,

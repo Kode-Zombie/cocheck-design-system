@@ -7,11 +7,11 @@ import {
 import { getFeatureStoryGroup } from './screens/featureStoryGroups';
 import './attendance.css';
 
-const group = getFeatureStoryGroup('사장님 출퇴근현황', '앱');
+const group = getFeatureStoryGroup('경영주 출퇴근현황', '앱');
 const ScreenStory = createScreenStory(group.screens);
 
 const meta = {
-  title: 'Attendance/기능별/사장님 출퇴근현황/앱',
+  title: 'Attendance/기능별/경영주 출퇴근현황/앱',
   component: ScreenStory,
   args: { screenId: 'owner-attendance-mobile', theme: 'calm' },
   argTypes: attendanceStoryArgTypes,

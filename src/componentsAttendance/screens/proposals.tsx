@@ -19,7 +19,7 @@ const proposalItems: Array<{
 }> = [
   {
     title: '스케줄 교환 요청',
-    body: '직원끼리 교대 제안을 보내고 사장님이 승인하면 근무표와 예상 인건비가 함께 갱신됩니다.',
+    body: '직원끼리 교대 제안을 보내고 경영주이 승인하면 근무표와 예상 인건비가 함께 갱신됩니다.',
     icon: <ArrowRightLeft size={20} />,
     tone: 'primary',
   },

@@ -58,6 +58,7 @@ const employeeTabs: NavItem[] = [
   { id: 'schedule', label: '스케줄', icon: <CalendarDays size={18} /> },
   { id: 'todo', label: '할 일', icon: <ListChecks size={18} /> },
   { id: 'salary', label: '급여', icon: <WalletCards size={18} /> },
+  { id: 'me', label: '나', icon: <User size={18} /> },
 ];
 
 type ScheduleRow = {
@@ -328,7 +329,7 @@ function ContractListContent() {
         ))}
       </div>
       <EmptyState
-        description="내용이 실제와 다르거나 계약서를 받지 못했다면 사장님께 문의하세요."
+        description="내용이 실제와 다르거나 계약서를 받지 못했다면 경영주께 문의하세요."
         icon={<FileText size={20} />}
         title="계약서 문의가 필요하신가요?"
       />
@@ -411,7 +412,7 @@ export function EmployeePunchMobile({ theme = 'calm' }: AttendanceScreenProps) {
           caption="GPS · QR · Wi-Fi 인증으로 변경 가능"
           icon={<CheckCircle2 size={16} />}
           right={<StatusBadge tone="success">사용 가능</StatusBadge>}
-          title="사장님이 설정한 방식: 버튼 태그"
+          title="경영주이 설정한 방식: 버튼 태그"
         />
         <div className="att-action-row" style={{ marginTop: 14 }}>
           <button className="att-punch-button att-punch-button--done" type="button">
@@ -526,7 +527,7 @@ export function EmployeeLateMobile({ theme = 'calm' }: AttendanceScreenProps) {
         </section>
       </main>
       <footer className="att-bottom-actions">
-        <button className="att-button att-button--full" type="button">사장님께 보고하기</button>
+        <button className="att-button att-button--full" type="button">경영주께 보고하기</button>
       </footer>
     </MobileShell>
   );
@@ -693,7 +694,7 @@ export function EmployeeMemoCreateMobile({ theme = 'calm' }: AttendanceScreenPro
           <div>
             <span className="att-field__label">알림 보낼 대상</span>
             <div className="att-inline-actions" style={{ marginTop: 8 }}>
-              <Chip active>사장님</Chip>
+              <Chip active>경영주</Chip>
               <Chip>전 직원</Chip>
               <Chip>오늘 근무자</Chip>
             </div>
@@ -753,6 +754,73 @@ export function EmployeeContractMobile({ theme = 'calm' }: AttendanceScreenProps
     <MobileShell activeTab="salary" height={844} theme={theme} title="M9 · 내 근로계약서 (직원)" width={390}>
       <PageHeader eyebrow="계약서를 확인하고 PDF로 저장할 수 있어요" title="내 근로계약서" />
       <ContractListContent />
+    </MobileShell>
+  );
+}
+
+export function EmployeeProfileMobile({ theme = 'calm' }: AttendanceScreenProps) {
+  const menuItems = [
+    { icon: <Bell size={17} />, label: '알림 설정', sub: '근무 · 급여 · 메모 알림' },
+    { icon: <FileText size={17} />, label: '내 근로계약서', sub: '서명완료 · PDF 저장' },
+    { icon: <WalletCards size={17} />, label: '급여 계좌', sub: '국민 123-456-7890' },
+  ];
+  const supportItems = [
+    { icon: <Bell size={17} />, label: '공지사항', sub: '서비스 업데이트와 운영 안내' },
+    { icon: <MessageCircle size={17} />, label: '1:1 문의', sub: '앱 사용과 계정 문의 접수' },
+    { icon: <FileText size={17} />, label: '문의 내역', sub: '최근 답변 1건' },
+  ];
+
+  return (
+    <MobileShell activeTab="me" height={844} theme={theme} title="M11 · 나 탭 (직원 마이페이지)" width={390}>
+      <PageHeader title="나" />
+      <main className="att-mobile-content att-mobile-content--flush-top" tabIndex={0}>
+        <section className="att-card-section">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+            <div style={{ display: 'grid', width: 56, height: 56, placeItems: 'center', borderRadius: 28, color: 'var(--att-primary-text)', background: 'var(--att-primary)', fontSize: 22, fontWeight: 800 }}>
+              {employee.name[0]}
+            </div>
+            <div style={{ minWidth: 0, flex: 1 }}>
+              <h2 style={{ margin: 0, fontSize: 17 }}>{employee.name} 직원</h2>
+              <p className="att-copy" style={{ marginTop: 2 }}>{store.name} · {employee.role}</p>
+              <p className="att-copy" style={{ marginTop: 2 }}>{employee.phone}</p>
+            </div>
+            <StatusBadge tone="success">{employee.status}</StatusBadge>
+          </div>
+          <div className="att-inline-actions" style={{ marginTop: 14 }}>
+            <Chip active>{store.name}</Chip>
+            <Chip>{currentContract.status}</Chip>
+          </div>
+        </section>
+        <section className="att-stack" style={{ marginTop: 16 }}>
+          {menuItems.map((item) => (
+            <ActionCard
+              caption={item.sub}
+              icon={item.icon}
+              key={item.label}
+              right={<ChevronRight size={17} />}
+              title={item.label}
+            />
+          ))}
+        </section>
+        <section className="att-stack" style={{ marginTop: 16 }}>
+          <div className="att-section-heading">
+            <h2>고객지원</h2>
+          </div>
+          {supportItems.map((item) => (
+            <ActionCard
+              caption={item.sub}
+              icon={item.icon}
+              key={item.label}
+              right={<ChevronRight size={17} />}
+              title={item.label}
+            />
+          ))}
+        </section>
+        <button className="att-button att-button--secondary att-button--full" style={{ marginTop: 16 }} type="button">
+          <LogOut size={16} />
+          로그아웃
+        </button>
+      </main>
     </MobileShell>
   );
 }

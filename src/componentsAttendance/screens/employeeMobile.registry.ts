@@ -7,6 +7,7 @@ import {
   EmployeeMemoDetailMobile,
   EmployeeMemoMobile,
   EmployeePunchMobile,
+  EmployeeProfileMobile,
   EmployeeSalaryMobile,
   EmployeeScheduleMobile,
   EmployeeTodoCreateMobile,
@@ -27,4 +28,5 @@ export const employeeMobileScreens: AttendanceScreen[] = [
   { id: 'employee-salary-mobile', label: '06 · 월급 계산', group: '직원 모바일', width: 402, height: 874, viewport: 'mobile', Component: EmployeeSalaryMobile },
   { id: 'employee-contract-mobile', label: 'M9 · 내 근로계약서 (직원)', group: '직원 모바일', width: 390, height: 844, viewport: 'mobile', Component: EmployeeContractMobile },
   { id: 'employee-contract-detail-mobile', label: 'M9b · 계약서 상세 바텀시트', group: '직원 모바일', width: 390, height: 844, viewport: 'mobile', Component: EmployeeContractDetailMobile },
+  { id: 'employee-profile-mobile', label: 'M11 · 나 탭 (직원 마이페이지)', group: '직원 모바일', width: 390, height: 844, viewport: 'mobile', Component: EmployeeProfileMobile },
 ];

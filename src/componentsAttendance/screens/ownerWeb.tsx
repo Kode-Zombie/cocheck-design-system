@@ -139,7 +139,7 @@ const memoRows = [
     tag: index === 1 ? '공지' : '인수인계',
     tone: index === 1 ? ('success' as StatusTone) : ('primary' as StatusTone),
     title: memo.title,
-    body: `${memo.author} 님이 남긴 공유 메모입니다. 다음 근무자가 바로 확인할 수 있도록 사장님 화면에 요약됩니다.`,
+    body: `${memo.author} 님이 남긴 공유 메모입니다. 다음 근무자가 바로 확인할 수 있도록 경영주 화면에 요약됩니다.`,
     author: memo.author,
     store: index === 2 ? '전체' : selectedStore.name,
     time: memo.time,
@@ -205,7 +205,7 @@ function OwnerWebShell({
       <WebAppShell
         activeId={activeId}
         navItems={ownerWebNavItems}
-        navTitle="사장님 포털"
+        navTitle="경영주 포털"
         right={
           right ?? (
             <>
@@ -225,7 +225,7 @@ function OwnerWebShell({
           <ActionCard
             caption={`${owner.email} · ${owner.phone}`}
             icon={<User size={16} />}
-            title={`${owner.name} 사장님`}
+            title={`${owner.name} 경영주`}
           />
         }
         subtitle={subtitle}

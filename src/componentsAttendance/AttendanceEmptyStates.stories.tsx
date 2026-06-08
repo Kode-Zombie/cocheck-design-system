@@ -38,7 +38,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const EmptyOwnerMobile: Story = {
-  name: 'E1 · 사장님 홈 (매장 없음)',
+  name: 'E1 · 경영주 홈 (매장 없음)',
   args: { screenId: 'empty-owner-mobile' },
 };
 
@@ -48,6 +48,6 @@ export const EmptyEmployeeMobile: Story = {
 };
 
 export const EmptyOwnerWeb: Story = {
-  name: 'E3 · 사장님 웹 대시보드 (직원 없음)',
+  name: 'E3 · 경영주 웹 대시보드 (직원 없음)',
   args: { screenId: 'empty-owner-web' },
 };

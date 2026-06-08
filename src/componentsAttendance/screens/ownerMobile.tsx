@@ -328,9 +328,9 @@ function StoreActionCard({ store }: { store: (typeof ownerStoreStatus)[number] }
 
 export function OwnerHomeMobile({ theme = 'calm' }: AttendanceScreenProps) {
   return (
-    <MobileShell activeTab="home" theme={theme} title="01 · 사장님 홈">
+    <MobileShell activeTab="home" theme={theme} title="01 · 경영주 홈">
       <PageHeader
-        eyebrow="사장님"
+        eyebrow="경영주"
         right={
           <IconButton label="알림 보기">
             <Bell size={18} />
@@ -884,7 +884,7 @@ export function OwnerMeMobile({ theme = 'calm' }: AttendanceScreenProps) {
               {owner.name[0]}
             </div>
             <div style={{ minWidth: 0, flex: 1 }}>
-              <h2 style={{ margin: 0, fontSize: 17 }}>{owner.name} 사장님</h2>
+              <h2 style={{ margin: 0, fontSize: 17 }}>{owner.name} 경영주</h2>
               <p className="att-copy" style={{ marginTop: 2 }}>{owner.email}</p>
               <p className="att-copy" style={{ marginTop: 2 }}>{owner.phone}</p>
             </div>
