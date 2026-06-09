@@ -116,21 +116,16 @@ type MemoItem = {
 };
 
 const weekDays: ScheduleRow[] = [
-  { day: '월', date: '14', work: '09-18' },
-  { day: '화', date: '15', work: '13-22' },
-  { day: '수', date: '16', work: '09-15' },
-  { day: '목', date: '17' },
-  { day: '금', date: '18', work: '09-18' },
-  { day: '토', date: '19', work: '18-24', tag: '야간' },
-  { day: '일', date: '20' },
-  { day: '화', date: '21', work: '09-18', today: true },
+  { day: '일', date: '19' },
+  { day: '월', date: '20', work: '09:00-18:00', tag: '완료' },
+  { day: '화', date: '21', work: '14:00-22:00', today: true },
+  { day: '수', date: '22' },
+  { day: '목', date: '23', work: '09:00-18:00' },
+  { day: '금', date: '24' },
+  { day: '토', date: '25', work: '18:00-24:00', store: attendanceStores[1].name, tag: '야간' },
 ];
 
-const scheduleRows: ScheduleRow[] = [
-  ...weekDays,
-  { day: '수', date: '22', work: '13-22', store: attendanceStores[1].name },
-  { day: '목', date: '23', work: '09-18' },
-];
+const scheduleRows: ScheduleRow[] = weekDays;
 
 const futureScheduleDetail: EmployeeScheduleDetail = {
   date: '2026년 4월 23일 목요일',
@@ -322,6 +317,18 @@ function DetailRow({ label, value }: { label: string; value: ReactNode }) {
   );
 }
 
+function getScheduleTagTone(tag?: string): StatusTone {
+  if (tag === '야간') {
+    return 'warning';
+  }
+
+  if (tag === '완료') {
+    return 'success';
+  }
+
+  return 'primary';
+}
+
 function ScheduleTodoLine({
   todo,
   mode,
@@ -334,11 +341,7 @@ function ScheduleTodoLine({
       <span className={`att-check-dot${todo.done ? ' att-check-dot--selected' : ''}`} />
       <div className="att-choice-card__body">
         <strong>{todo.title}</strong>
-        <span>
-          {todo.owner}
-          {todo.due ? ` · 목표 ${todo.due}` : ''}
-          {mode === 'completed' && todo.checkedAt ? ` · 체크 ${todo.checkedAt}` : ''}
-        </span>
+        <span>{todo.owner}</span>
       </div>
       {mode === 'future' ? <Pencil size={15} /> : <CheckCircle2 size={16} />}
     </div>
@@ -557,6 +560,35 @@ export function EmployeeScheduleMobile({ theme = 'calm' }: AttendanceScreenProps
         ))}
       </div>
       <main className="att-mobile-content att-mobile-content--flush-top" tabIndex={0}>
+        <section aria-label="직원 주간 시간표" className="att-card-section att-weekly-timetable att-weekly-timetable--mobile">
+          <div className="att-section-heading">
+            <h2>주간 시간표</h2>
+            <span>4월 19일-25일</span>
+          </div>
+          <div className="att-weekly-timetable__mobile-grid">
+            {weekDays.map((day) => (
+              <article
+                className={`att-weekly-timetable__mobile-card${day.today ? ' att-weekly-timetable__mobile-card--today' : ''}`}
+                key={`${day.day}-${day.date}`}
+              >
+                <header>
+                  <span className="att-weekly-timetable__day-label">{day.day}</span>
+                  <strong>{day.date}</strong>
+                </header>
+                {day.work ? (
+                  <div className="att-weekly-timetable__mobile-shift">
+                    <span className="att-mono">{day.work}</span>
+                    <strong>{day.store ?? store.name}</strong>
+                    {day.today ? <StatusBadge tone="primary">오늘</StatusBadge> : null}
+                    {day.tag ? <StatusBadge tone={getScheduleTagTone(day.tag)}>{day.tag}</StatusBadge> : null}
+                  </div>
+                ) : (
+                  <span className="att-weekly-timetable__empty">근무 없음</span>
+                )}
+              </article>
+            ))}
+          </div>
+        </section>
         <div className="att-schedule-list">
           {scheduleRows.map((row) => (
             <div className="att-schedule-row" key={`${row.day}-${row.date}`}>
@@ -568,7 +600,7 @@ export function EmployeeScheduleMobile({ theme = 'calm' }: AttendanceScreenProps
                 <div className={`att-schedule-row__card${row.today ? ' att-schedule-row__card--today' : ''}`}>
                   <div>
                     <strong>{row.work}</strong>
-                    {row.tag ? <StatusBadge tone="warning">{row.tag}</StatusBadge> : null}
+                    {row.tag ? <StatusBadge tone={getScheduleTagTone(row.tag)}>{row.tag}</StatusBadge> : null}
                     {row.today ? <StatusBadge tone="primary">오늘</StatusBadge> : null}
                     <ChevronRight size={15} />
                   </div>

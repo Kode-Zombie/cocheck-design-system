@@ -64,25 +64,43 @@ const weekShifts = [
   { day: '토 4/25', store: attendanceStores[1].name, time: '18:00-24:00', status: '야간', tone: 'warning' },
 ] satisfies { day: string; store: string; time: string; status: string; tone: StatusTone }[];
 
-const scheduleRows = [
-  { day: '월', date: '4/20', store: store.name, time: '09:00-18:00', tone: 'primary', status: '완료' },
-  { day: '화', date: '4/21', store: store.name, time: '14:00-22:00', tone: 'primary', status: '오늘', today: true },
-  { day: '수', date: '4/22' },
-  { day: '목', date: '4/23', store: store.name, time: '09:00-18:00', tone: 'primary', status: '예정' },
-  { day: '금', date: '4/24' },
-  { day: '토', date: '4/25', store: attendanceStores[1].name, time: '18:00-24:00', tone: 'warning', status: '야간' },
-  { day: '일', date: '4/26' },
-  { day: '월', date: '4/27', store: store.name, time: '09:00-18:00', tone: 'primary', status: '예정' },
-  { day: '화', date: '4/28', store: attendanceStores[1].name, time: '13:00-22:00', tone: 'success', status: '예정' },
-] satisfies {
+type EmployeeWeeklyShift = {
+  store: string;
+  time: string;
+  tone: StatusTone;
+  status: string;
+};
+
+type EmployeeWeeklyScheduleDay = {
   day: string;
   date: string;
-  store?: string;
-  time?: string;
-  tone?: StatusTone;
-  status?: string;
+  shifts: EmployeeWeeklyShift[];
   today?: boolean;
-}[];
+};
+
+const employeeWeeklySchedule = [
+  { day: '일', date: '4/19', shifts: [] },
+  { day: '월', date: '4/20', shifts: [{ store: store.name, time: '09:00-18:00', tone: 'success', status: '완료' }] },
+  { day: '화', date: '4/21', today: true, shifts: [{ store: store.name, time: '14:00-22:00', tone: 'primary', status: '오늘' }] },
+  { day: '수', date: '4/22', shifts: [] },
+  { day: '목', date: '4/23', shifts: [{ store: store.name, time: '09:00-18:00', tone: 'primary', status: '예정' }] },
+  { day: '금', date: '4/24', shifts: [] },
+  { day: '토', date: '4/25', shifts: [{ store: attendanceStores[1].name, time: '18:00-24:00', tone: 'warning', status: '야간' }] },
+] satisfies EmployeeWeeklyScheduleDay[];
+
+const scheduleRows = employeeWeeklySchedule.map((day) => {
+  const shift = day.shifts[0];
+
+  return {
+    day: day.day,
+    date: day.date,
+    store: shift?.store,
+    time: shift?.time,
+    tone: shift?.tone,
+    status: shift?.status,
+    today: day.today,
+  };
+});
 
 type EmployeeScheduleTodo = {
   title: string;
@@ -350,11 +368,7 @@ function ScheduleTodoRow({
       <TodoCheck done={todo.done} />
       <div className="att-choice-card__body">
         <strong>{todo.title}</strong>
-        <span>
-          {todo.owner}
-          {todo.due ? ` · 목표 ${todo.due}` : ''}
-          {mode === 'completed' && todo.checkedAt ? ` · 체크 ${todo.checkedAt}` : ''}
-        </span>
+        <span>{todo.owner}</span>
       </div>
       {mode === 'future' ? <Pencil size={15} /> : <CheckCircle2 size={16} />}
     </div>
@@ -515,13 +529,49 @@ export function EmployeeScheduleWeb({ theme = 'calm' }: AttendanceScreenProps) {
       <div className="att-stack att-stack--loose">
         <div className="att-section-heading">
           <div className="att-inline-actions">
-            <button className="att-button att-button--secondary" type="button">주간</button>
+            <button className="att-button att-button--secondary" type="button">시간표</button>
+            <button className="att-button att-button--ghost" type="button">목록</button>
             <button className="att-button att-button--ghost" type="button">월간</button>
           </div>
           <button className="att-button att-button--secondary" type="button">
             <RefreshCw size={15} /> 스케줄 교환 신청
           </button>
         </div>
+        <section aria-label="직원 주간 시간표" className="att-card-section att-weekly-timetable">
+          <div className="att-section-heading">
+            <div>
+              <h2>주간 시간표</h2>
+              <span>2026년 4월 19일-25일</span>
+            </div>
+            <StatusBadge tone="primary">이번 주</StatusBadge>
+          </div>
+          <div className="att-weekly-timetable__grid">
+            {employeeWeeklySchedule.map((day) => (
+              <article
+                className={`att-weekly-timetable__day${day.today ? ' att-weekly-timetable__day--today' : ''}`}
+                key={`${day.day}-${day.date}`}
+              >
+                <header className="att-weekly-timetable__day-head">
+                  <span className="att-weekly-timetable__day-label">{day.day}</span>
+                  <strong>{day.date}</strong>
+                </header>
+                <div className="att-weekly-timetable__shift-stack">
+                  {day.shifts.length > 0 ? (
+                    day.shifts.map((shift) => (
+                      <div className="att-weekly-timetable__shift" key={`${day.date}-${shift.time}`}>
+                        <span className="att-mono">{shift.time}</span>
+                        <strong>{shift.store}</strong>
+                        <StatusBadge tone={shift.tone}>{shift.status}</StatusBadge>
+                      </div>
+                    ))
+                  ) : (
+                    <span className="att-weekly-timetable__empty">근무 없음</span>
+                  )}
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
         <section className="att-card-section" style={{ padding: 0, overflow: 'hidden' }}>
           {scheduleRows.map((row, index) => (
             <div
@@ -554,7 +604,7 @@ export function EmployeeScheduleWeb({ theme = 'calm' }: AttendanceScreenProps) {
               ) : (
                 <span style={{ color: 'var(--att-text-subtle)', fontSize: 13 }}>근무 없음</span>
               )}
-              {row.status ? <StatusBadge tone={row.tone}>{row.status}</StatusBadge> : null}
+              {row.status && row.tone ? <StatusBadge tone={row.tone}>{row.status}</StatusBadge> : null}
               {row.store ? (
                 <button className="att-button att-button--ghost" type="button">
                   상세 <ChevronRight size={14} />

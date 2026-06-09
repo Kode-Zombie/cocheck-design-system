@@ -123,6 +123,82 @@ const attendanceRows = [
   { name: '강도현', store: attendanceStores[2].name, sched: '09:00-18:00', in: '09:01', out: '18:00', status: '정상', tone: 'success' },
 ] satisfies { name: string; store: string; sched: string; in: string; out: string; status: string; tone: StatusTone }[];
 
+const ownerScheduleDays = ['월 14', '화 15', '수 16', '목 17', '금 18', '토 19', '일 20'];
+const ownerScheduleGridTemplate = '126px repeat(7, minmax(0, 1fr))';
+const ownerScheduleStoreNames = attendanceStores.map((store) => store.name.replace('GS25 ', ''));
+
+type OwnerScheduleShift = {
+  employee: string;
+  role: string;
+  store: string;
+  time: string;
+  tone: 'primary' | 'success' | 'warning';
+};
+
+type OwnerScheduleSlot = {
+  label: string;
+  time: string;
+  cells: OwnerScheduleShift[][];
+};
+
+const ownerScheduleSlots: OwnerScheduleSlot[] = [
+  {
+    label: '오픈',
+    time: '09-18',
+    cells: [
+      [{ employee: '최지우', role: '오픈 담당', store: ownerScheduleStoreNames[0], time: '09-18', tone: 'primary' }],
+      [{ employee: '이준호', role: '제조 지원', store: ownerScheduleStoreNames[2], time: '09-18', tone: 'warning' }],
+      [{ employee: '최지우', role: '매대 정리', store: ownerScheduleStoreNames[0], time: '09-18', tone: 'primary' }],
+      [{ employee: '강도현', role: '오전 지원', store: ownerScheduleStoreNames[1], time: '09-18', tone: 'success' }],
+      [
+        { employee: '이준호', role: '제조 지원', store: ownerScheduleStoreNames[2], time: '09-18', tone: 'warning' },
+        { employee: '강도현', role: '물류 정리', store: ownerScheduleStoreNames[1], time: '09-13', tone: 'success' },
+      ],
+      [],
+      [{ employee: '강도현', role: '주말 오픈', store: ownerScheduleStoreNames[1], time: '09-18', tone: 'success' }],
+    ],
+  },
+  {
+    label: '오후',
+    time: '14-22',
+    cells: [
+      [{ employee: '박민아', role: '홀 운영', store: ownerScheduleStoreNames[1], time: '14-22', tone: 'success' }],
+      [{ employee: '박민아', role: '홀 운영', store: ownerScheduleStoreNames[1], time: '14-22', tone: 'success' }],
+      [{ employee: '최지우', role: '피크 지원', store: ownerScheduleStoreNames[0], time: '14-22', tone: 'primary' }],
+      [{ employee: '박민아', role: '홀 운영', store: ownerScheduleStoreNames[1], time: '14-22', tone: 'success' }],
+      [],
+      [{ employee: '한유진', role: '마감 전환', store: ownerScheduleStoreNames[0], time: '14-22', tone: 'primary' }],
+      [],
+    ],
+  },
+  {
+    label: '저녁',
+    time: '18-22',
+    cells: [
+      [],
+      [{ employee: '한유진', role: '피크 마감', store: ownerScheduleStoreNames[0], time: '18-22', tone: 'primary' }],
+      [],
+      [{ employee: '이준호', role: '행사 매대', store: ownerScheduleStoreNames[2], time: '18-22', tone: 'warning' }],
+      [{ employee: '박민아', role: '주문 피크', store: ownerScheduleStoreNames[1], time: '18-22', tone: 'success' }],
+      [{ employee: '최지우', role: '주말 피크', store: ownerScheduleStoreNames[0], time: '18-22', tone: 'primary' }],
+      [{ employee: '이준호', role: '행사 매대', store: ownerScheduleStoreNames[2], time: '18-22', tone: 'warning' }],
+    ],
+  },
+  {
+    label: '야간',
+    time: '22-06',
+    cells: [
+      [],
+      [{ employee: '한유진', role: '마감 점검', store: ownerScheduleStoreNames[0], time: '22-06', tone: 'primary' }],
+      [],
+      [{ employee: '강도현', role: '야간 운영', store: ownerScheduleStoreNames[1], time: '22-06', tone: 'success' }],
+      [],
+      [{ employee: '한유진', role: '주말 마감', store: ownerScheduleStoreNames[0], time: '22-06', tone: 'primary' }],
+      [],
+    ],
+  },
+];
+
 const memoRows = [
   {
     tag: '이슈',
@@ -480,26 +556,7 @@ function ModalCard({
 }
 
 function RosterContent({ compact = false }: { compact?: boolean }) {
-  const days = ['월 14', '화 15', '수 16', '목 17', '금 18', '토 19', '일 20'];
-  const rows = staffRows.slice(0, compact ? 4 : 6).map((staff, staffIndex) => ({
-    staff,
-    cells: days.map((day, dayIndex) => {
-      const hasShift = [
-        [0, 2, 4],
-        [0, 1, 3, 5],
-        [1, 2, 4, 6],
-        [0, 2, 5],
-        [1, 3, 4, 6],
-        [0, 2, 3, 5],
-      ][staffIndex]?.includes(dayIndex);
-      return hasShift ? {
-        day,
-        store: attendanceStores[staffIndex % attendanceStores.length].name.replace('GS25 ', ''),
-        time: staffIndex % 2 === 0 ? '09-18' : '14-22',
-        tone: staffIndex % 3 === 1 ? 'success' : staffIndex % 3 === 2 ? 'warning' : 'primary',
-      } : undefined;
-    }),
-  }));
+  const slots = ownerScheduleSlots.slice(0, compact ? 3 : ownerScheduleSlots.length);
 
   return (
     <div className="att-stack att-stack--loose">
@@ -513,69 +570,59 @@ function RosterContent({ compact = false }: { compact?: boolean }) {
         </PageActions>
         <span>총 668시간 편성 · 예상 인건비 3,847,500원</span>
       </div>
-      <section className="att-card-section" style={{ overflow: 'hidden', padding: 0 }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '150px repeat(7, minmax(0, 1fr))' }}>
-          <div style={{ background: 'var(--att-surface-muted)', padding: 12 }} />
-          {days.map((day) => (
+      <section className={`att-card-section att-owner-schedule-grid${compact ? ' att-owner-schedule-grid--compact' : ''}`}>
+        <div className="att-owner-schedule-grid__header" style={{ gridTemplateColumns: ownerScheduleGridTemplate }}>
+          <div className="att-owner-schedule-grid__corner">시간대</div>
+          {ownerScheduleDays.map((day) => (
             <div
+              className={`att-owner-schedule-grid__day${day.startsWith('월') ? ' att-owner-schedule-grid__day--today' : ''}`}
               key={day}
-              style={{
-                background: 'var(--att-surface-muted)',
-                borderLeft: '1px solid var(--att-border)',
-                color: day.startsWith('월') ? 'var(--att-primary-readable)' : 'var(--att-text-muted)',
-                fontSize: 12,
-                fontWeight: 800,
-                padding: 12,
-                textAlign: 'center',
-              }}
             >
               {day}
             </div>
           ))}
         </div>
-        {rows.map((row) => (
+        {slots.map((slot) => (
           <div
-            key={row.staff.name}
-            style={{
-              borderTop: '1px solid var(--att-border)',
-              display: 'grid',
-              gridTemplateColumns: '150px repeat(7, minmax(0, 1fr))',
-              minHeight: compact ? 54 : 68,
-            }}
+            className="att-owner-schedule-grid__row"
+            key={`${slot.label}-${slot.time}`}
+            style={{ gridTemplateColumns: ownerScheduleGridTemplate }}
           >
-            <div style={{ alignItems: 'center', display: 'flex', gap: 8, minWidth: 0, padding: '12px 14px' }}>
-              <AvatarName name={row.staff.name} />
+            <div
+              aria-label={`${slot.label} ${slot.time} 시간대`}
+              className="att-owner-schedule-grid__row-label"
+            >
+              <span>{slot.label}</span>
+              <strong className="att-mono">{slot.time}</strong>
             </div>
-            {row.cells.map((shift, index) => (
-              <div key={`${row.staff.name}-${days[index]}`} style={{ borderLeft: '1px solid var(--att-border)', padding: 6 }}>
-                {shift ? (
-                  <div
-                    style={{
-                      background: `var(--att-${shift.tone === 'warning' ? 'warn' : shift.tone}-soft)`,
-                      borderLeft: `3px solid var(--att-${shift.tone === 'warning' ? 'warn' : shift.tone})`,
-                      borderRadius: 5,
-                      height: '100%',
-                      padding: '6px 8px',
-                    }}
-                  >
-                    <strong
-                      className="att-mono"
-                      style={{
-                        color: shift.tone === 'primary'
-                          ? 'var(--att-primary-readable)'
-                          : `var(--att-${shift.tone === 'warning' ? 'warn' : shift.tone})`,
-                        fontSize: 11,
-                      }}
-                    >
-                      {shift.time}
-                    </strong>
-                    <span style={{ color: 'var(--att-text-muted)', display: 'block', fontSize: 10, marginTop: 2 }}>{shift.store}</span>
-                  </div>
-                ) : (
-                  <div style={{ border: '1px dashed var(--att-border)', borderRadius: 5, height: '100%', opacity: 0.55 }} />
-                )}
-              </div>
-            ))}
+            {ownerScheduleDays.map((day, dayIndex) => {
+              const shifts = slot.cells[dayIndex] ?? [];
+
+              return (
+                <div className="att-owner-schedule-grid__cell" key={`${slot.label}-${day}`}>
+                  {shifts.length > 0 ? (
+                    <div className="att-owner-schedule-grid__shift-stack">
+                      {shifts.map((shift) => (
+                        <article
+                          aria-label={`${shift.employee} ${shift.time} ${shift.store} 일정`}
+                          className={`att-owner-schedule-grid__shift att-owner-schedule-grid__shift--${shift.tone}`}
+                          key={`${day}-${slot.label}-${shift.employee}-${shift.time}-${shift.role}`}
+                        >
+                          <strong>{shift.employee}</strong>
+                          <span className="att-owner-schedule-grid__shift-time att-mono">{shift.time}</span>
+                          <span className="att-owner-schedule-grid__shift-store">{shift.store}</span>
+                        </article>
+                      ))}
+                    </div>
+                  ) : (
+                    <div
+                      aria-label={`${day} ${slot.time} 빈 일정`}
+                      className="att-owner-schedule-grid__empty"
+                    />
+                  )}
+                </div>
+              );
+            })}
           </div>
         ))}
       </section>
