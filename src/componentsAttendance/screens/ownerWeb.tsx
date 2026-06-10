@@ -30,7 +30,9 @@ import {
   WalletCards,
   X,
 } from 'lucide-react';
+import { useState } from 'react';
 import type { ReactNode } from 'react';
+import { SearchInput } from '../../components';
 import { ActionCard } from '../components/ActionCard';
 import { DocumentPreview, type DocumentPreviewItem } from '../components/DocumentPreview';
 import { EmptyState } from '../components/EmptyState';
@@ -48,6 +50,10 @@ import {
   attendancePlans,
   attendanceStores,
 } from '../data/attendanceSampleData';
+import {
+  filterOwnerScheduleAssignmentsByEmployee,
+  type OwnerScheduleAssignment,
+} from './ownerScheduleModel';
 import type { AttendanceScreenProps } from './screenTypes';
 
 const owner = {
@@ -124,79 +130,51 @@ const attendanceRows = [
 ] satisfies { name: string; store: string; sched: string; in: string; out: string; status: string; tone: StatusTone }[];
 
 const ownerScheduleDays = ['월 14', '화 15', '수 16', '목 17', '금 18', '토 19', '일 20'];
-const ownerScheduleGridTemplate = '126px repeat(7, minmax(0, 1fr))';
+const ownerScheduleFirstHour = 9;
+const ownerScheduleLastHour = 24;
+const ownerScheduleHours = Array.from(
+  { length: ownerScheduleLastHour - ownerScheduleFirstHour },
+  (_, index) => ownerScheduleFirstHour + index,
+);
+const ownerScheduleRowsTemplate = `repeat(${ownerScheduleHours.length}, var(--att-owner-schedule-hour-height))`;
+const ownerScheduleGridTemplate = '82px repeat(7, minmax(0, 1fr))';
 const ownerScheduleStoreNames = attendanceStores.map((store) => store.name.replace('GS25 ', ''));
 
-type OwnerScheduleShift = {
-  employee: string;
-  role: string;
-  store: string;
-  time: string;
-  tone: 'primary' | 'success' | 'warning';
-};
+function formatOwnerScheduleHour(hour: number) {
+  return `${String(hour).padStart(2, '0')}:00`;
+}
 
-type OwnerScheduleSlot = {
-  label: string;
-  time: string;
-  cells: OwnerScheduleShift[][];
-};
+function formatOwnerScheduleShortHour(hour: number) {
+  return String(hour).padStart(2, '0');
+}
 
-const ownerScheduleSlots: OwnerScheduleSlot[] = [
+function getOwnerScheduleGridRow(assignment: OwnerScheduleAssignment) {
+  return `${assignment.startHour - ownerScheduleFirstHour + 1} / span ${Math.max(1, assignment.endHour - assignment.startHour)}`;
+}
+
+function getOwnerScheduleTimeLabel(assignment: OwnerScheduleAssignment) {
+  return `${formatOwnerScheduleShortHour(assignment.startHour)}-${assignment.endLabel ?? formatOwnerScheduleShortHour(assignment.endHour)}`;
+}
+
+const ownerScheduleAssignments: OwnerScheduleAssignment[] = [
+  { dayIndex: 0, employee: '최지우', store: ownerScheduleStoreNames[0], startHour: 9, endHour: 18, tone: 'primary' },
+  { dayIndex: 1, employee: '박민아', store: ownerScheduleStoreNames[1], startHour: 14, endHour: 22, tone: 'success' },
+  { dayIndex: 2, employee: '이준호', store: ownerScheduleStoreNames[2], startHour: 9, endHour: 18, tone: 'warning' },
   {
-    label: '오픈',
-    time: '09-18',
-    cells: [
-      [{ employee: '최지우', role: '오픈 담당', store: ownerScheduleStoreNames[0], time: '09-18', tone: 'primary' }],
-      [{ employee: '이준호', role: '제조 지원', store: ownerScheduleStoreNames[2], time: '09-18', tone: 'warning' }],
-      [{ employee: '최지우', role: '매대 정리', store: ownerScheduleStoreNames[0], time: '09-18', tone: 'primary' }],
-      [{ employee: '강도현', role: '오전 지원', store: ownerScheduleStoreNames[1], time: '09-18', tone: 'success' }],
-      [
-        { employee: '이준호', role: '제조 지원', store: ownerScheduleStoreNames[2], time: '09-18', tone: 'warning' },
-        { employee: '강도현', role: '물류 정리', store: ownerScheduleStoreNames[1], time: '09-13', tone: 'success' },
-      ],
-      [],
-      [{ employee: '강도현', role: '주말 오픈', store: ownerScheduleStoreNames[1], time: '09-18', tone: 'success' }],
-    ],
+    dayIndex: 3,
+    employee: '강도현',
+    store: ownerScheduleStoreNames[1],
+    startHour: 9,
+    endHour: 18,
+    tone: 'success',
+    completed: true,
+    adminComment: '정시 마감과 진열 보충이 잘 마무리됐습니다.',
   },
-  {
-    label: '오후',
-    time: '14-22',
-    cells: [
-      [{ employee: '박민아', role: '홀 운영', store: ownerScheduleStoreNames[1], time: '14-22', tone: 'success' }],
-      [{ employee: '박민아', role: '홀 운영', store: ownerScheduleStoreNames[1], time: '14-22', tone: 'success' }],
-      [{ employee: '최지우', role: '피크 지원', store: ownerScheduleStoreNames[0], time: '14-22', tone: 'primary' }],
-      [{ employee: '박민아', role: '홀 운영', store: ownerScheduleStoreNames[1], time: '14-22', tone: 'success' }],
-      [],
-      [{ employee: '한유진', role: '마감 전환', store: ownerScheduleStoreNames[0], time: '14-22', tone: 'primary' }],
-      [],
-    ],
-  },
-  {
-    label: '저녁',
-    time: '18-22',
-    cells: [
-      [],
-      [{ employee: '한유진', role: '피크 마감', store: ownerScheduleStoreNames[0], time: '18-22', tone: 'primary' }],
-      [],
-      [{ employee: '이준호', role: '행사 매대', store: ownerScheduleStoreNames[2], time: '18-22', tone: 'warning' }],
-      [{ employee: '박민아', role: '주문 피크', store: ownerScheduleStoreNames[1], time: '18-22', tone: 'success' }],
-      [{ employee: '최지우', role: '주말 피크', store: ownerScheduleStoreNames[0], time: '18-22', tone: 'primary' }],
-      [{ employee: '이준호', role: '행사 매대', store: ownerScheduleStoreNames[2], time: '18-22', tone: 'warning' }],
-    ],
-  },
-  {
-    label: '야간',
-    time: '22-06',
-    cells: [
-      [],
-      [{ employee: '한유진', role: '마감 점검', store: ownerScheduleStoreNames[0], time: '22-06', tone: 'primary' }],
-      [],
-      [{ employee: '강도현', role: '야간 운영', store: ownerScheduleStoreNames[1], time: '22-06', tone: 'success' }],
-      [],
-      [{ employee: '한유진', role: '주말 마감', store: ownerScheduleStoreNames[0], time: '22-06', tone: 'primary' }],
-      [],
-    ],
-  },
+  { dayIndex: 3, employee: '한유진', store: ownerScheduleStoreNames[0], startHour: 18, endHour: 22, tone: 'primary' },
+  { dayIndex: 4, employee: '박민아', store: ownerScheduleStoreNames[1], startHour: 14, endHour: 22, tone: 'success' },
+  { dayIndex: 5, employee: '최지우', store: ownerScheduleStoreNames[0], startHour: 18, endHour: 22, tone: 'primary' },
+  { dayIndex: 5, employee: '한유진', store: ownerScheduleStoreNames[0], startHour: 22, endHour: 24, endLabel: '06', tone: 'primary' },
+  { dayIndex: 6, employee: '강도현', store: ownerScheduleStoreNames[1], startHour: 9, endHour: 18, tone: 'success' },
 ];
 
 const memoRows = [
@@ -556,7 +534,9 @@ function ModalCard({
 }
 
 function RosterContent({ compact = false }: { compact?: boolean }) {
-  const slots = ownerScheduleSlots.slice(0, compact ? 3 : ownerScheduleSlots.length);
+  const [employeeQuery, setEmployeeQuery] = useState('');
+  const visibleAssignments = filterOwnerScheduleAssignmentsByEmployee(ownerScheduleAssignments, employeeQuery);
+  const assignments = compact ? visibleAssignments.slice(0, 6) : visibleAssignments;
 
   return (
     <div className="att-stack att-stack--loose">
@@ -565,6 +545,15 @@ function RosterContent({ compact = false }: { compact?: boolean }) {
           <button className="att-button att-button--secondary" type="button">
             <ChevronLeft size={15} /> 4월 14일-20일
           </button>
+          <SearchInput
+            aria-label="직원 이름 검색"
+            className="att-owner-schedule-search"
+            hideLabel
+            label="직원 이름 검색"
+            onChange={(event) => setEmployeeQuery(event.currentTarget.value)}
+            placeholder="직원 이름으로 검색"
+            value={employeeQuery}
+          />
           <button className="att-button att-button--ghost" type="button">복사하기</button>
           <button className="att-button" type="button"><Plus size={15} /> 일정 추가</button>
         </PageActions>
@@ -582,49 +571,65 @@ function RosterContent({ compact = false }: { compact?: boolean }) {
             </div>
           ))}
         </div>
-        {slots.map((slot) => (
-          <div
-            className="att-owner-schedule-grid__row"
-            key={`${slot.label}-${slot.time}`}
-            style={{ gridTemplateColumns: ownerScheduleGridTemplate }}
-          >
-            <div
-              aria-label={`${slot.label} ${slot.time} 시간대`}
-              className="att-owner-schedule-grid__row-label"
-            >
-              <span>{slot.label}</span>
-              <strong className="att-mono">{slot.time}</strong>
-            </div>
-            {ownerScheduleDays.map((day, dayIndex) => {
-              const shifts = slot.cells[dayIndex] ?? [];
-
-              return (
-                <div className="att-owner-schedule-grid__cell" key={`${slot.label}-${day}`}>
-                  {shifts.length > 0 ? (
-                    <div className="att-owner-schedule-grid__shift-stack">
-                      {shifts.map((shift) => (
-                        <article
-                          aria-label={`${shift.employee} ${shift.time} ${shift.store} 일정`}
-                          className={`att-owner-schedule-grid__shift att-owner-schedule-grid__shift--${shift.tone}`}
-                          key={`${day}-${slot.label}-${shift.employee}-${shift.time}-${shift.role}`}
-                        >
-                          <strong>{shift.employee}</strong>
-                          <span className="att-owner-schedule-grid__shift-time att-mono">{shift.time}</span>
-                          <span className="att-owner-schedule-grid__shift-store">{shift.store}</span>
-                        </article>
-                      ))}
-                    </div>
-                  ) : (
-                    <div
-                      aria-label={`${day} ${slot.time} 빈 일정`}
-                      className="att-owner-schedule-grid__empty"
-                    />
-                  )}
-                </div>
-              );
-            })}
+        <div className="att-owner-schedule-grid__body" style={{ gridTemplateColumns: ownerScheduleGridTemplate }}>
+          <div className="att-owner-schedule-grid__hours" style={{ gridTemplateRows: ownerScheduleRowsTemplate }}>
+            {ownerScheduleHours.map((hour) => (
+              <div className="att-owner-schedule-grid__hour" key={hour}>
+                {formatOwnerScheduleHour(hour)}
+              </div>
+            ))}
           </div>
-        ))}
+          {ownerScheduleDays.map((day, dayIndex) => (
+            <div
+              className="att-owner-schedule-grid__day-column"
+              key={day}
+              style={{ gridTemplateRows: ownerScheduleRowsTemplate }}
+            >
+              {ownerScheduleHours.map((hour, hourIndex) => (
+                <div
+                  aria-label={`${day} ${formatOwnerScheduleHour(hour)} 빈 시간`}
+                  className="att-owner-schedule-grid__time-cell"
+                  key={`${day}-${hour}`}
+                  style={{ gridRow: hourIndex + 1 }}
+                />
+              ))}
+              {assignments
+                .filter((assignment) => assignment.dayIndex === dayIndex)
+                .map((assignment) => {
+                  const timeLabel = getOwnerScheduleTimeLabel(assignment);
+
+                  return (
+                    <article
+                      aria-label={`${assignment.employee} ${timeLabel} ${assignment.store} 일정`}
+                      className={`att-owner-schedule-grid__shift att-owner-schedule-grid__shift--${assignment.tone}${assignment.completed ? ' att-owner-schedule-grid__shift--with-comment' : ''}`}
+                      key={`${day}-${assignment.employee}-${timeLabel}-${assignment.store}`}
+                      style={{ gridRow: getOwnerScheduleGridRow(assignment) }}
+                    >
+                      <span className="att-owner-schedule-grid__shift-store">{assignment.store}</span>
+                      {assignment.completed ? (
+                        <section className="att-admin-comment-panel att-owner-schedule-grid__comment">
+                          <div className="att-admin-comment-panel__header">
+                            <span className="att-admin-comment-panel__title">
+                              <MessageCircle size={13} />
+                              완수 일정
+                            </span>
+                          </div>
+                          {assignment.adminComment ? (
+                            <p className="att-admin-comment-panel__saved">{assignment.adminComment}</p>
+                          ) : null}
+                          <textarea
+                            aria-label={`${assignment.employee} ${timeLabel} 일정 관리자 코멘트 입력`}
+                            className="att-admin-comment-panel__input"
+                            placeholder="관리자 코멘트 입력"
+                          />
+                        </section>
+                      ) : null}
+                    </article>
+                  );
+                })}
+            </div>
+          ))}
+        </div>
       </section>
     </div>
   );

@@ -111,16 +111,6 @@ export const attendanceFeatureStoryGroups: AttendanceFeatureStoryGroup[] = [
     ),
   },
   {
-    feature: '직원 할 일',
-    platform: '웹',
-    screens: pickScreens('employee-todo-web'),
-  },
-  {
-    feature: '직원 할 일',
-    platform: '앱',
-    screens: pickScreens('employee-todo-mobile', 'employee-todo-create-mobile'),
-  },
-  {
     feature: '직원 메모',
     platform: '웹',
     screens: pickScreens(

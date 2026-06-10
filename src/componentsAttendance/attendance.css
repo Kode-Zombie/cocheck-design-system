@@ -653,6 +653,52 @@
   font-size: 12px;
 }
 
+.att-admin-comment-panel {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 10px;
+  border: 1px solid var(--att-border);
+  border-radius: 8px;
+  background: var(--att-surface-muted);
+}
+
+.att-admin-comment-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.att-admin-comment-panel__title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--att-text);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.att-admin-comment-panel__saved {
+  margin: 0;
+  color: var(--att-text-muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.att-admin-comment-panel__input {
+  width: 100%;
+  min-height: 64px;
+  padding: 10px 12px;
+  border: 1px solid var(--att-border);
+  border-radius: 8px;
+  color: var(--att-text);
+  background: var(--att-surface);
+  font-size: 13px;
+  line-height: 1.45;
+  resize: vertical;
+}
+
 .att-week-grid {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
@@ -690,38 +736,83 @@
 }
 
 .att-weekly-timetable {
+  --att-weekly-timetable-mobile-hour-height: 30px;
   display: grid;
   gap: 14px;
+  overflow: hidden;
 }
 
-.att-weekly-timetable__grid {
+.att-weekly-timetable__matrix {
   display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 8px;
-}
-
-.att-weekly-timetable__day {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  min-height: 172px;
-  gap: 10px;
-  padding: 10px;
+  overflow: auto;
+  max-height: 520px;
   border: 1px solid var(--att-border);
   border-radius: 8px;
+  grid-template-columns: 72px repeat(7, minmax(92px, 1fr));
+}
+
+.att-weekly-timetable--mobile .att-weekly-timetable__matrix {
+  max-height: 560px;
+  grid-template-columns: 58px repeat(7, minmax(76px, 1fr));
+}
+
+.att-weekly-timetable--mobile .att-weekly-timetable__hour-label,
+.att-weekly-timetable--mobile .att-weekly-timetable__cell {
+  min-height: var(--att-weekly-timetable-mobile-hour-height);
+}
+
+.att-weekly-timetable--mobile .att-weekly-timetable__hour-label {
+  padding: 0 8px;
+  font-size: 11px;
+}
+
+.att-weekly-timetable--mobile .att-weekly-timetable__cell {
+  padding: 0;
+}
+
+.att-weekly-timetable__corner,
+.att-weekly-timetable__day-head,
+.att-weekly-timetable__hour-label,
+.att-weekly-timetable__cell {
+  min-width: 0;
+  border-left: 1px solid var(--att-border);
+  border-top: 1px solid var(--att-border);
+}
+
+.att-weekly-timetable__corner,
+.att-weekly-timetable__day-head {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  min-height: 48px;
   background: var(--att-surface-muted);
 }
 
-.att-weekly-timetable__day--today {
-  border-color: var(--att-primary);
-  background: var(--att-primary-soft);
+.att-weekly-timetable__corner {
+  display: flex;
+  align-items: center;
+  left: 0;
+  z-index: 3;
+  padding: 10px;
+  border-left: 0;
+  border-top: 0;
+  color: var(--att-text-muted);
+  font-size: 12px;
+  font-weight: 800;
 }
 
 .att-weekly-timetable__day-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 6px;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 2px;
+  padding: 8px 6px;
+  border-top: 0;
+}
+
+.att-weekly-timetable__day-today {
+  color: var(--att-primary-readable);
+  background: var(--att-primary-soft);
 }
 
 .att-weekly-timetable__day-label {
@@ -735,116 +826,142 @@
   font-size: 12px;
 }
 
-.att-weekly-timetable__shift-stack {
-  display: grid;
-  min-height: 104px;
+.att-weekly-timetable__hour-label {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  min-height: 56px;
+  padding: 8px 10px;
+  border-left: 0;
+  background: var(--att-surface);
+  color: var(--att-text-muted);
+  font-size: 12px;
+  font-weight: 800;
 }
 
-.att-weekly-timetable__shift {
-  display: grid;
-  align-content: start;
-  min-width: 0;
-  min-height: 104px;
-  gap: 7px;
-  padding: 10px;
-  border-left: 4px solid var(--att-primary);
-  border-radius: 8px;
+.att-weekly-timetable__cell {
+  min-height: 56px;
+  padding: 4px;
   background: var(--att-surface);
 }
 
-.att-weekly-timetable__shift > span {
-  color: var(--att-primary-readable);
-  font-size: 12px;
-  font-weight: 800;
-}
-
-.att-weekly-timetable__shift strong {
-  overflow: hidden;
-  color: var(--att-text);
-  font-size: 12px;
-  line-height: 1.35;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.att-weekly-timetable__empty {
-  display: grid;
-  min-height: 82px;
-  place-items: center;
-  border: 1px dashed var(--att-border);
-  border-radius: 8px;
-  color: var(--att-text-subtle);
-  font-size: 12px;
-  font-weight: 800;
-}
-
-.att-weekly-timetable__mobile-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
-}
-
-.att-weekly-timetable__mobile-card {
-  display: grid;
-  min-width: 0;
-  min-height: 116px;
-  gap: 8px;
-  padding: 10px;
-  border: 1px solid var(--att-border);
-  border-radius: 8px;
-  background: var(--att-surface-muted);
-}
-
-.att-weekly-timetable__mobile-card--today {
-  border-color: var(--att-primary);
-  background: var(--att-primary-soft);
-}
-
-.att-weekly-timetable__mobile-card header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.att-weekly-timetable__mobile-card header strong {
-  font-size: 16px;
-}
-
-.att-weekly-timetable__mobile-shift {
+.att-weekly-timetable__hour-block {
   display: grid;
   align-content: start;
   min-width: 0;
-  gap: 5px;
+  min-height: 48px;
+  gap: 4px;
+  padding: 6px 7px;
+  border-left: 4px solid var(--att-primary);
+  border-radius: 5px;
+  background: var(--att-primary-soft);
 }
 
-.att-weekly-timetable__mobile-shift > span {
+.att-weekly-timetable__hour-block--success {
+  border-left-color: var(--att-success);
+  background: var(--att-success-soft);
+}
+
+.att-weekly-timetable__hour-block--warning {
+  border-left-color: var(--att-warn);
+  background: var(--att-warn-soft);
+}
+
+.att-weekly-timetable__hour-block > span {
   color: var(--att-primary-readable);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 800;
 }
 
-.att-weekly-timetable__mobile-shift strong {
+.att-weekly-timetable__hour-block--success > span {
+  color: var(--att-success);
+}
+
+.att-weekly-timetable__hour-block--warning > span {
+  color: var(--att-warn);
+}
+
+.att-weekly-timetable__hour-block strong {
   overflow: hidden;
+  color: var(--att-text);
   font-size: 12px;
-  line-height: 1.35;
+  line-height: 1.25;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
+.att-weekly-timetable__continued {
+  color: var(--att-text-subtle);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.att-weekly-timetable__shift-block {
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  margin: 2px 4px;
+  padding: 0 7px;
+  border-left: 3px solid var(--att-primary);
+  border-radius: 5px;
+  background: var(--att-primary-soft);
+  box-shadow: 0 1px 0 rgba(15, 23, 42, 0.04);
+}
+
+.att-weekly-timetable__shift-block--success {
+  border-left-color: var(--att-success);
+  background: var(--att-success-soft);
+}
+
+.att-weekly-timetable__shift-block--warning {
+  border-left-color: var(--att-warn);
+  background: var(--att-warn-soft);
+}
+
+.att-weekly-timetable__shift-store {
+  overflow: hidden;
+  color: var(--att-primary-readable);
+  font-size: 11px;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.att-weekly-timetable__shift-block--success .att-weekly-timetable__shift-store {
+  color: var(--att-success);
+}
+
+.att-weekly-timetable__shift-block--warning .att-weekly-timetable__shift-store {
+  color: var(--att-warn);
+}
+
 .att-owner-schedule-grid {
+  --att-owner-schedule-hour-height: 28px;
   overflow: hidden;
   padding: 0;
 }
 
+.att-owner-schedule-search {
+  width: 240px;
+}
+
+.att-owner-schedule-search .sb-field__input {
+  min-height: 38px;
+  border-color: var(--att-border);
+  border-radius: 8px;
+}
+
 .att-owner-schedule-grid__header,
-.att-owner-schedule-grid__row {
+.att-owner-schedule-grid__body {
   display: grid;
 }
 
 .att-owner-schedule-grid__corner,
 .att-owner-schedule-grid__day {
-  padding: 12px;
+  padding: 10px 12px;
   background: var(--att-surface-muted);
   font-size: 12px;
   font-weight: 800;
@@ -864,51 +981,56 @@
   color: var(--att-primary-readable);
 }
 
-.att-owner-schedule-grid__row {
-  min-height: 86px;
+.att-owner-schedule-grid__body {
   border-top: 1px solid var(--att-border);
 }
 
-.att-owner-schedule-grid__row-label {
+.att-owner-schedule-grid__hours,
+.att-owner-schedule-grid__day-column {
   display: grid;
-  align-content: center;
   min-width: 0;
-  gap: 4px;
-  padding: 12px 14px;
-  background: var(--att-surface);
 }
 
-.att-owner-schedule-grid__row-label span {
-  color: var(--att-text);
-  font-size: 13px;
-  font-weight: 800;
-}
-
-.att-owner-schedule-grid__row-label strong {
-  color: var(--att-text-muted);
-  font-size: 12px;
-}
-
-.att-owner-schedule-grid__cell {
-  min-width: 0;
-  padding: 6px;
+.att-owner-schedule-grid__day-column {
   border-left: 1px solid var(--att-border);
 }
 
-.att-owner-schedule-grid__shift-stack {
-  display: grid;
-  gap: 6px;
+.att-owner-schedule-grid__hour,
+.att-owner-schedule-grid__time-cell {
+  min-height: var(--att-owner-schedule-hour-height);
+  border-top: 1px solid var(--att-border);
+}
+
+.att-owner-schedule-grid__hour:first-child,
+.att-owner-schedule-grid__time-cell:nth-child(1) {
+  border-top: 0;
+}
+
+.att-owner-schedule-grid__hour {
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  color: var(--att-text-muted);
+  font-size: 11px;
+  font-weight: 800;
+  background: var(--att-surface);
+}
+
+.att-owner-schedule-grid__time-cell {
+  background: var(--att-surface);
 }
 
 .att-owner-schedule-grid__shift {
   display: grid;
-  align-content: start;
+  z-index: 1;
+  place-items: center;
   min-width: 0;
-  gap: 3px;
-  padding: 7px 8px;
+  margin: 2px 5px;
+  padding: 0 7px;
   border-left: 3px solid var(--att-primary);
   border-radius: 5px;
   background: var(--att-primary-soft);
+  box-shadow: 0 1px 0 rgba(15, 23, 42, 0.04);
 }
 
 .att-owner-schedule-grid__shift--success {
@@ -921,52 +1043,56 @@
   background: var(--att-warn-soft);
 }
 
-.att-owner-schedule-grid__shift strong,
-.att-owner-schedule-grid__shift-time,
+.att-owner-schedule-grid__shift--with-comment {
+  place-items: stretch;
+  align-content: start;
+  padding: 7px;
+}
+
 .att-owner-schedule-grid__shift-store {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.att-owner-schedule-grid__shift strong {
-  color: var(--att-text);
-  font-size: 12px;
-  line-height: 1.2;
-}
-
-.att-owner-schedule-grid__shift-time {
+.att-owner-schedule-grid__shift-store {
   color: var(--att-primary-readable);
   font-size: 11px;
   font-weight: 800;
 }
 
-.att-owner-schedule-grid__shift--success .att-owner-schedule-grid__shift-time {
+.att-owner-schedule-grid__shift--success .att-owner-schedule-grid__shift-store {
   color: var(--att-success);
 }
 
-.att-owner-schedule-grid__shift--warning .att-owner-schedule-grid__shift-time {
+.att-owner-schedule-grid__shift--warning .att-owner-schedule-grid__shift-store {
   color: var(--att-warn);
 }
 
-.att-owner-schedule-grid__shift-store {
-  color: var(--att-text-muted);
-  font-size: 10px;
+.att-owner-schedule-grid__comment {
+  gap: 6px;
+  margin-top: 7px;
+  padding: 7px;
+  background: rgba(255, 255, 255, 0.68);
 }
 
-.att-owner-schedule-grid__empty {
-  min-height: 100%;
-  border: 1px dashed var(--att-border);
-  border-radius: 5px;
-  opacity: 0.55;
+.att-owner-schedule-grid__comment .att-admin-comment-panel__title {
+  font-size: 11px;
 }
 
-.att-owner-schedule-grid--compact .att-owner-schedule-grid__row {
-  min-height: 74px;
+.att-owner-schedule-grid__comment .att-admin-comment-panel__saved {
+  font-size: 11px;
 }
 
-.att-owner-schedule-grid--compact .att-owner-schedule-grid__shift {
-  padding: 6px 7px;
+.att-owner-schedule-grid__comment .att-admin-comment-panel__input {
+  min-height: 44px;
+  padding: 7px;
+  font-size: 11px;
+  resize: none;
+}
+
+.att-owner-schedule-grid--compact {
+  --att-owner-schedule-hour-height: 24px;
 }
 
 .att-time-display {

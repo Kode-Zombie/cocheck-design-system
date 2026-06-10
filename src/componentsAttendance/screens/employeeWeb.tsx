@@ -23,7 +23,7 @@ import {
   User,
   WalletCards,
 } from 'lucide-react';
-import { useState, type ReactNode } from 'react';
+import { Fragment, useState, type ReactNode } from 'react';
 import { ActionCard } from '../components/ActionCard';
 import { DocumentPreview } from '../components/DocumentPreview';
 import { FormPanel } from '../components/FormPanel';
@@ -101,6 +101,31 @@ const scheduleRows = employeeWeeklySchedule.map((day) => {
     today: day.today,
   };
 });
+
+const timetableHours = Array.from({ length: 24 }, (_, hour) => `${String(hour).padStart(2, '0')}:00`);
+
+function getShiftStartHour(time: string) {
+  return Number(time.slice(0, 2));
+}
+
+function getShiftEndHour(time: string) {
+  return Number(time.slice(6, 8));
+}
+
+function includesScheduleHour(shift: EmployeeWeeklyShift, hour: number) {
+  const startHour = getShiftStartHour(shift.time);
+  const endHour = getShiftEndHour(shift.time);
+
+  if (endHour <= startHour) {
+    return hour >= startHour || hour < endHour;
+  }
+
+  return hour >= startHour && hour < endHour;
+}
+
+function getScheduleShiftForHour(day: EmployeeWeeklyScheduleDay, hour: number) {
+  return day.shifts.find((shift) => includesScheduleHour(shift, hour));
+}
 
 type EmployeeScheduleTodo = {
   title: string;
@@ -545,30 +570,47 @@ export function EmployeeScheduleWeb({ theme = 'calm' }: AttendanceScreenProps) {
             </div>
             <StatusBadge tone="primary">이번 주</StatusBadge>
           </div>
-          <div className="att-weekly-timetable__grid">
+          <div className="att-weekly-timetable__matrix">
+            <div className="att-weekly-timetable__corner">시간</div>
             {employeeWeeklySchedule.map((day) => (
-              <article
-                className={`att-weekly-timetable__day${day.today ? ' att-weekly-timetable__day--today' : ''}`}
+              <div
+                className={`att-weekly-timetable__day-head${day.today ? ' att-weekly-timetable__day-today' : ''}`}
                 key={`${day.day}-${day.date}`}
               >
-                <header className="att-weekly-timetable__day-head">
-                  <span className="att-weekly-timetable__day-label">{day.day}</span>
-                  <strong>{day.date}</strong>
-                </header>
-                <div className="att-weekly-timetable__shift-stack">
-                  {day.shifts.length > 0 ? (
-                    day.shifts.map((shift) => (
-                      <div className="att-weekly-timetable__shift" key={`${day.date}-${shift.time}`}>
-                        <span className="att-mono">{shift.time}</span>
-                        <strong>{shift.store}</strong>
-                        <StatusBadge tone={shift.tone}>{shift.status}</StatusBadge>
-                      </div>
-                    ))
-                  ) : (
-                    <span className="att-weekly-timetable__empty">근무 없음</span>
-                  )}
-                </div>
-              </article>
+                <span className="att-weekly-timetable__day-label">{day.day}</span>
+                <strong>{day.date}</strong>
+              </div>
+            ))}
+            {timetableHours.map((hourLabel, hour) => (
+              <Fragment key={hourLabel}>
+                <div className="att-weekly-timetable__hour-label" key={`hour-${hourLabel}`}>{hourLabel}</div>
+                {employeeWeeklySchedule.map((day) => {
+                  const shift = getScheduleShiftForHour(day, hour);
+                  const isStartHour = shift ? getShiftStartHour(shift.time) === hour : false;
+
+                  return (
+                    <div
+                      aria-label={`${day.day} ${hourLabel} 시간표 칸`}
+                      className="att-weekly-timetable__cell"
+                      key={`${day.day}-${hourLabel}`}
+                    >
+                      {shift ? (
+                        <div className={`att-weekly-timetable__hour-block att-weekly-timetable__hour-block--${shift.tone}`}>
+                          {isStartHour ? (
+                            <>
+                              <span className="att-mono">{shift.time}</span>
+                              <strong>{shift.store}</strong>
+                              <StatusBadge tone={shift.tone}>{shift.status}</StatusBadge>
+                            </>
+                          ) : (
+                            <span className="att-weekly-timetable__continued">근무중</span>
+                          )}
+                        </div>
+                      ) : null}
+                    </div>
+                  );
+                })}
+              </Fragment>
             ))}
           </div>
         </section>

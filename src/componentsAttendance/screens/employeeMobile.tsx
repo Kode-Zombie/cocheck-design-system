@@ -127,6 +127,32 @@ const weekDays: ScheduleRow[] = [
 
 const scheduleRows: ScheduleRow[] = weekDays;
 
+const timetableHours = Array.from({ length: 24 }, (_, hour) => `${String(hour).padStart(2, '0')}:00`);
+const employeeMobileTimetableRows = `48px repeat(${timetableHours.length}, var(--att-weekly-timetable-mobile-hour-height))`;
+
+function getWorkStartHour(work: string) {
+  return Number(work.slice(0, 2));
+}
+
+function getWorkEndHour(work: string) {
+  return Number(work.slice(6, 8));
+}
+
+function getMobileTimetableShiftSpan(row: ScheduleRow) {
+  if (!row.work) {
+    return undefined;
+  }
+
+  const startHour = getWorkStartHour(row.work);
+  const endHour = getWorkEndHour(row.work);
+  const normalizedEndHour = endHour <= startHour ? 24 : endHour;
+
+  return {
+    gridRow: `${startHour + 2} / span ${Math.max(1, normalizedEndHour - startHour)}`,
+    label: `${row.day} ${row.work} ${row.store ?? store.name} 근무`,
+  };
+}
+
 const futureScheduleDetail: EmployeeScheduleDetail = {
   date: '2026년 4월 23일 목요일',
   title: '오픈 근무',
@@ -565,28 +591,49 @@ export function EmployeeScheduleMobile({ theme = 'calm' }: AttendanceScreenProps
             <h2>주간 시간표</h2>
             <span>4월 19일-25일</span>
           </div>
-          <div className="att-weekly-timetable__mobile-grid">
-            {weekDays.map((day) => (
-              <article
-                className={`att-weekly-timetable__mobile-card${day.today ? ' att-weekly-timetable__mobile-card--today' : ''}`}
+          <div className="att-weekly-timetable__matrix" style={{ gridTemplateRows: employeeMobileTimetableRows }}>
+            <div className="att-weekly-timetable__corner" style={{ gridColumn: 1, gridRow: 1 }}>시간</div>
+            {weekDays.map((day, dayIndex) => (
+              <div
+                className={`att-weekly-timetable__day-head${day.today ? ' att-weekly-timetable__day-today' : ''}`}
                 key={`${day.day}-${day.date}`}
+                style={{ gridColumn: dayIndex + 2, gridRow: 1 }}
               >
-                <header>
-                  <span className="att-weekly-timetable__day-label">{day.day}</span>
-                  <strong>{day.date}</strong>
-                </header>
-                {day.work ? (
-                  <div className="att-weekly-timetable__mobile-shift">
-                    <span className="att-mono">{day.work}</span>
-                    <strong>{day.store ?? store.name}</strong>
-                    {day.today ? <StatusBadge tone="primary">오늘</StatusBadge> : null}
-                    {day.tag ? <StatusBadge tone={getScheduleTagTone(day.tag)}>{day.tag}</StatusBadge> : null}
-                  </div>
-                ) : (
-                  <span className="att-weekly-timetable__empty">근무 없음</span>
-                )}
-              </article>
+                <span className="att-weekly-timetable__day-label">{day.day}</span>
+                <strong>{day.date}</strong>
+              </div>
             ))}
+            {timetableHours.map((hourLabel, hour) => (
+              <div className="att-weekly-timetable__hour-label" key={hourLabel} style={{ gridColumn: 1, gridRow: hour + 2 }}>{hourLabel}</div>
+            ))}
+            {weekDays.flatMap((day, dayIndex) => (
+              timetableHours.map((hourLabel, hour) => (
+                <div
+                  aria-label={`${day.day} ${hourLabel} 시간표 칸`}
+                  className="att-weekly-timetable__cell"
+                  key={`${day.day}-${hourLabel}`}
+                  style={{ gridColumn: dayIndex + 2, gridRow: hour + 2 }}
+                />
+              ))
+            ))}
+            {weekDays.map((day, dayIndex) => {
+              const shiftSpan = getMobileTimetableShiftSpan(day);
+
+              if (!shiftSpan || !day.work) {
+                return null;
+              }
+
+              return (
+                <article
+                  aria-label={shiftSpan.label}
+                  className={`att-weekly-timetable__shift-block att-weekly-timetable__shift-block--${getScheduleTagTone(day.tag)}`}
+                  key={`${day.day}-${day.date}-${day.work}`}
+                  style={{ gridColumn: dayIndex + 2, gridRow: shiftSpan.gridRow }}
+                >
+                  <strong className="att-weekly-timetable__shift-store">{day.store ?? store.name}</strong>
+                </article>
+              );
+            })}
           </div>
         </section>
         <div className="att-schedule-list">

@@ -13,6 +13,7 @@ import {
   FileText,
   Home,
   LogOut,
+  MessageCircle,
   MoreVertical,
   Plus,
   Search,
@@ -92,9 +93,11 @@ type BranchScheduleTodo = {
 };
 
 type BranchScheduleRow = {
+  adminComment?: string;
   attendance: string;
   attendanceTone: StatusTone;
   branch: string;
+  completed: boolean;
   content: string;
   date: string;
   employee: string;
@@ -116,6 +119,7 @@ const branchScheduleRows: BranchScheduleRow[] = [
     time: '09:00-18:00',
     attendance: '근무 예정',
     attendanceTone: 'primary',
+    completed: false,
     content: '오픈 전 시재 확인 후 행사 매대와 냉장 설비를 점검합니다.',
     todos: [
       {
@@ -142,8 +146,10 @@ const branchScheduleRows: BranchScheduleRow[] = [
     branch: selectedStore.name,
     date: '2026.04.29',
     time: '12:00-17:00',
-    attendance: '출근 확인',
+    attendance: '완수',
     attendanceTone: 'success',
+    completed: true,
+    adminComment: '점심 피크 계산대 응대는 안정적이었습니다.',
     content: '점심 피크 시간대 계산대와 재고 보충을 지원합니다.',
     todos: [
       {
@@ -165,6 +171,7 @@ const branchScheduleRows: BranchScheduleRow[] = [
     time: '18:00-23:00',
     attendance: '대기',
     attendanceTone: 'warning',
+    completed: false,
     content: '마감 전 폐기 상품과 매장 외부 청결 상태를 확인합니다.',
     todos: [
       {
@@ -726,6 +733,28 @@ export function OwnerScheduleManagementMobile({ theme = 'calm' }: AttendanceScre
                     </div>
                   )}
                 </div>
+                {schedule.completed ? (
+                  <section className="att-admin-comment-panel">
+                    <div className="att-admin-comment-panel__header">
+                      <span className="att-admin-comment-panel__title">
+                        <MessageCircle size={15} />
+                        완수된 일정 관리자 코멘트
+                      </span>
+                      <StatusBadge tone="success">작성 가능</StatusBadge>
+                    </div>
+                    {schedule.adminComment ? (
+                      <p className="att-admin-comment-panel__saved">{schedule.adminComment}</p>
+                    ) : null}
+                    <label className="att-field">
+                      <span className="att-field__label">코멘트 입력</span>
+                      <textarea
+                        aria-label={`${schedule.name} 관리자 코멘트 입력`}
+                        className="att-admin-comment-panel__input"
+                        placeholder="직원의 수행 내용에 대한 코멘트를 입력하세요."
+                      />
+                    </label>
+                  </section>
+                ) : null}
                 <div className="att-inline-actions" style={{ marginTop: 12 }}>
                   <button className="att-button att-button--ghost" type="button">일정 수정</button>
                   <button className="att-button att-button--secondary" type="button">직원 알림</button>

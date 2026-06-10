@@ -10,7 +10,6 @@ import {
   EmployeeScheduleDetailFutureWeb,
   EmployeeScheduleWeb,
   EmployeeShiftSwapMobile,
-  EmployeeTodoWeb,
 } from './employeeWeb';
 import type { AttendanceScreen } from './screenTypes';
 
@@ -21,7 +20,6 @@ export const employeeWebScreens: AttendanceScreen[] = [
   { id: 'employee-schedule-detail-future-web', label: 'EW5b · 일정 상세·수정 (예정)', group: '직원 웹', width: 1280, height: 800, viewport: 'web', Component: EmployeeScheduleDetailFutureWeb },
   { id: 'employee-schedule-detail-completed-web', label: 'EW5c · 수행 일정 상세', group: '직원 웹', width: 1280, height: 800, viewport: 'web', Component: EmployeeScheduleDetailCompletedWeb },
   { id: 'employee-shift-swap-mobile', label: '06 · 스케줄 교환 신청 (모바일)', group: '직원 웹', width: 402, height: 874, viewport: 'mobile', Component: EmployeeShiftSwapMobile },
-  { id: 'employee-todo-web', label: '02 · 할 일', group: '직원 웹', width: 1280, height: 800, viewport: 'web', Component: EmployeeTodoWeb },
   { id: 'employee-memo-web', label: '03 · 메모·인수인계', group: '직원 웹', width: 1280, height: 800, viewport: 'web', Component: EmployeeMemoWeb },
   { id: 'employee-memo-detail-web', label: 'EW5b · 메모 상세·댓글 (직원웹)', group: '직원 웹', width: 1280, height: 800, viewport: 'web', Component: EmployeeMemoDetailWeb },
   { id: 'employee-salary-web', label: '04 · 내 급여', group: '직원 웹', width: 1280, height: 800, viewport: 'web', Component: EmployeeSalaryWeb },
