@@ -4,6 +4,7 @@ export type NavItem = {
   id: string;
   label: string;
   icon?: ReactNode;
+  hideLabel?: boolean;
 };
 
 function NavButton({
@@ -19,11 +20,13 @@ function NavButton({
 }) {
   const isActive = item.id === activeId;
   const isStatic = !onSelect;
+  const isIconOnly = Boolean(item.hideLabel);
 
   return (
     <button
+      aria-label={isIconOnly ? item.label : undefined}
       aria-current={isActive ? 'page' : undefined}
-      className={`${className}${isActive ? ` ${className}--active` : ''}${
+      className={`${className}${isIconOnly ? ` ${className}--icon-only` : ''}${isActive ? ` ${className}--active` : ''}${
         isStatic ? ` ${className}--static` : ''
       }`}
       disabled={isStatic}
@@ -31,7 +34,7 @@ function NavButton({
       type="button"
     >
       {item.icon ? <span className={`${className}__icon`}>{item.icon}</span> : null}
-      <span>{item.label}</span>
+      {isIconOnly ? null : <span>{item.label}</span>}
     </button>
   );
 }

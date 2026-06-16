@@ -2493,6 +2493,12 @@
   cursor: pointer;
 }
 
+.att-mobile-tab-bar__item--icon-only,
+.att-owner-tab-bar__item--icon-only {
+  align-content: center;
+  gap: 0;
+}
+
 .att-mobile-tab-bar__item:hover:not(:disabled),
 .att-owner-tab-bar__item:hover:not(:disabled) {
   color: var(--att-primary-readable);

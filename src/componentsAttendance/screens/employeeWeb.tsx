@@ -10,7 +10,6 @@ import {
   Download,
   FileText,
   Home,
-  ListChecks,
   LogIn,
   LogOut,
   MessageCircle,
@@ -48,12 +47,9 @@ const currentShift = attendanceShifts[0];
 
 const employeeWebNavItems: NavItem[] = [
   { id: 'home', label: '홈', icon: <Home size={17} /> },
-  { id: 'punch', label: '출퇴근', icon: <Clock3 size={17} /> },
-  { id: 'todo', label: '할 일', icon: <ListChecks size={17} /> },
   { id: 'memo', label: '메모·인수인계', icon: <MessageCircle size={17} /> },
   { id: 'salary', label: '내 급여', icon: <WalletCards size={17} /> },
   { id: 'schedule', label: '스케줄', icon: <CalendarDays size={17} /> },
-  { id: 'contract', label: '근로계약서', icon: <FileText size={17} /> },
   { id: 'profile', label: '내 정보', icon: <User size={17} /> },
 ];
 

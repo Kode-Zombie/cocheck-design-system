@@ -8,6 +8,7 @@ import {
   ChevronRight,
   Circle,
   Download,
+  Ellipsis,
   FileText,
   Home,
   LogOut,
@@ -53,7 +54,7 @@ const employeeTabs: NavItem[] = [
   { id: 'memo', label: '메모', icon: <MessageCircle size={18} /> },
   { id: 'schedule', label: '일정', icon: <CalendarDays size={18} /> },
   { id: 'salary', label: '급여', icon: <WalletCards size={18} /> },
-  { id: 'me', label: '나', icon: <User size={18} /> },
+  { id: 'me', label: '나', icon: <Ellipsis size={18} />, hideLabel: true },
 ];
 
 type ScheduleRow = {
@@ -227,6 +228,7 @@ function MobileShell({
   width = 402,
   height = 874,
   activeTab,
+  showNotificationLauncher = true,
   children,
 }: {
   theme: AttendanceScreenProps['theme'];
@@ -234,12 +236,13 @@ function MobileShell({
   width?: number;
   height?: number;
   activeTab?: string;
+  showNotificationLauncher?: boolean;
   children: ReactNode;
 }) {
   return (
     <MobileFrame height={height} theme={theme} title={title} width={width}>
       <div className="att-mobile-screen">
-        <EmployeeAppHeader />
+        <EmployeeAppHeader showNotificationLauncher={showNotificationLauncher} />
         {children}
         {activeTab ? <MobileTabBar activeId={activeTab} items={employeeTabs} /> : null}
       </div>
@@ -247,7 +250,7 @@ function MobileShell({
   );
 }
 
-function EmployeeAppHeader() {
+function EmployeeAppHeader({ showNotificationLauncher = true }: { showNotificationLauncher?: boolean } = {}) {
   return (
     <header aria-label="직원 앱 헤더" className="att-employee-app-header">
       <button aria-label="설정 열기" className="att-icon-button" type="button">
@@ -257,16 +260,18 @@ function EmployeeAppHeader() {
         <img alt="CoCheck" src="/cocheck-logo.png" />
         <span>CoCheck</span>
       </div>
-      <button
-        aria-controls="employee-notification-mobile"
-        aria-label="알림창 열기"
-        className="att-icon-button"
-        data-target-screen="employee-notification-mobile"
-        type="button"
-      >
-        <Bell size={18} />
-        <span className="att-notification-dot" />
-      </button>
+      {showNotificationLauncher ? (
+        <button
+          aria-controls="employee-notification-mobile"
+          aria-label="알림창 열기"
+          className="att-icon-button"
+          data-target-screen="employee-notification-mobile"
+          type="button"
+        >
+          <Bell size={18} />
+          <span className="att-notification-dot" />
+        </button>
+      ) : null}
     </header>
   );
 }
@@ -869,7 +874,7 @@ export function EmployeeMemoCreateMobile({ theme = 'calm' }: AttendanceScreenPro
 
 export function EmployeeNotificationMobile({ theme = 'calm' }: AttendanceScreenProps) {
   return (
-    <MobileShell height={844} theme={theme} title="알림창" width={390}>
+    <MobileShell height={844} showNotificationLauncher={false} theme={theme} title="알림창" width={390}>
       <PageHeader
         back
         right={<button className="att-button att-button--ghost" type="button">모두 읽음</button>}
