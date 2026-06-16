@@ -5,16 +5,11 @@ import {
   CalendarDays,
   Check,
   CheckCircle2,
-  ChevronDown,
   ChevronRight,
   Circle,
-  Clock3,
-  Coffee,
   Download,
   FileText,
   Home,
-  ListChecks,
-  LogIn,
   LogOut,
   MapPin,
   MessageCircle,
@@ -23,6 +18,7 @@ import {
   Pin,
   Plus,
   Send,
+  Settings,
   Store,
   User,
   WalletCards,
@@ -54,9 +50,8 @@ const currentContract = attendanceContracts[0];
 
 const employeeTabs: NavItem[] = [
   { id: 'home', label: '홈', icon: <Home size={18} /> },
-  { id: 'punch', label: '출퇴근', icon: <Clock3 size={18} /> },
-  { id: 'schedule', label: '스케줄', icon: <CalendarDays size={18} /> },
-  { id: 'todo', label: '할 일', icon: <ListChecks size={18} /> },
+  { id: 'memo', label: '메모', icon: <MessageCircle size={18} /> },
+  { id: 'schedule', label: '일정', icon: <CalendarDays size={18} /> },
   { id: 'salary', label: '급여', icon: <WalletCards size={18} /> },
   { id: 'me', label: '나', icon: <User size={18} /> },
 ];
@@ -94,14 +89,6 @@ type EmployeeScheduleDetail = {
     breakTime: string;
     totalHours: string;
   };
-};
-
-type TodoItem = {
-  text: string;
-  done: boolean;
-  owner: string;
-  due?: string;
-  priority?: boolean;
 };
 
 type MemoItem = {
@@ -191,30 +178,6 @@ const completedScheduleDetail: EmployeeScheduleDetail = {
   ],
 };
 
-const todoSections: { title: string; done: number; total: number; items: TodoItem[] }[] = [
-  {
-    title: '오전 오픈 체크',
-    done: 3,
-    total: 4,
-    items: [
-      { text: 'POS 전원 켜고 현금 시재 확인', done: true, owner: '공통' },
-      { text: '도시락·김밥 유통기한 확인', done: true, owner: '공통' },
-      { text: '매장 외부 청소', done: true, owner: employee.name },
-      { text: '신상품 POP 교체', done: false, owner: employee.name, due: '11:00' },
-    ],
-  },
-  {
-    title: '수시 업무',
-    done: 0,
-    total: 3,
-    items: [
-      { text: attendanceTodos[0].title, done: attendanceTodos[0].done, owner: attendanceTodos[0].owner },
-      { text: attendanceTodos[2].title, done: attendanceTodos[2].done, owner: attendanceTodos[2].owner },
-      { text: '본사 공지사항 확인 후 공유', done: false, owner: employee.name, due: '14:00', priority: true },
-    ],
-  },
-];
-
 const memoFeed: MemoItem[] = [
   {
     tag: '이슈',
@@ -237,6 +200,27 @@ const memoFeed: MemoItem[] = [
   })),
 ];
 
+const notificationRows = [
+  {
+    title: '근무 시작 30분 전입니다',
+    body: `${store.name} ${currentShift.time} 일정이 곧 시작됩니다.`,
+    meta: '새 알림 · 08:30',
+    tone: 'primary' as StatusTone,
+  },
+  {
+    title: '공지사항이 고정되었습니다',
+    body: '이번 주 야간 진열 기준과 폐기 체크 기준을 확인해 주세요.',
+    meta: '공지 · 20분 전',
+    tone: 'warning' as StatusTone,
+  },
+  {
+    title: '급여 명세서가 준비되었습니다',
+    body: '2026년 4월 예상 급여와 공제 내역을 조회할 수 있습니다.',
+    meta: '급여 · 어제',
+    tone: 'success' as StatusTone,
+  },
+];
+
 function MobileShell({
   theme,
   title,
@@ -255,10 +239,35 @@ function MobileShell({
   return (
     <MobileFrame height={height} theme={theme} title={title} width={width}>
       <div className="att-mobile-screen">
+        <EmployeeAppHeader />
         {children}
         {activeTab ? <MobileTabBar activeId={activeTab} items={employeeTabs} /> : null}
       </div>
     </MobileFrame>
+  );
+}
+
+function EmployeeAppHeader() {
+  return (
+    <header aria-label="직원 앱 헤더" className="att-employee-app-header">
+      <button aria-label="설정 열기" className="att-icon-button" type="button">
+        <Settings size={18} />
+      </button>
+      <div className="att-employee-app-header__brand">
+        <img alt="CoCheck" src="/cocheck-logo.png" />
+        <span>CoCheck</span>
+      </div>
+      <button
+        aria-controls="employee-notification-mobile"
+        aria-label="알림창 열기"
+        className="att-icon-button"
+        data-target-screen="employee-notification-mobile"
+        type="button"
+      >
+        <Bell size={18} />
+        <span className="att-notification-dot" />
+      </button>
+    </header>
   );
 }
 
@@ -323,14 +332,6 @@ function Chip({
 }) {
   return (
     <span className={`att-chip${active ? ` att-chip--${tone}` : ''}`}>{children}</span>
-  );
-}
-
-function ProgressBar({ value }: { value: number }) {
-  return (
-    <div className="att-progress">
-      <div style={{ width: `${value}%` }} />
-    </div>
   );
 }
 
@@ -458,21 +459,15 @@ export function EmployeeHomeMobile({ theme = 'calm' }: AttendanceScreenProps) {
     <MobileShell activeTab="home" theme={theme} title="01 · 홈">
       <main className="att-mobile-content" tabIndex={0}>
         <PageHeader
-          eyebrow="2026년 4월 21일 화요일"
-          right={
-            <IconButton label="알림 보기">
-              <Bell size={18} />
-              <span className="att-notification-dot" />
-            </IconButton>
-          }
-          title={`안녕하세요, ${employee.name} 님`}
+          eyebrow={`2026년 4월 21일 화요일 · ${employee.name} 님`}
+          title="지금 근무 관리"
         />
         <PrimaryStatusCard />
         <div className="att-metric-grid att-metric-grid--two">
-          <MetricCard icon={<ListChecks size={18} />} label="오늘 할 일" value="3 / 7" />
-          <MetricCard icon={<Pencil size={18} />} label="새 메모" value="인수인계" />
+          <MetricCard icon={<CheckCircle2 size={18} />} label="근무 상태" value="정시" />
+          <MetricCard icon={<MessageCircle size={18} />} label="새 메모" value="인수인계" />
           <MetricCard icon={<WalletCards size={18} />} label="이번 달 예상" value="1,424,260원" />
-          <MetricCard icon={<CalendarDays size={18} />} label="스케줄 교환" value="요청 1건" />
+          <MetricCard icon={<CalendarDays size={18} />} label="다음 일정" value="목 09:00" />
         </div>
         <section className="att-card-section">
           <div className="att-section-heading">
@@ -491,7 +486,7 @@ export function EmployeeHomeMobile({ theme = 'calm' }: AttendanceScreenProps) {
         </section>
         <section className="att-stack">
           <div className="att-section-heading">
-            <h2>오늘 체크</h2>
+            <h2>근무 중 체크</h2>
             <button className="att-button att-button--ghost" type="button">전체 보기</button>
           </div>
           {attendanceTodos.slice(0, 2).map((todo) => (
@@ -509,63 +504,9 @@ export function EmployeeHomeMobile({ theme = 'calm' }: AttendanceScreenProps) {
   );
 }
 
-export function EmployeePunchMobile({ theme = 'calm' }: AttendanceScreenProps) {
-  return (
-    <MobileShell activeTab="punch" theme={theme} title="02 · 출퇴근">
-      <PageHeader eyebrow="2026년 4월 21일 · 화요일" title="출퇴근" />
-      <main className="att-mobile-content att-mobile-content--flush-top" tabIndex={0}>
-        <ActionCard
-          caption={`${currentShift.time} · 버튼 태그`}
-          icon={<Store size={17} />}
-          right={<ChevronDown size={18} />}
-          title={store.name}
-        />
-        <section className="att-time-display">
-          <strong>13:23</strong>
-          <span className="att-mono">:47</span>
-        </section>
-        <ActionCard
-          caption="GPS · QR · Wi-Fi 인증으로 변경 가능"
-          icon={<CheckCircle2 size={16} />}
-          right={<StatusBadge tone="success">사용 가능</StatusBadge>}
-          title="경영주이 설정한 방식: 버튼 태그"
-        />
-        <div className="att-action-row" style={{ marginTop: 14 }}>
-          <button className="att-punch-button att-punch-button--done" type="button">
-            <LogIn size={24} />
-            <strong>출근 완료</strong>
-            <span className="att-mono">09:00:12</span>
-          </button>
-          <button className="att-punch-button att-punch-button--primary" type="button">
-            <LogOut size={24} />
-            <strong>퇴근하기</strong>
-            <span className="att-mono">18:00 예정</span>
-          </button>
-        </div>
-        <section className="att-stack" style={{ marginTop: 18 }}>
-          <h2 className="att-section-title" style={{ fontSize: 15 }}>오늘 기록</h2>
-          {[
-            ['출근', '09:00:12', '정시 · 버튼 태그'],
-            ['휴게 시작', '12:30:04', '30분 예정'],
-            ['휴게 종료', '13:01:22', '실제 31분'],
-          ].map(([title, time, caption]) => (
-            <ActionCard
-              caption={caption}
-              icon={title === '출근' ? <LogIn size={16} /> : <Coffee size={16} />}
-              key={title}
-              meta={time}
-              title={title}
-            />
-          ))}
-        </section>
-      </main>
-    </MobileShell>
-  );
-}
-
 export function EmployeeScheduleMobile({ theme = 'calm' }: AttendanceScreenProps) {
   return (
-    <MobileShell activeTab="schedule" theme={theme} title="03 · 스케줄">
+    <MobileShell activeTab="schedule" theme={theme} title="03 · 일정">
       <PageHeader
         eyebrow="2026년 4월"
         right={
@@ -574,7 +515,7 @@ export function EmployeeScheduleMobile({ theme = 'calm' }: AttendanceScreenProps
             <IconButton label="스케줄 더보기"><MoreVertical size={18} /></IconButton>
           </>
         }
-        title="스케줄"
+        title="일정 목록 조회"
       />
       <div className="att-date-strip">
         {weekDays.map((day) => (
@@ -809,69 +750,13 @@ export function EmployeeLateMobile({ theme = 'calm' }: AttendanceScreenProps) {
   );
 }
 
-export function EmployeeTodoMobile({ theme = 'calm' }: AttendanceScreenProps) {
-  return (
-    <MobileShell activeTab="todo" theme={theme} title="04 · 할 일">
-      <PageHeader
-        eyebrow="오늘의 체크리스트"
-        right={<button className="att-button" type="button"><Plus size={15} /> 추가</button>}
-        title="할 일"
-      />
-      <main className="att-mobile-content att-mobile-content--flush-top" tabIndex={0}>
-        <section className="att-card-section">
-          <div className="att-section-heading">
-            <h2>전체 진행률</h2>
-            <span className="att-mono">3 / 7</span>
-          </div>
-          <ProgressBar value={43} />
-        </section>
-        {todoSections.map((section) => (
-          <section className="att-stack" key={section.title} style={{ marginTop: 18 }}>
-            <div className="att-section-heading">
-              <h2>{section.title}</h2>
-              <span className="att-mono">{section.done}/{section.total}</span>
-            </div>
-            {section.items.map((item) => (
-              <ActionCard
-                caption={`${item.owner}${item.due ? ` · ${item.due}` : ''}${item.priority ? ' · 중요' : ''}`}
-                icon={item.done ? <CheckCircle2 size={16} /> : <Circle size={16} />}
-                key={item.text}
-                right={<StatusBadge tone={item.done ? 'success' : 'neutral'}>{item.done ? '완료' : '대기'}</StatusBadge>}
-                title={item.text}
-              />
-            ))}
-          </section>
-        ))}
-      </main>
-    </MobileShell>
-  );
-}
-
-export function EmployeeTodoCreateMobile({ theme = 'calm' }: AttendanceScreenProps) {
-  return (
-    <MobileShell height={844} theme={theme} title="M5b · 내 할일 추가 (직원)" width={390}>
-      <PageHeader
-        back
-        right={<button className="att-button" type="button">저장</button>}
-        title="내 할일 추가"
-      />
-      <main className="att-mobile-content" tabIndex={0}>
-        <FormPanel description="내가 볼 개인 체크리스트로 저장됩니다." title="할 일 정보">
-          <Field focus label="제목 *" value="신상품 POP 교체" />
-          <Field tall label="메모" value="행사 매대 왼쪽 첫 번째 줄에 부착하고 사진으로 확인하기" />
-        </FormPanel>
-      </main>
-    </MobileShell>
-  );
-}
-
 export function EmployeeMemoMobile({ theme = 'calm' }: AttendanceScreenProps) {
   return (
-    <MobileShell activeTab="home" theme={theme} title="05 · 메모·인수인계">
+    <MobileShell activeTab="memo" theme={theme} title="02 · 메모">
       <PageHeader
         eyebrow={store.name}
         right={<button className="att-button" type="button"><Plus size={15} /> 작성</button>}
-        title="메모 · 인수인계"
+        title="공지사항 및 메모 관리"
       />
       <main className="att-mobile-content att-mobile-content--flush-top" tabIndex={0}>
         <div className="att-inline-actions" style={{ marginBottom: 14 }}>
@@ -982,12 +867,53 @@ export function EmployeeMemoCreateMobile({ theme = 'calm' }: AttendanceScreenPro
   );
 }
 
+export function EmployeeNotificationMobile({ theme = 'calm' }: AttendanceScreenProps) {
+  return (
+    <MobileShell height={844} theme={theme} title="알림창" width={390}>
+      <PageHeader
+        back
+        right={<button className="att-button att-button--ghost" type="button">모두 읽음</button>}
+        title="알림창"
+      />
+      <main className="att-mobile-content" tabIndex={0}>
+        <div aria-label="알림 필터" className="att-notification-filter-row">
+          <Chip active>전체 {notificationRows.length}</Chip>
+          <Chip>새 알림 2</Chip>
+          <Chip>읽음 1</Chip>
+        </div>
+        <div className="att-stack att-notification-list">
+          {notificationRows.map((notification) => (
+            <article
+              className={`att-notification-card${
+                notification.meta.startsWith('새 알림') ? ' att-notification-card--unread' : ''
+              }`}
+              key={notification.title}
+            >
+              <div className={`att-notification-card__icon att-notification-card__icon--${notification.tone}`}>
+                <Bell size={16} />
+              </div>
+              <div className="att-notification-card__body">
+                <div className="att-notification-card__top">
+                  <span>{notification.meta}</span>
+                  <StatusBadge tone={notification.tone}>알림</StatusBadge>
+                </div>
+                <h2>{notification.title}</h2>
+                <p>{notification.body}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </main>
+    </MobileShell>
+  );
+}
+
 export function EmployeeSalaryMobile({ theme = 'calm' }: AttendanceScreenProps) {
   const payroll = attendancePayrollRows[0];
 
   return (
-    <MobileShell activeTab="salary" theme={theme} title="06 · 월급 계산">
-      <PageHeader eyebrow="2026년 4월 예상" title="월급 계산" />
+    <MobileShell activeTab="salary" theme={theme} title="04 · 급여">
+      <PageHeader eyebrow="2026년 4월 예상" title="급여 조회" />
       <main className="att-mobile-content att-mobile-content--flush-top" tabIndex={0}>
         <section className="att-salary-hero">
           <span>예상 실수령액</span>
@@ -1047,8 +973,8 @@ export function EmployeeProfileMobile({ theme = 'calm' }: AttendanceScreenProps)
   ];
 
   return (
-    <MobileShell activeTab="me" height={844} theme={theme} title="M11 · 나 탭 (직원 마이페이지)" width={390}>
-      <PageHeader title="나" />
+    <MobileShell activeTab="me" height={844} theme={theme} title="05 · 나 탭 (직원 마이페이지)" width={390}>
+      <PageHeader title="마이페이지" />
       <main className="att-mobile-content att-mobile-content--flush-top" tabIndex={0}>
         <section className="att-card-section">
           <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
@@ -1105,6 +1031,7 @@ export function EmployeeContractDetailMobile({ theme = 'calm' }: AttendanceScree
   return (
     <MobileFrame height={844} theme={theme} title="M9b · 계약서 상세 바텀시트" width={390}>
       <div className="att-mobile-screen att-sheet-screen">
+        <EmployeeAppHeader />
         <div className="att-sheet-background">
           <div className="att-mobile-screen">
             <PageHeader eyebrow="계약서를 확인하고 PDF로 저장할 수 있어요" title="내 근로계약서" />

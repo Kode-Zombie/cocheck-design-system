@@ -2,7 +2,6 @@ import {
   AlertTriangle,
   ArrowLeft,
   Bell,
-  BriefcaseBusiness,
   CalendarDays,
   Camera,
   CheckCircle2,
@@ -19,12 +18,10 @@ import {
   MessageCircle,
   Plus,
   ReceiptText,
-  RefreshCw,
   Search,
   Send,
   ShieldCheck,
   Store,
-  Trash2,
   Upload,
   User,
   Users,
@@ -67,24 +64,6 @@ const employee = {
 
 const store = attendanceStores[0];
 
-type OwnerInviteStatus = '초대대기' | '가입완료' | '만료';
-
-type OwnerInviteRow = {
-  name: string;
-  contact: string;
-  store: string;
-  status: OwnerInviteStatus;
-  tone: StatusTone;
-  invitedAt: string;
-  completedAt?: string;
-};
-
-const ownerInviteRows: OwnerInviteRow[] = [
-  { name: '정지훈', contact: '010-3333-1212', store: store.name, status: '초대대기', tone: 'warning', invitedAt: '06.08 10:20' },
-  { name: '한유진', contact: '010-9999-0000', store: attendanceStores[1].name, status: '가입완료', tone: 'success', invitedAt: '06.05 14:12', completedAt: '06.07 09:15' },
-  { name: '강도현', contact: '010-2222-3333', store: attendanceStores[2].name, status: '만료', tone: 'neutral', invitedAt: '06.01 09:30' },
-];
-
 const employeeTabs: NavItem[] = [
   { id: 'home', label: '홈', icon: <Home size={18} /> },
   { id: 'punch', label: '출퇴근', icon: <Clock3 size={18} /> },
@@ -118,14 +97,12 @@ const ownerWebNavItems: NavItem[] = [
   { id: 'staff', label: '직원 관리', icon: <Users size={17} /> },
   { id: 'attendance', label: '근태 현황', icon: <Clock3 size={17} /> },
   { id: 'memo', label: '메모·인수인계', icon: <MessageCircle size={17} /> },
-  { id: 'leave', label: '휴가·연차', icon: <BriefcaseBusiness size={17} /> },
   { id: 'stats', label: '통계 리포트', icon: <LineChart size={17} /> },
   { id: 'taxation', label: '세무사 연결', icon: <Landmark size={17} /> },
   { id: 'labor', label: '근로계약서', icon: <FileText size={17} /> },
   { id: 'payment', label: '결제·구독', icon: <CreditCard size={17} /> },
   { id: 'profile', label: '내 계정', icon: <User size={17} /> },
   { id: 'todo', label: '할 일 관리', icon: <ClipboardList size={17} /> },
-  { id: 'invite', label: '초대 관리', icon: <Send size={17} /> },
 ];
 
 const contractItems: DocumentPreviewItem[] = [
@@ -173,82 +150,6 @@ function DetailRow({ label, value }: { label: string; value: ReactNode }) {
 
 function PageActions({ children }: { children: ReactNode }) {
   return <div className="att-inline-actions">{children}</div>;
-}
-
-function OwnerInviteActionButton({ invite }: { invite: OwnerInviteRow }) {
-  if (invite.status === '초대대기') {
-    return <button className="att-button att-button--ghost" type="button"><Trash2 size={14} /> 취소</button>;
-  }
-
-  if (invite.status === '만료') {
-    return <button className="att-button att-button--ghost" type="button"><RefreshCw size={14} /> 재전송</button>;
-  }
-
-  return null;
-}
-
-function hasOwnerInviteAction(invite: OwnerInviteRow) {
-  return invite.status === '초대대기' || invite.status === '만료';
-}
-
-function OwnerInviteWebActions({ invite }: { invite: OwnerInviteRow }) {
-  if (hasOwnerInviteAction(invite)) {
-    return (
-      <PageActions>
-        <StatusBadge tone={invite.tone}>{invite.status}</StatusBadge>
-        <OwnerInviteActionButton invite={invite} />
-      </PageActions>
-    );
-  }
-
-  return (
-    <PageActions>
-      <StatusBadge tone={invite.tone}>{invite.status}</StatusBadge>
-      {invite.completedAt ? <span className="att-invite-completed-at">완료일시 {invite.completedAt}</span> : null}
-    </PageActions>
-  );
-}
-
-function OwnerInviteMobileCard({ invite }: { invite: OwnerInviteRow }) {
-  return (
-    <article className="att-invite-card">
-      <div className="att-invite-card__top">
-        <div className="att-invite-card__person">
-          <div className="att-invite-card__avatar">
-            <User size={16} />
-          </div>
-          <div className="att-invite-card__identity">
-            <strong>{invite.name}</strong>
-            <span>{invite.store}</span>
-          </div>
-        </div>
-        <StatusBadge tone={invite.tone}>{invite.status}</StatusBadge>
-      </div>
-
-      <dl className="att-invite-card__details">
-        <div className="att-invite-card__detail">
-          <dt>전화번호</dt>
-          <dd>{invite.contact}</dd>
-        </div>
-        <div className="att-invite-card__detail">
-          <dt>초대일시</dt>
-          <dd>{invite.invitedAt}</dd>
-        </div>
-        {invite.completedAt ? (
-          <div className="att-invite-card__detail att-invite-card__detail--full">
-            <dt>완료일시</dt>
-            <dd>{invite.completedAt}</dd>
-          </div>
-        ) : null}
-      </dl>
-
-      {hasOwnerInviteAction(invite) ? (
-        <div className="att-invite-card__actions">
-          <OwnerInviteActionButton invite={invite} />
-        </div>
-      ) : null}
-    </article>
-  );
 }
 
 function IconButton({ children, label }: { children: ReactNode; label: string }) {
@@ -755,21 +656,6 @@ export function EmployeeNotificationMobile({ theme = 'calm' }: AttendanceScreenP
   );
 }
 
-export function OwnerInviteListMobile({ theme = 'calm' }: AttendanceScreenProps) {
-  return (
-    <OwnerMobileShell activeTab="stores" theme={theme} title="OM4b · 초대 인원 목록 (사장 모바일)">
-      <MobileHeader back right={<button className="att-button" type="button"><Plus size={14} /> 초대</button>} title="초대 인원" />
-      <main className="att-mobile-content">
-        <div className="att-stack">
-          {ownerInviteRows.map((invite) => (
-            <OwnerInviteMobileCard invite={invite} key={invite.contact} />
-          ))}
-        </div>
-      </main>
-    </OwnerMobileShell>
-  );
-}
-
 export function OwnerProfileEditMobile({ theme = 'calm' }: AttendanceScreenProps) {
   return (
     <OwnerMobileShell activeTab="me" theme={theme} title="OM8 · 프로필 수정 (사장 모바일)">
@@ -811,30 +697,6 @@ export function OwnerNotificationMobile({ theme = 'calm' }: AttendanceScreenProp
               right={<StatusBadge tone={tone}>{tone === 'danger' ? '확인필요' : '알림'}</StatusBadge>}
               title={title}
             />
-          ))}
-        </div>
-      </main>
-    </OwnerMobileShell>
-  );
-}
-
-export function OwnerLeaveMobile({ theme = 'calm' }: AttendanceScreenProps) {
-  const requests = [
-    { name: '최지우', date: '4월 25일 (금)', type: '연차', tone: 'warning' as StatusTone },
-    { name: '박민아', date: '4월 18일 (금)', type: '연차', tone: 'success' as StatusTone },
-    { name: '한유진', date: '5월 1일-3일', type: '반차', tone: 'warning' as StatusTone },
-  ];
-  return (
-    <OwnerMobileShell activeTab="home" theme={theme} title="OM10 · 휴가·연차 관리 (사장 모바일)">
-      <MobileHeader right={<StatusBadge tone="warning">2건 대기</StatusBadge>} subtitle="휴가·연차 요청" title="승인 관리" />
-      <main className="att-mobile-content">
-        <div className="att-metric-grid att-metric-grid--two">
-          <MetricCard caption="이번 달" label="사용 연차" value="6일" />
-          <MetricCard caption="승인 대기" label="요청" value="2건" />
-        </div>
-        <div className="att-stack" style={{ marginTop: 14 }}>
-          {requests.map((request) => (
-            <ActionCard caption={`${request.type} · ${request.date}`} icon={<BriefcaseBusiness size={16} />} key={`${request.name}-${request.date}`} right={<StatusBadge tone={request.tone}>{request.tone === 'success' ? '승인' : '대기'}</StatusBadge>} title={request.name} />
           ))}
         </div>
       </main>
@@ -1122,31 +984,6 @@ export function OwnerTodoWeb({ theme = 'calm' }: AttendanceScreenProps) {
       <div className="att-card-section">
         {rows.map(([title, ownerName, caption, tone]) => (
           <ActionCard icon={<ClipboardList size={16} />} key={title} right={<StatusBadge tone={tone}>{caption}</StatusBadge>} title={title} caption={`담당 ${ownerName}`} />
-        ))}
-      </div>
-    </OwnerWebShell>
-  );
-}
-
-export function OwnerInviteManageWeb({ theme = 'calm' }: AttendanceScreenProps) {
-  return (
-    <OwnerWebShell activeId="invite" subtitle="직원 초대 현황과 재전송 이력을 관리합니다." theme={theme} title="초대 관리">
-      <div className="att-section-heading">
-        <PageActions>
-          <button className="att-button att-button--secondary" type="button"><RefreshCw size={15} /> 일괄 재전송</button>
-          <button className="att-button" type="button"><Send size={15} /> 새 초대</button>
-        </PageActions>
-      </div>
-      <div className="att-card-section">
-        {ownerInviteRows.map((invite) => (
-          <ActionCard
-            caption={`${invite.store} · ${invite.contact}`}
-            icon={<User size={16} />}
-            key={invite.contact}
-            meta={`초대일시 ${invite.invitedAt}`}
-            right={<OwnerInviteWebActions invite={invite} />}
-            title={invite.name}
-          />
         ))}
       </div>
     </OwnerWebShell>

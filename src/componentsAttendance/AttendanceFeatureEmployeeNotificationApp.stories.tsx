@@ -13,7 +13,7 @@ const ScreenStory = createScreenStory(group.screens);
 const meta = {
   title: 'Attendance/기능별/직원 알림/앱',
   component: ScreenStory,
-  args: { screenId: 'latest-employee-notification-mobile', theme: 'calm' },
+  args: { screenId: 'employee-notification-mobile', theme: 'calm' },
   argTypes: attendanceStoryArgTypes,
   parameters: { layout: 'centered' },
 } satisfies Meta<typeof ScreenStory>;
@@ -26,4 +26,4 @@ const story = (screenId: string): Story => ({
   args: { screenId },
 });
 
-export const EmployeeNotificationMobile = story('latest-employee-notification-mobile');
+export const EmployeeNotificationMobile = story('employee-notification-mobile');

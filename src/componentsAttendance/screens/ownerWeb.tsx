@@ -20,6 +20,7 @@ import {
   Pencil,
   Plus,
   ReceiptText,
+  RefreshCw,
   Send,
   ShieldCheck,
   Star,
@@ -31,7 +32,7 @@ import {
   X,
 } from 'lucide-react';
 import { useState } from 'react';
-import type { ReactNode } from 'react';
+import type { KeyboardEvent, ReactNode } from 'react';
 import { SearchInput } from '../../components';
 import { ActionCard } from '../components/ActionCard';
 import { DocumentPreview, type DocumentPreviewItem } from '../components/DocumentPreview';
@@ -71,7 +72,6 @@ const ownerWebNavItems: NavItem[] = [
   { id: 'staff', label: '직원 관리', icon: <Users size={17} /> },
   { id: 'attendance', label: '근태 현황', icon: <ClockIcon /> },
   { id: 'memo', label: '메모·인수인계', icon: <MessageCircle size={17} /> },
-  { id: 'leave', label: '휴가·연차', icon: <BriefcaseBusiness size={17} /> },
   { id: 'stats', label: '통계 리포트', icon: <LineChart size={17} /> },
   { id: 'taxation', label: '세무사 연결', icon: <Landmark size={17} /> },
   { id: 'labor', label: '근로계약서', icon: <FileText size={17} /> },
@@ -118,6 +118,26 @@ const staffRows = [
     status: '퇴직',
     tone: 'neutral' as StatusTone,
   },
+];
+
+type OwnerStaffTab = 'staff' | 'invite';
+
+type OwnerInviteStatus = '초대대기' | '가입완료' | '만료';
+
+type OwnerInviteRow = {
+  name: string;
+  contact: string;
+  store: string;
+  status: OwnerInviteStatus;
+  tone: StatusTone;
+  invitedAt: string;
+  completedAt?: string;
+};
+
+const ownerInviteRows: OwnerInviteRow[] = [
+  { name: '정지훈', contact: '010-3333-1212', store: selectedStore.name, status: '초대대기', tone: 'warning', invitedAt: '06.08 10:20' },
+  { name: '한유진', contact: '010-9999-0000', store: attendanceStores[1].name, status: '가입완료', tone: 'success', invitedAt: '06.05 14:12', completedAt: '06.07 09:15' },
+  { name: '강도현', contact: '010-2222-3333', store: attendanceStores[2].name, status: '만료', tone: 'neutral', invitedAt: '06.01 09:30' },
 ];
 
 const attendanceRows = [
@@ -212,12 +232,78 @@ const memoRows = [
   pinned: boolean;
 }[];
 
+type OwnerScheduleTab = 'schedule' | 'leave';
+type LeaveRequestStatus = '대기' | '승인' | '반려';
+
+type LeaveRequest = {
+  id: string;
+  name: string;
+  store: string;
+  type: string;
+  date: string;
+  days: string;
+  status: LeaveRequestStatus;
+  tone: StatusTone;
+  reason: string;
+};
+
 const leaveRequests = [
-  { name: '최지우', store: selectedStore.name, type: '연차', date: '4월 25일 (금)', days: '1일', status: '대기', tone: 'warning' },
-  { name: '한유진', store: attendanceStores[1].name, type: '반차(오후)', date: '5월 1일-5월 3일', days: '3일', status: '대기', tone: 'warning' },
-  { name: '박민아', store: selectedStore.name, type: '연차', date: '4월 18일 (금)', days: '1일', status: '승인', tone: 'success' },
-  { name: '정지훈', store: attendanceStores[1].name, type: '병가', date: '4월 10일-4월 11일', days: '2일', status: '승인', tone: 'success' },
-] satisfies { name: string; store: string; type: string; date: string; days: string; status: string; tone: StatusTone }[];
+  {
+    id: 'leave-jiwoo',
+    name: '최지우',
+    store: selectedStore.name,
+    type: '연차',
+    date: '4월 25일 (금)',
+    days: '1일',
+    status: '대기',
+    tone: 'warning',
+    reason: '가족 병원 진료 동행 일정이 있어 하루 연차를 신청합니다.',
+  },
+  {
+    id: 'leave-yujin',
+    name: '한유진',
+    store: attendanceStores[1].name,
+    type: '반차(오후)',
+    date: '5월 1일-5월 3일',
+    days: '3일',
+    status: '대기',
+    tone: 'warning',
+    reason: '지방 일정으로 오후 근무 조정이 필요합니다.',
+  },
+  {
+    id: 'leave-mina',
+    name: '박민아',
+    store: selectedStore.name,
+    type: '연차',
+    date: '4월 18일 (금)',
+    days: '1일',
+    status: '승인',
+    tone: 'success',
+    reason: '가족 여행 일정이 확정되어 하루 연차를 사용하려고 합니다.',
+  },
+  {
+    id: 'leave-jihun',
+    name: '정지훈',
+    store: attendanceStores[1].name,
+    type: '병가',
+    date: '4월 10일-4월 11일',
+    days: '2일',
+    status: '승인',
+    tone: 'success',
+    reason: '몸살 증상으로 병원 진료와 회복 시간이 필요합니다.',
+  },
+  {
+    id: 'leave-dohyun',
+    name: '강도현',
+    store: attendanceStores[2].name,
+    type: '연차',
+    date: '4월 27일 (일)',
+    days: '1일',
+    status: '반려',
+    tone: 'danger',
+    reason: '동시간대 근무 가능 인원이 부족해 대체 근무자 확인 후 재신청이 필요합니다.',
+  },
+] satisfies LeaveRequest[];
 
 const contractItems: DocumentPreviewItem[] = [
   { title: '제1조 (근무 장소)', content: `${selectedStore.name}\n${selectedStore.address}` },
@@ -420,6 +506,254 @@ function Money({ children, tone }: { children: ReactNode; tone?: 'success' | 'da
     >
       {children}
     </span>
+  );
+}
+
+function OwnerStaffTabs({
+  activeTab,
+  onChange,
+}: {
+  activeTab: OwnerStaffTab;
+  onChange: (tab: OwnerStaffTab) => void;
+}) {
+  const tabs: Array<{
+    id: OwnerStaffTab;
+    label: string;
+    icon: ReactNode;
+    panelId: string;
+  }> = [
+    { id: 'staff', label: '직원 목록', icon: <Users size={15} />, panelId: 'owner-staff-list-panel' },
+    { id: 'invite', label: '초대 목록', icon: <Send size={15} />, panelId: 'owner-staff-invite-panel' },
+  ];
+
+  return (
+    <div aria-label="직원 관리 보기 전환" className="att-owner-staff-tabs" role="tablist">
+      {tabs.map((tab) => {
+        const selected = activeTab === tab.id;
+
+        return (
+          <button
+            aria-controls={tab.panelId}
+            aria-selected={selected}
+            className={`att-button att-owner-staff-tabs__item${selected ? '' : ' att-button--secondary'}`}
+            id={`owner-staff-${tab.id}-tab`}
+            key={tab.id}
+            onClick={() => onChange(tab.id)}
+            role="tab"
+            type="button"
+          >
+            {tab.icon}
+            {tab.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function OwnerInviteActionButton({ invite }: { invite: OwnerInviteRow }) {
+  if (invite.status === '초대대기') {
+    return <button className="att-button att-button--ghost" type="button"><Trash2 size={14} /> 취소</button>;
+  }
+
+  if (invite.status === '만료') {
+    return <button className="att-button att-button--ghost" type="button"><RefreshCw size={14} /> 재전송</button>;
+  }
+
+  return null;
+}
+
+function hasOwnerInviteAction(invite: OwnerInviteRow) {
+  return invite.status === '초대대기' || invite.status === '만료';
+}
+
+function OwnerInviteWebActions({ invite }: { invite: OwnerInviteRow }) {
+  if (hasOwnerInviteAction(invite)) {
+    return (
+      <PageActions>
+        <StatusBadge tone={invite.tone}>{invite.status}</StatusBadge>
+        <OwnerInviteActionButton invite={invite} />
+      </PageActions>
+    );
+  }
+
+  return (
+    <PageActions>
+      <StatusBadge tone={invite.tone}>{invite.status}</StatusBadge>
+      {invite.completedAt ? <span className="att-invite-completed-at">완료일시 {invite.completedAt}</span> : null}
+    </PageActions>
+  );
+}
+
+function OwnerScheduleTabs({
+  activeTab,
+  onChange,
+}: {
+  activeTab: OwnerScheduleTab;
+  onChange: (tab: OwnerScheduleTab) => void;
+}) {
+  const tabs: Array<{
+    id: OwnerScheduleTab;
+    label: string;
+    icon: ReactNode;
+    panelId: string;
+  }> = [
+    { id: 'schedule', label: '일정목록', icon: <CalendarDays size={15} />, panelId: 'owner-schedule-list-panel' },
+    { id: 'leave', label: '휴가목록', icon: <BriefcaseBusiness size={15} />, panelId: 'owner-schedule-leave-panel' },
+  ];
+
+  return (
+    <div aria-label="일정관리 보기 전환" className="att-owner-schedule-tabs" role="tablist">
+      {tabs.map((tab) => {
+        const selected = activeTab === tab.id;
+
+        return (
+          <button
+            aria-controls={tab.panelId}
+            aria-selected={selected}
+            className={`att-button att-owner-schedule-tabs__item${selected ? '' : ' att-button--secondary'}`}
+            id={`owner-schedule-${tab.id}-tab`}
+            key={tab.id}
+            onClick={() => onChange(tab.id)}
+            role="tab"
+            type="button"
+          >
+            {tab.icon}
+            {tab.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function LeaveRequestCard({
+  expanded,
+  onToggle,
+  request,
+}: {
+  expanded: boolean;
+  onToggle: () => void;
+  request: LeaveRequest;
+}) {
+  const detailsId = `${request.id}-details`;
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      onToggle();
+    }
+  };
+
+  return (
+    <article className={`att-leave-request-card${expanded ? ' att-leave-request-card--expanded' : ''}`}>
+      <div
+        aria-controls={detailsId}
+        aria-expanded={expanded}
+        className="att-leave-request-card__trigger"
+        onClick={onToggle}
+        onKeyDown={handleKeyDown}
+        role="button"
+        tabIndex={0}
+      >
+        <ActionCard
+          caption={`${request.store} · ${request.type} · ${request.date} (${request.days})`}
+          icon={<BriefcaseBusiness size={16} />}
+          right={
+            <PageActions>
+              <StatusBadge tone={request.tone}>{request.status}</StatusBadge>
+              <ChevronRight className={expanded ? 'att-leave-request-card__chevron--expanded' : undefined} size={16} />
+            </PageActions>
+          }
+          title={request.name}
+        />
+      </div>
+      {expanded ? (
+        <section aria-label={`${request.name} 휴가 상세사유`} className="att-leave-request-card__detail" id={detailsId}>
+          <div>
+            <span>상세사유</span>
+            <p>{request.reason}</p>
+          </div>
+          <PageActions>
+            <button className="att-button att-button--secondary" type="button">반려</button>
+            <button className="att-button" type="button">승인</button>
+          </PageActions>
+        </section>
+      ) : null}
+    </article>
+  );
+}
+
+function LeaveRequestsContent({ initialExpandedLeaveId }: { initialExpandedLeaveId?: string }) {
+  const [expandedLeaveIds, setExpandedLeaveIds] = useState<string[]>(
+    initialExpandedLeaveId ? [initialExpandedLeaveId] : [],
+  );
+
+  const toggleLeaveRequest = (requestId: string) => {
+    setExpandedLeaveIds((current) => (
+      current.includes(requestId)
+        ? current.filter((id) => id !== requestId)
+        : [...current, requestId]
+    ));
+  };
+
+  return (
+    <div className="att-stack att-stack--loose">
+      <div className="att-section-heading">
+        <PageActions>
+          {['전체', '대기 2', '승인 2', '반려 1'].map((filter, index) => (
+            <button className={`att-button ${index === 0 ? '' : 'att-button--secondary'}`} key={filter} type="button">
+              {filter}
+            </button>
+          ))}
+        </PageActions>
+        <span>상세사유 확인 후 상태를 변경할 수 있습니다.</span>
+      </div>
+      <FormPanel title={`휴가목록 (${leaveRequests.length}건)`}>
+        {leaveRequests.map((request) => (
+          <LeaveRequestCard
+            expanded={expandedLeaveIds.includes(request.id)}
+            key={request.id}
+            onToggle={() => toggleLeaveRequest(request.id)}
+            request={request}
+          />
+        ))}
+      </FormPanel>
+    </div>
+  );
+}
+
+function OwnerScheduleContent({
+  initialExpandedLeaveId,
+  initialTab = 'schedule',
+}: {
+  initialExpandedLeaveId?: string;
+  initialTab?: OwnerScheduleTab;
+}) {
+  const [activeTab, setActiveTab] = useState<OwnerScheduleTab>(initialTab);
+
+  return (
+    <div className="att-stack att-stack--loose">
+      <OwnerScheduleTabs activeTab={activeTab} onChange={setActiveTab} />
+      {activeTab === 'schedule' ? (
+        <section
+          aria-labelledby="owner-schedule-schedule-tab"
+          className="att-stack att-stack--loose"
+          id="owner-schedule-list-panel"
+          role="tabpanel"
+        >
+          <RosterContent />
+        </section>
+      ) : (
+        <section
+          aria-labelledby="owner-schedule-leave-tab"
+          id="owner-schedule-leave-panel"
+          role="tabpanel"
+        >
+          <LeaveRequestsContent initialExpandedLeaveId={initialExpandedLeaveId} />
+        </section>
+      )}
+    </div>
   );
 }
 
@@ -635,9 +969,9 @@ function RosterContent({ compact = false }: { compact?: boolean }) {
   );
 }
 
-function StaffContent({ compact = false }: { compact?: boolean }) {
+function StaffListContent({ compact = false }: { compact?: boolean }) {
   return (
-    <div className="att-stack att-stack--loose">
+    <>
       <div className="att-section-heading">
         <PageActions>
           {['전체 (5)', `${selectedStore.name} (2)`, `${attendanceStores[1].name} (2)`, '퇴직 포함'].map((filter, index) => (
@@ -665,6 +999,68 @@ function StaffContent({ compact = false }: { compact?: boolean }) {
         ])}
         template="1.05fr 1.15fr 1.3fr 0.7fr 0.9fr 0.7fr 0.7fr 1fr"
       />
+    </>
+  );
+}
+
+function OwnerInviteListContent() {
+  return (
+    <>
+      <div className="att-section-heading">
+        <PageActions>
+          <button className="att-button att-button--secondary" type="button"><RefreshCw size={15} /> 일괄 재전송</button>
+          <button className="att-button" type="button"><Send size={15} /> 새 초대</button>
+        </PageActions>
+        <span>대기 1명 · 가입완료 1명 · 만료 1명</span>
+      </div>
+      <div className="att-card-section">
+        {ownerInviteRows.map((invite) => (
+          <ActionCard
+            caption={`${invite.store} · ${invite.contact}`}
+            icon={<User size={16} />}
+            key={invite.contact}
+            meta={`초대일시 ${invite.invitedAt}`}
+            right={<OwnerInviteWebActions invite={invite} />}
+            title={invite.name}
+          />
+        ))}
+      </div>
+    </>
+  );
+}
+
+function StaffContent({
+  compact = false,
+  initialTab = 'staff',
+}: {
+  compact?: boolean;
+  initialTab?: OwnerStaffTab;
+}) {
+  const [activeTab, setActiveTab] = useState<OwnerStaffTab>(initialTab);
+  const currentTab = compact ? 'staff' : activeTab;
+
+  return (
+    <div className="att-stack att-stack--loose">
+      {compact ? null : <OwnerStaffTabs activeTab={currentTab} onChange={setActiveTab} />}
+      {currentTab === 'staff' ? (
+        <section
+          aria-labelledby="owner-staff-staff-tab"
+          className="att-stack att-stack--loose"
+          id="owner-staff-list-panel"
+          role={compact ? undefined : 'tabpanel'}
+        >
+          <StaffListContent compact={compact} />
+        </section>
+      ) : (
+        <section
+          aria-labelledby="owner-staff-invite-tab"
+          className="att-stack att-stack--loose"
+          id="owner-staff-invite-panel"
+          role="tabpanel"
+        >
+          <OwnerInviteListContent />
+        </section>
+      )}
     </div>
   );
 }
@@ -772,15 +1168,22 @@ export function OwnerDashboardWeb({ theme = 'calm' }: AttendanceScreenProps) {
   );
 }
 
-export function OwnerScheduleWeb({ theme = 'calm' }: AttendanceScreenProps) {
+export function OwnerScheduleWeb({
+  initialExpandedLeaveId,
+  initialTab = 'schedule',
+  theme = 'calm',
+}: AttendanceScreenProps & {
+  initialExpandedLeaveId?: string;
+  initialTab?: OwnerScheduleTab;
+}) {
   return (
     <OwnerWebShell
       activeId="schedule"
-      subtitle={`${selectedStore.name} · 근무를 추가하거나 주간 스케줄을 조정합니다.`}
+      subtitle={`${selectedStore.name} · 일정과 휴가 요청을 함께 관리합니다.`}
       theme={theme}
       title="스케줄 편성"
     >
-      <RosterContent />
+      <OwnerScheduleContent initialExpandedLeaveId={initialExpandedLeaveId} initialTab={initialTab} />
     </OwnerWebShell>
   );
 }
@@ -927,15 +1330,18 @@ export function OwnerPayrollWeb({ theme = 'calm' }: AttendanceScreenProps) {
   );
 }
 
-export function OwnerStaffWeb({ theme = 'calm' }: AttendanceScreenProps) {
+export function OwnerStaffWeb({
+  initialTab = 'staff',
+  theme = 'calm',
+}: AttendanceScreenProps & { initialTab?: OwnerStaffTab }) {
   return (
     <OwnerWebShell
       activeId="staff"
-      subtitle="등록된 직원 목록과 근무 매장, 시급, 재직 상태를 관리합니다."
+      subtitle="직원 목록과 초대 현황을 탭으로 전환해 관리합니다."
       theme={theme}
       title="직원 관리"
     >
-      <StaffContent />
+      <StaffContent initialTab={initialTab} />
     </OwnerWebShell>
   );
 }
@@ -1120,58 +1526,6 @@ export function OwnerPushMessageCreateWeb({ theme = 'calm' }: AttendanceScreenPr
         </div>
       </ModalCard>
     </ModalOverlay>
-  );
-}
-
-export function OwnerLeaveWeb({ theme = 'calm' }: AttendanceScreenProps) {
-  const balances = [
-    { name: '최지우', total: 15, used: 3, remain: 12 },
-    { name: '박민아', total: 11, used: 2, remain: 9 },
-    { name: '정지훈', total: 15, used: 5, remain: 10 },
-    { name: '최서아', total: 8, used: 0, remain: 8 },
-    { name: '한유진', total: 15, used: 1, remain: 14 },
-  ];
-
-  return (
-    <OwnerWebShell
-      activeId="leave"
-      subtitle="휴가 신청 승인과 직원별 연차 잔여 현황을 확인합니다."
-      theme={theme}
-      title="휴가·연차 관리"
-    >
-      <div style={{ display: 'grid', gap: 20, gridTemplateColumns: '1fr 1fr' }}>
-        <FormPanel title={`승인 대기 (${leaveRequests.filter((request) => request.status === '대기').length}건)`}>
-          {leaveRequests.map((request) => (
-            <ActionCard
-              caption={`${request.store} · ${request.type} · ${request.date} (${request.days})`}
-              icon={<BriefcaseBusiness size={16} />}
-              key={`${request.name}-${request.date}`}
-              right={
-                request.status === '대기' ? (
-                  <PageActions>
-                    <button className="att-button" type="button">승인</button>
-                    <button className="att-button att-button--secondary" type="button">반려</button>
-                  </PageActions>
-                ) : <StatusBadge tone={request.tone}>{request.status}</StatusBadge>
-              }
-              title={request.name}
-            />
-          ))}
-        </FormPanel>
-        <FormPanel title="연차 잔여 현황">
-          <WebTable
-            columns={['직원', '부여', '사용', '잔여']}
-            rows={balances.map((balance) => [
-              <AvatarName name={balance.name} />,
-              `${balance.total}일`,
-              <span style={{ color: 'var(--att-warn)', fontWeight: 800 }}>{balance.used}일</span>,
-              <span style={{ color: 'var(--att-success)', fontWeight: 800 }}>{balance.remain}일</span>,
-            ])}
-            template="1fr 70px 70px 70px"
-          />
-        </FormPanel>
-      </div>
-    </OwnerWebShell>
   );
 }
 

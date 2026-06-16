@@ -86,11 +86,6 @@ export const attendanceFeatureStoryGroups: AttendanceFeatureStoryGroup[] = [
     screens: pickScreens('employee-punch-web'),
   },
   {
-    feature: '직원 출퇴근',
-    platform: '앱',
-    screens: pickScreens('employee-punch-mobile'),
-  },
-  {
     feature: '직원 일정관리',
     platform: '웹',
     screens: pickScreens(
@@ -156,7 +151,7 @@ export const attendanceFeatureStoryGroups: AttendanceFeatureStoryGroup[] = [
   {
     feature: '직원 알림',
     platform: '앱',
-    screens: pickScreens('latest-employee-notification-mobile'),
+    screens: pickScreens('employee-notification-mobile'),
   },
   {
     feature: '직원 프로필',
@@ -232,16 +227,6 @@ export const attendanceFeatureStoryGroups: AttendanceFeatureStoryGroup[] = [
     screens: pickScreens('owner-staff-web', 'owner-staff-add-web', 'latest-owner-staff-edit-web'),
   },
   {
-    feature: '경영주 초대관리',
-    platform: '웹',
-    screens: pickScreens('latest-owner-invite-manage-web'),
-  },
-  {
-    feature: '경영주 초대관리',
-    platform: '앱',
-    screens: pickScreens('latest-owner-invite-list-mobile'),
-  },
-  {
     feature: '경영주 출퇴근현황',
     platform: '웹',
     screens: pickScreens('owner-attendance-web'),
@@ -265,16 +250,6 @@ export const attendanceFeatureStoryGroups: AttendanceFeatureStoryGroup[] = [
     feature: '경영주 알림',
     platform: '앱',
     screens: pickScreens('owner-push-message-create-mobile', 'latest-owner-notification-mobile'),
-  },
-  {
-    feature: '경영주 휴가관리',
-    platform: '웹',
-    screens: pickScreens('owner-leave-web'),
-  },
-  {
-    feature: '경영주 휴가관리',
-    platform: '앱',
-    screens: pickScreens('latest-owner-leave-mobile'),
   },
   {
     feature: '경영주 통계리포트',

@@ -414,6 +414,44 @@
   background: var(--att-surface);
 }
 
+.att-employee-app-header {
+  display: grid;
+  align-items: center;
+  grid-template-columns: 40px minmax(0, 1fr) 40px;
+  gap: 12px;
+  padding: 12px 18px 8px;
+  border-bottom: 1px solid color-mix(in srgb, var(--att-border) 68%, transparent);
+  background: var(--att-surface);
+  flex: 0 0 auto;
+}
+
+.att-employee-app-header__brand {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  gap: 8px;
+}
+
+.att-employee-app-header__brand img {
+  display: block;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  object-fit: cover;
+  object-position: 50% 26%;
+}
+
+.att-employee-app-header__brand span {
+  overflow: hidden;
+  color: var(--att-text);
+  font-size: 21px;
+  font-weight: 900;
+  line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .att-notification-dot {
   position: absolute;
   top: 8px;
@@ -1268,6 +1306,70 @@
   border-color: var(--att-warn);
   color: var(--att-warn);
   background: var(--att-warn-soft);
+}
+
+.att-owner-staff-tabs,
+.att-owner-schedule-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  max-width: 360px;
+}
+
+.att-owner-staff-tabs__item,
+.att-owner-schedule-tabs__item {
+  justify-content: center;
+}
+
+.att-owner-staff-tabs__item[aria-selected="true"],
+.att-owner-schedule-tabs__item[aria-selected="true"] {
+  border-color: var(--att-primary);
+  box-shadow: 0 0 0 1px var(--att-primary);
+}
+
+.att-leave-request-card {
+  border-bottom: 1px solid var(--att-border);
+}
+
+.att-leave-request-card:last-child {
+  border-bottom: 0;
+}
+
+.att-leave-request-card__trigger {
+  color: inherit;
+  cursor: pointer;
+}
+
+.att-leave-request-card__trigger:focus-visible {
+  outline: 2px solid var(--att-primary);
+  outline-offset: -2px;
+}
+
+.att-leave-request-card__chevron--expanded {
+  transform: rotate(90deg);
+}
+
+.att-leave-request-card__detail {
+  display: grid;
+  gap: 12px;
+  margin: 0 12px 12px 60px;
+  padding: 12px;
+  border: 1px solid var(--att-border);
+  border-radius: 8px;
+  background: var(--att-surface-muted);
+}
+
+.att-leave-request-card__detail span {
+  color: var(--att-text-subtle);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.att-leave-request-card__detail p {
+  margin: 4px 0 0;
+  color: var(--att-text);
+  font-size: 13px;
+  line-height: 1.55;
 }
 
 .att-chip {
