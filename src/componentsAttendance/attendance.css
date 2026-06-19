@@ -414,7 +414,8 @@
   background: var(--att-surface);
 }
 
-.att-employee-app-header {
+.att-employee-app-header,
+.att-owner-app-header {
   display: grid;
   align-items: center;
   grid-template-columns: 40px minmax(0, 1fr) 40px;
@@ -425,7 +426,18 @@
   flex: 0 0 auto;
 }
 
-.att-employee-app-header__brand {
+.att-owner-app-header {
+  grid-template-columns: minmax(0, 1fr) 118px 40px;
+  gap: 10px;
+}
+
+.att-owner-app-header__brand {
+  grid-column: 1;
+  justify-self: start;
+}
+
+.att-employee-app-header__brand,
+.att-owner-app-header__brand {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -433,23 +445,50 @@
   gap: 8px;
 }
 
-.att-employee-app-header__brand img {
+.att-employee-app-header__brand img,
+.att-owner-app-header__brand img {
   display: block;
-  width: 34px;
-  height: 34px;
-  border-radius: 9px;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
   object-fit: cover;
   object-position: 50% 26%;
 }
 
-.att-employee-app-header__brand span {
+.att-employee-app-header__brand span,
+.att-owner-app-header__brand span {
   overflow: hidden;
   color: var(--att-text);
-  font-size: 21px;
+  font-size: 18px;
   font-weight: 900;
   line-height: 1;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.att-owner-store-select {
+  display: block;
+  min-width: 0;
+  max-width: 118px;
+  grid-column: 2;
+}
+
+.att-owner-store-select select {
+  width: 100%;
+  min-width: 0;
+  height: 36px;
+  padding: 0 9px;
+  border: 1px solid var(--att-border);
+  border-radius: 8px;
+  color: var(--att-text);
+  background: var(--att-surface);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.att-owner-app-header > .att-icon-button {
+  grid-column: 3;
+  justify-self: end;
 }
 
 .att-notification-dot {

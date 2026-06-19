@@ -1,8 +1,10 @@
 import {
   CalendarDays,
   Clock3,
+  Ellipsis,
   Home,
   KeyRound,
+  MessageCircle,
   Plus,
   Store,
   User,
@@ -21,10 +23,10 @@ import type { AttendanceScreenProps } from './screenTypes';
 
 const ownerTabs: NavItem[] = [
   { id: 'home', label: '홈', icon: <Home size={18} /> },
-  { id: 'schedule', label: '스케줄', icon: <CalendarDays size={18} /> },
+  { id: 'memo', label: '메모', icon: <MessageCircle size={18} /> },
+  { id: 'schedule', label: '일정', icon: <CalendarDays size={18} /> },
   { id: 'salary', label: '급여', icon: <WalletCards size={18} /> },
-  { id: 'stores', label: '매장', icon: <Store size={18} /> },
-  { id: 'me', label: '나', icon: <User size={18} /> },
+  { id: 'me', label: '나', icon: <Ellipsis size={18} />, hideLabel: true },
 ];
 
 const employeeTabs: NavItem[] = [

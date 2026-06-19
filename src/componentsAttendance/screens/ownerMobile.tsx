@@ -9,6 +9,7 @@ import {
   Circle,
   ClipboardList,
   Download,
+  Ellipsis,
   Edit3,
   FileText,
   Home,
@@ -51,10 +52,10 @@ const selectedStore = attendanceStores[0];
 
 const ownerTabs: NavItem[] = [
   { id: 'home', label: '홈', icon: <Home size={18} /> },
-  { id: 'schedule', label: '스케줄', icon: <CalendarDays size={18} /> },
+  { id: 'memo', label: '메모', icon: <MessageCircle size={18} /> },
+  { id: 'schedule', label: '일정', icon: <CalendarDays size={18} /> },
   { id: 'salary', label: '급여', icon: <WalletCards size={18} /> },
-  { id: 'stores', label: '매장', icon: <Store size={18} /> },
-  { id: 'me', label: '나', icon: <User size={18} /> },
+  { id: 'me', label: '나', icon: <Ellipsis size={18} />, hideLabel: true },
 ];
 
 const ownerStoreStatus = attendanceStores.map((store, index) => ({
@@ -208,6 +209,7 @@ function MobileShell({
   activeTab,
   children,
   height = 874,
+  showNotificationLauncher = true,
   theme,
   title,
   width = 402,
@@ -215,6 +217,7 @@ function MobileShell({
   activeTab?: string;
   children: ReactNode;
   height?: number;
+  showNotificationLauncher?: boolean;
   theme: AttendanceScreenProps['theme'];
   title: string;
   width?: number;
@@ -222,10 +225,41 @@ function MobileShell({
   return (
     <MobileFrame height={height} theme={theme} title={title} width={width}>
       <div className="att-mobile-screen">
+        <OwnerAppHeader showNotificationLauncher={showNotificationLauncher} />
         {children}
         {activeTab ? <OwnerTabBar activeId={activeTab} items={ownerTabs} /> : null}
       </div>
     </MobileFrame>
+  );
+}
+
+function OwnerAppHeader({ showNotificationLauncher = true }: { showNotificationLauncher?: boolean } = {}) {
+  return (
+    <header aria-label="경영주 앱 헤더" className="att-owner-app-header">
+      <div className="att-owner-app-header__brand">
+        <img alt="CoCheck" src="/cocheck-logo.png" />
+        <span>CoCheck</span>
+      </div>
+      <label className="att-owner-store-select">
+        <select aria-label="지점 선택" defaultValue={selectedStore.id}>
+          {attendanceStores.map((store) => (
+            <option key={store.id} value={store.id}>{store.name}</option>
+          ))}
+        </select>
+      </label>
+      {showNotificationLauncher ? (
+        <button
+          aria-controls="owner-push-message-create-mobile"
+          aria-label="직원 알림 보내기"
+          className="att-icon-button"
+          data-target-screen="owner-push-message-create-mobile"
+          type="button"
+        >
+          <Bell size={18} />
+          <span className="att-notification-dot" />
+        </button>
+      ) : null}
+    </header>
   );
 }
 
@@ -338,12 +372,6 @@ export function OwnerHomeMobile({ theme = 'calm' }: AttendanceScreenProps) {
     <MobileShell activeTab="home" theme={theme} title="01 · 경영주 홈">
       <PageHeader
         eyebrow="경영주"
-        right={
-          <IconButton label="알림 보기">
-            <Bell size={18} />
-            <span className="att-notification-dot" />
-          </IconButton>
-        }
         title={`${owner.name} 님`}
       />
       <main className="att-mobile-content att-mobile-content--flush-top" tabIndex={0}>
@@ -547,7 +575,7 @@ export function OwnerPayrollPublishMobile({ theme = 'calm' }: AttendanceScreenPr
 
 export function OwnerStoresMobile({ theme = 'calm' }: AttendanceScreenProps) {
   return (
-    <MobileShell activeTab="stores" theme={theme} title="04 · 매장 관리">
+    <MobileShell activeTab="me" theme={theme} title="04 · 매장 관리">
       <PageHeader
         eyebrow={`${ownerStoreStatus.length}개 매장 · 직원 ${ownerStoreStatus.reduce((sum, store) => sum + store.total, 0)}명`}
         right={<IconButton label="매장 추가"><Plus size={18} /></IconButton>}
@@ -834,7 +862,13 @@ export function OwnerScheduleEditMobile({ theme = 'calm' }: AttendanceScreenProp
 
 export function OwnerPushMessageCreateMobile({ theme = 'calm' }: AttendanceScreenProps) {
   return (
-    <MobileShell height={844} theme={theme} title="F2 · 직원 알림 보내기 (모바일)" width={390}>
+    <MobileShell
+      height={844}
+      showNotificationLauncher={false}
+      theme={theme}
+      title="F2 · 직원 알림 보내기 (모바일)"
+      width={390}
+    >
       <PageHeader
         back
         right={<button className="att-button" type="button"><Send size={15} /> 푸시 보내기</button>}
