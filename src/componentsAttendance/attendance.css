@@ -672,6 +672,44 @@
   background: var(--att-surface);
 }
 
+.att-workplace-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.att-workplace-card {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid var(--att-border);
+  border-radius: 8px;
+  color: var(--att-text);
+  background: var(--att-surface);
+}
+
+.att-workplace-card .att-section-heading {
+  align-items: flex-start;
+  margin-bottom: 0;
+}
+
+.att-workplace-card__details {
+  display: grid;
+  gap: 8px;
+  padding-top: 10px;
+  border-top: 1px solid var(--att-border);
+}
+
+.att-workplace-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--att-text-muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
 .att-section-heading {
   display: flex;
   align-items: center;
@@ -1962,6 +2000,10 @@
   color: var(--att-primary);
   background: var(--att-primary-soft);
   flex: 0 0 auto;
+}
+
+.att-profile-menu .att-action-card__icon {
+  color: #1E3A5F;
 }
 
 .att-action-card__body {

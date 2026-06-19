@@ -35,6 +35,7 @@ import { MobileTabBar, type NavItem } from '../components/Navigation';
 import { StatusBadge, type StatusTone } from '../components/StatusBadge';
 import {
   attendanceContracts,
+  attendanceEmployeeWorkplaces,
   attendanceEmployees,
   attendanceMemos,
   attendancePayrollRows,
@@ -456,6 +457,33 @@ function ContractListContent() {
         title="계약서 문의가 필요하신가요?"
       />
     </main>
+  );
+}
+
+function EmployeeWorkplaceMobileCard({
+  workplace,
+}: {
+  workplace: (typeof attendanceEmployeeWorkplaces)[number];
+}) {
+  return (
+    <section className="att-workplace-card">
+      <div className="att-section-heading">
+        <div>
+          <h2>{workplace.store}</h2>
+          <span>{workplace.address}</span>
+        </div>
+        <StatusBadge tone={workplace.contractTone as StatusTone}>{workplace.contractStatus}</StatusBadge>
+      </div>
+      <div className="att-workplace-card__details">
+        <DetailRow label="직무" value={workplace.role} />
+        <DetailRow label="내 근로계약서" value={workplace.contractPeriod} />
+        <DetailRow label="급여 계좌" value={workplace.payAccount} />
+      </div>
+      <div className="att-workplace-card__footer">
+        <span>{workplace.wage} · {workplace.payday}</span>
+        <ChevronRight size={17} />
+      </div>
+    </section>
   );
 }
 
@@ -958,7 +986,7 @@ export function EmployeeSalaryMobile({ theme = 'calm' }: AttendanceScreenProps) 
 
 export function EmployeeContractMobile({ theme = 'calm' }: AttendanceScreenProps) {
   return (
-    <MobileShell activeTab="salary" height={844} theme={theme} title="M9 · 내 근로계약서 (직원)" width={390}>
+    <MobileShell activeTab="me" height={844} theme={theme} title="M9 · 내 근로계약서 (직원)" width={390}>
       <PageHeader eyebrow="계약서를 확인하고 PDF로 저장할 수 있어요" title="내 근로계약서" />
       <ContractListContent />
     </MobileShell>
@@ -968,8 +996,6 @@ export function EmployeeContractMobile({ theme = 'calm' }: AttendanceScreenProps
 export function EmployeeProfileMobile({ theme = 'calm' }: AttendanceScreenProps) {
   const menuItems = [
     { icon: <Bell size={17} />, label: '알림 설정', sub: '근무 · 급여 · 메모 알림' },
-    { icon: <FileText size={17} />, label: '내 근로계약서', sub: '서명완료 · PDF 저장' },
-    { icon: <WalletCards size={17} />, label: '급여 계좌', sub: '국민 123-456-7890' },
   ];
   const supportItems = [
     { icon: <Bell size={17} />, label: '공지사항', sub: '서비스 업데이트와 운영 안내' },
@@ -998,7 +1024,7 @@ export function EmployeeProfileMobile({ theme = 'calm' }: AttendanceScreenProps)
             <Chip>{currentContract.status}</Chip>
           </div>
         </section>
-        <section className="att-stack" style={{ marginTop: 16 }}>
+        <section className="att-stack att-profile-menu" style={{ marginTop: 16 }}>
           {menuItems.map((item) => (
             <ActionCard
               caption={item.sub}
@@ -1010,6 +1036,15 @@ export function EmployeeProfileMobile({ theme = 'calm' }: AttendanceScreenProps)
           ))}
         </section>
         <section className="att-stack" style={{ marginTop: 16 }}>
+          <div className="att-section-heading">
+            <h2>내 근무처</h2>
+            <span>{attendanceEmployeeWorkplaces.length}개 소속</span>
+          </div>
+          {attendanceEmployeeWorkplaces.map((workplace) => (
+            <EmployeeWorkplaceMobileCard key={workplace.id} workplace={workplace} />
+          ))}
+        </section>
+        <section className="att-stack att-profile-menu" style={{ marginTop: 16 }}>
           <div className="att-section-heading">
             <h2>고객지원</h2>
           </div>
@@ -1041,7 +1076,7 @@ export function EmployeeContractDetailMobile({ theme = 'calm' }: AttendanceScree
           <div className="att-mobile-screen">
             <PageHeader eyebrow="계약서를 확인하고 PDF로 저장할 수 있어요" title="내 근로계약서" />
             <ContractListContent />
-            <MobileTabBar activeId="salary" items={employeeTabs} />
+            <MobileTabBar activeId="me" items={employeeTabs} />
           </div>
         </div>
         <div className="att-sheet-backdrop">

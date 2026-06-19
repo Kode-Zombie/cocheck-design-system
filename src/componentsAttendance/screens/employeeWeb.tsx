@@ -32,6 +32,7 @@ import { WebAppShell, type NavItem } from '../components/Navigation';
 import { StatusBadge, type StatusTone } from '../components/StatusBadge';
 import {
   attendanceContracts,
+  attendanceEmployeeWorkplaces,
   attendanceEmployees,
   attendanceMemos,
   attendancePayrollRows,
@@ -319,6 +320,34 @@ function DetailRow({ label, value }: { label: string; value: ReactNode }) {
       <span>{label}</span>
       <strong>{value}</strong>
     </div>
+  );
+}
+
+function EmployeeWorkplaceWebCard({
+  workplace,
+}: {
+  workplace: (typeof attendanceEmployeeWorkplaces)[number];
+}) {
+  return (
+    <section className="att-workplace-card">
+      <div className="att-section-heading">
+        <div>
+          <h2>{workplace.store}</h2>
+          <span>{workplace.address}</span>
+        </div>
+        <StatusBadge tone={workplace.contractTone as StatusTone}>{workplace.contractStatus}</StatusBadge>
+      </div>
+      <div className="att-workplace-card__details">
+        <DetailRow label="직무" value={workplace.role} />
+        <DetailRow label="내 근로계약서" value={workplace.contractPeriod} />
+        <DetailRow label="급여 계좌" value={workplace.payAccount} />
+        <DetailRow label="시급" value={workplace.wage} />
+      </div>
+      <div className="att-workplace-card__footer">
+        <span>{workplace.payday} 지급 · {workplace.manager}</span>
+        <ChevronRight size={17} />
+      </div>
+    </section>
   );
 }
 
@@ -1089,7 +1118,7 @@ export function EmployeeProfileWeb({ theme = 'calm' }: AttendanceScreenProps) {
   return (
     <EmployeeWebShell
       activeId="profile"
-      subtitle="프로필, 알림, 고객지원 항목을 관리합니다."
+      subtitle="계정 정보와 근무처별 근로 정보를 관리합니다."
       theme={theme}
       title="내 정보"
     >
@@ -1101,12 +1130,25 @@ export function EmployeeProfileWeb({ theme = 'calm' }: AttendanceScreenProps) {
             <Field label="이메일" value="jiwoo@example.com" />
             <button className="att-button" type="button">프로필 저장</button>
           </FormPanel>
-          <FormPanel title="근무 정보">
-            <DetailRow label="소속 매장" value={store.name} />
-            <DetailRow label="직무" value={employee.role} />
-            <DetailRow label="오늘 근무" value={currentShift.time} />
-            <DetailRow label="계약 상태" value={<StatusBadge tone="success">서명완료</StatusBadge>} />
+          <FormPanel title="알림 설정">
+            <ActionCard
+              caption="근무 · 급여 · 메모 알림"
+              icon={<Bell size={16} />}
+              right={<span className="att-toggle att-toggle--on" />}
+              title="앱 푸시 알림"
+            />
           </FormPanel>
+          <section className="att-stack" aria-label="내 근무처">
+            <div className="att-section-heading">
+              <h2>내 근무처</h2>
+              <span>{attendanceEmployeeWorkplaces.length}개 소속</span>
+            </div>
+            <div className="att-workplace-grid">
+              {attendanceEmployeeWorkplaces.map((workplace) => (
+                <EmployeeWorkplaceWebCard key={workplace.id} workplace={workplace} />
+              ))}
+            </div>
+          </section>
         </div>
         <aside className="att-stack">
           <WebHeroCard label="현재 상태" value={employee.status}>
@@ -1139,7 +1181,7 @@ export function EmployeeContractWeb({ theme = 'calm' }: AttendanceScreenProps) {
 
   return (
     <EmployeeWebShell
-      activeId="contract"
+      activeId="profile"
       right={
         <>
           <StatusBadge tone={contract.tone}>{contract.status}</StatusBadge>

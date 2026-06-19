@@ -55,6 +55,35 @@ export const attendanceContracts = [
   },
 ] as const;
 
+export const attendanceEmployeeWorkplaces = [
+  {
+    id: 'workplace-gs25',
+    store: 'GS25 강남역점',
+    address: '서울시 강남구 강남대로 123',
+    role: '오픈 타임',
+    contractStatus: '서명완료',
+    contractTone: 'success',
+    contractPeriod: '2026.01.01 - 2026.12.31',
+    wage: '10,030원/h',
+    payAccount: '국민 ****1234',
+    payday: '매월 25일',
+    manager: '김성호 점장',
+  },
+  {
+    id: 'workplace-cafe',
+    store: '스타벅스 선릉',
+    address: '서울시 강남구 테헤란로 456',
+    role: '바리스타',
+    contractStatus: '만료',
+    contractTone: 'neutral',
+    contractPeriod: '2025.07.01 - 2025.12.31',
+    wage: '9,860원/h',
+    payAccount: '신한 ****0908',
+    payday: '매월 10일',
+    manager: '이서연 매니저',
+  },
+] as const;
+
 export const attendanceDashboardMetrics = [
   { label: '오늘 출근', value: '12명', caption: '지각 1명' },
   { label: '이번 주 근무', value: '286h', caption: '전주 대비 +12h' },
