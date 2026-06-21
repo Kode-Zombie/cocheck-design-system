@@ -16,6 +16,7 @@ import {
   LogOut,
   MessageCircle,
   MoreVertical,
+  Pin,
   Plus,
   Search,
   Send,
@@ -36,6 +37,7 @@ import { StatusBadge, type StatusTone } from '../components/StatusBadge';
 import {
   attendanceDashboardMetrics,
   attendanceEmployees,
+  attendanceMemos,
   attendancePayrollRows,
   attendanceStores,
   attendanceTodos,
@@ -84,6 +86,41 @@ const ownerAttendanceRows = [
   { name: '최서아', sched: '14:00-22:00', actual: '미태그', status: '결근', tone: 'danger' },
   { name: attendanceEmployees[2].name, sched: '15:00-22:00', actual: '14:55-', status: '근무중', tone: 'primary' },
 ] satisfies { name: string; sched: string; actual: string; status: string; tone: StatusTone }[];
+
+const ownerMemoRows = [
+  {
+    tag: '이슈',
+    tone: 'danger',
+    title: '3번 냉장고 온도 불안정',
+    body: '새벽부터 온도가 8도 위로 올라갔습니다. 기사님 방문 전까지 유제품 상태를 자주 확인해 주세요.',
+    author: '정지훈',
+    store: selectedStore.name,
+    time: '오늘 11:14',
+    comments: 2,
+    pinned: true,
+  },
+  ...attendanceMemos.map((memo, index) => ({
+    tag: index === 1 ? '공지' : '인수인계',
+    tone: index === 1 ? ('success' as StatusTone) : ('primary' as StatusTone),
+    title: memo.title,
+    body: `${memo.author} 님이 남긴 공유 메모입니다. 다음 근무자가 바로 확인할 수 있도록 요약됩니다.`,
+    author: memo.author,
+    store: index === 2 ? '전체 매장' : selectedStore.name,
+    time: memo.time,
+    comments: memo.comments,
+    pinned: false,
+  })),
+] satisfies {
+  tag: string;
+  tone: StatusTone;
+  title: string;
+  body: string;
+  author: string;
+  store: string;
+  time: string;
+  comments: number;
+  pinned: boolean;
+}[];
 
 type BranchScheduleTodo = {
   category: string;
@@ -424,6 +461,55 @@ export function OwnerHomeMobile({ theme = 'calm' }: AttendanceScreenProps) {
             title="이준호 · 연차 신청"
           />
         </section>
+      </main>
+    </MobileShell>
+  );
+}
+
+export function OwnerMemoMobile({ theme = 'calm' }: AttendanceScreenProps) {
+  return (
+    <MobileShell activeTab="memo" theme={theme} title="02 · 메모">
+      <PageHeader
+        eyebrow={selectedStore.name}
+        right={<button className="att-button" type="button"><Plus size={15} /> 작성</button>}
+        title="메모"
+      />
+      <main className="att-mobile-content att-mobile-content--flush-top" tabIndex={0}>
+        <section className="att-card-section">
+          <div className="att-section-heading">
+            <h2>오늘 공유 메모</h2>
+            <StatusBadge tone="primary">{ownerMemoRows.length}건</StatusBadge>
+          </div>
+          <p className="att-subtitle">공지 · 인수인계를 한 곳에서 확인합니다.</p>
+          <div className="att-metric-grid att-metric-grid--two" style={{ marginBottom: 0, marginTop: 12 }}>
+            <MetricCard icon={<Pin size={18} />} label="고정 이슈" value="1건" />
+            <MetricCard icon={<MessageCircle size={18} />} label="새 댓글" value="11개" />
+          </div>
+        </section>
+        <div className="att-inline-actions" style={{ marginBottom: 14, marginTop: 16 }}>
+          <Chip active>전체</Chip>
+          <Chip>이슈</Chip>
+          <Chip>인수인계</Chip>
+          <Chip>공지</Chip>
+        </div>
+        <div className="att-stack">
+          {ownerMemoRows.map((memo) => (
+            <article className="att-memo-card" key={`${memo.title}-${memo.time}`}>
+              <div className="att-memo-card__meta">
+                <StatusBadge tone={memo.tone}>{memo.tag}</StatusBadge>
+                {memo.pinned ? <span><Pin size={12} /> 고정</span> : null}
+                <span>{memo.store}</span>
+              </div>
+              <h2>{memo.title}</h2>
+              <p>{memo.body}</p>
+              <footer>
+                <span>{memo.author}</span>
+                <span>{memo.time}</span>
+                <span><MessageCircle size={13} /> {memo.comments}</span>
+              </footer>
+            </article>
+          ))}
+        </div>
       </main>
     </MobileShell>
   );
@@ -916,7 +1002,7 @@ export function OwnerPushMessageCreateMobile({ theme = 'calm' }: AttendanceScree
             </div>
           </div>
           <ActionCard
-            caption="메모·인수인계에도 남김"
+            caption="메모에도 남김"
             icon={<CheckCircle2 size={16} />}
             right={<span className="att-toggle att-toggle--on" />}
             title="공지로도 남기기"

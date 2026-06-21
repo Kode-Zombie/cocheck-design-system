@@ -237,7 +237,12 @@ export const attendanceFeatureStoryGroups: AttendanceFeatureStoryGroup[] = [
     screens: pickScreens('owner-attendance-mobile'),
   },
   {
-    feature: '경영주 메모공지',
+    feature: '경영주 메모',
+    platform: '앱',
+    screens: pickScreens('owner-memo-mobile'),
+  },
+  {
+    feature: '경영주 메모',
     platform: '웹',
     screens: pickScreens('owner-memo-web', 'owner-memo-create-web'),
   },

@@ -71,7 +71,7 @@ const ownerWebNavItems: NavItem[] = [
   { id: 'payroll', label: '급여 관리', icon: <WalletCards size={17} /> },
   { id: 'staff', label: '직원 관리', icon: <Users size={17} /> },
   { id: 'attendance', label: '근태 현황', icon: <ClockIcon /> },
-  { id: 'memo', label: '메모·인수인계', icon: <MessageCircle size={17} /> },
+  { id: 'memo', label: '메모', icon: <MessageCircle size={17} /> },
   { id: 'stats', label: '통계 리포트', icon: <LineChart size={17} /> },
   { id: 'taxation', label: '세무사 연결', icon: <Landmark size={17} /> },
   { id: 'labor', label: '근로계약서', icon: <FileText size={17} /> },
@@ -1422,7 +1422,7 @@ export function OwnerMemoWeb({ theme = 'calm' }: AttendanceScreenProps) {
       activeId="memo"
       subtitle="매장 공지, 이슈, 인수인계를 작성하고 확인합니다."
       theme={theme}
-      title="메모·인수인계"
+      title="메모"
     >
       <MemoContent />
     </OwnerWebShell>
@@ -1431,7 +1431,7 @@ export function OwnerMemoWeb({ theme = 'calm' }: AttendanceScreenProps) {
 
 export function OwnerMemoCreateWeb({ theme = 'calm' }: AttendanceScreenProps) {
   return (
-    <ModalOverlay activeId="memo" subtitle="웹 모달 · 공지와 인수인계를 작성합니다." theme={theme} title="메모·인수인계">
+    <ModalOverlay activeId="memo" subtitle="웹 모달 · 공지와 인수인계를 작성합니다." theme={theme} title="메모">
       <ModalCard
         footer={
           <>
@@ -1439,7 +1439,7 @@ export function OwnerMemoCreateWeb({ theme = 'calm' }: AttendanceScreenProps) {
             <button className="att-button" type="button"><Send size={15} /> 게시하기</button>
           </>
         }
-        title="메모·공지 작성"
+        title="메모 작성"
         width={540}
       >
         <div>
@@ -1518,7 +1518,7 @@ export function OwnerPushMessageCreateWeb({ theme = 'calm' }: AttendanceScreenPr
             title="수신 대상 미리보기"
           />
           <ActionCard
-            caption="메모·인수인계에도 남김"
+            caption="메모에도 남김"
             icon={<CheckCircle2 size={16} />}
             right={<span className="att-toggle att-toggle--on" />}
             title="공지로도 남기기"
