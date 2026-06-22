@@ -1,20 +1,16 @@
 import {
   AlertTriangle,
-  BadgePercent,
   Bell,
   BriefcaseBusiness,
   CalendarDays,
-  Check,
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
   Circle,
   ClipboardList,
-  CreditCard,
   Download,
   FileText,
   Home,
-  Landmark,
   LineChart,
   MessageCircle,
   Pencil,
@@ -23,7 +19,6 @@ import {
   RefreshCw,
   Send,
   ShieldCheck,
-  Star,
   Trash2,
   Upload,
   User,
@@ -48,7 +43,6 @@ import {
   attendanceEmployees,
   attendanceMemos,
   attendancePayrollRows,
-  attendancePlans,
   attendanceStores,
 } from '../data/attendanceSampleData';
 import {
@@ -73,9 +67,7 @@ const ownerWebNavItems: NavItem[] = [
   { id: 'attendance', label: '근태 현황', icon: <ClockIcon /> },
   { id: 'memo', label: '메모', icon: <MessageCircle size={17} /> },
   { id: 'stats', label: '통계 리포트', icon: <LineChart size={17} /> },
-  { id: 'taxation', label: '세무사 연결', icon: <Landmark size={17} /> },
   { id: 'labor', label: '근로계약서', icon: <FileText size={17} /> },
-  { id: 'payment', label: '결제·구독', icon: <CreditCard size={17} /> },
 ];
 
 const ownerStoreStatus = attendanceStores.map((store, index) => ({
@@ -1586,60 +1578,6 @@ export function OwnerStatsWeb({ theme = 'calm' }: AttendanceScreenProps) {
   );
 }
 
-export function OwnerTaxationWeb({ theme = 'calm' }: AttendanceScreenProps) {
-  const recommendations = [
-    { name: '이정훈 세무사', office: '한빛 세무법인', spec: '프랜차이즈 가맹점', rating: '4.8', reviews: '32건' },
-    { name: '박소연 세무사', office: '클리어 세무사무소', spec: '편의점·소매업 전문', rating: '4.7', reviews: '21건' },
-    { name: '최준호 세무사', office: '미래 세무법인', spec: '카페·F&B 특화', rating: '4.6', reviews: '18건' },
-  ];
-
-  return (
-    <OwnerWebShell
-      activeId="taxation"
-      subtitle="급여 자료와 매장 매출 신고를 함께 볼 세무사를 연결합니다."
-      theme={theme}
-      title="세무사 연결"
-    >
-      <div className="att-stack att-stack--loose">
-        <FormPanel title="연결된 세무사" description="김민철 세무사 · 청운 세무회계사무소 · 2025-03부터">
-          <ActionCard
-            caption="소규모 사업장 특화 · 02-1234-5678"
-            icon={<User size={16} />}
-            right={
-              <PageActions>
-                <button className="att-button att-button--secondary" type="button">연결 해제</button>
-                <button className="att-button" type="button"><MessageCircle size={15} /> 메시지 보내기</button>
-              </PageActions>
-            }
-            title="김민철 세무사"
-          />
-          <div style={{ display: 'grid', gap: 12, gridTemplateColumns: 'repeat(3, minmax(0, 1fr))' }}>
-            <MetricCard label="이번 달 신고" value="부가세 예정" caption="5월 25일 마감" />
-            <MetricCard label="다음 미팅" value="5월 10일" caption="온라인 상담" />
-            <MetricCard label="미처리 서류" value="2건" caption="급여대장 · 카드매출" />
-          </div>
-        </FormPanel>
-        <FormPanel title="추천 세무사">
-          {recommendations.map((tax) => (
-            <ActionCard
-              caption={`${tax.office} · ${tax.spec} · 리뷰 ${tax.reviews}`}
-              icon={<Landmark size={16} />}
-              key={tax.name}
-              right={
-                <PageActions>
-                  <StatusBadge tone="warning"><Star size={12} /> {tax.rating}</StatusBadge>
-                  <button className="att-button att-button--ghost" type="button">연결 요청</button>
-                </PageActions>
-              }
-              title={tax.name}
-            />
-          ))}
-        </FormPanel>
-      </div>
-    </OwnerWebShell>
-  );
-}
-
 export function OwnerLaborWeb({ theme = 'calm' }: AttendanceScreenProps) {
   const rows = [
     { name: '최지우', contract: attendanceContracts[0], status: '서명완료', tone: 'success' },
@@ -1787,118 +1725,6 @@ export function OwnerLaborPreviewWeb({ theme = 'calm' }: AttendanceScreenProps) 
             ))}
           </FormPanel>
         </aside>
-      </div>
-    </OwnerWebShell>
-  );
-}
-
-export function OwnerPaymentWeb({ theme = 'calm' }: AttendanceScreenProps) {
-  const history = [
-    { date: '2026-04-01', desc: 'Pro 플랜 · 4월', amount: '39,000원', method: '신한카드 ****1234' },
-    { date: '2026-03-01', desc: 'Pro 플랜 · 3월', amount: '39,000원', method: '신한카드 ****1234' },
-    { date: '2026-02-01', desc: 'Pro 플랜 · 2월', amount: '39,000원', method: '신한카드 ****1234' },
-  ];
-
-  return (
-    <OwnerWebShell
-      activeId="payment"
-      subtitle="구독 플랜, 결제 수단, 결제 내역을 관리합니다."
-      theme={theme}
-      title="결제·구독 관리"
-    >
-      <div className="att-stack att-stack--loose">
-        <div style={{ display: 'grid', gap: 16, gridTemplateColumns: '1fr 1fr' }}>
-          <FormPanel title="현재 플랜" description="다음 결제일: 2026-05-01">
-            <MetricCard label="Pro" value="39,000원 / 월" caption="3개 매장 · 직원 50명" icon={<BadgePercent size={18} />} />
-            <PageActions>
-              <button className="att-button att-button--secondary" type="button">플랜 변경</button>
-              <button className="att-button att-button--ghost" type="button">구독 취소</button>
-            </PageActions>
-          </FormPanel>
-          <FormPanel title="결제 수단" description="토스페이먼츠로 안전하게 처리됩니다.">
-            <ActionCard caption="유효기간 12/27 · 자동결제 등록됨" icon={<CreditCard size={16} />} title="신한카드 ****1234" />
-            <button className="att-button att-button--secondary" type="button">카드 변경</button>
-          </FormPanel>
-        </div>
-        <div style={{ display: 'grid', gap: 12, gridTemplateColumns: 'repeat(3, minmax(0, 1fr))' }}>
-          {attendancePlans.map((plan) => (
-            <FormPanel
-              key={plan.id}
-              title={plan.name}
-              description={`${plan.stores} · ${plan.staff}`}
-              footer={plan.id === 'pro' ? <StatusBadge tone="primary">현재 플랜</StatusBadge> : <button className="att-button att-button--ghost" type="button">{plan.id === 'team' ? '업그레이드' : '다운그레이드'}</button>}
-            >
-              <MetricCard label="월 요금" value={plan.price} caption="VAT 별도" />
-              {['출퇴근·스케줄', '할일·메모', plan.id === 'basic' ? '급여 기본' : '근태 통계·세무 연동'].map((feature) => (
-                <DetailRow key={feature} label={feature} value={<Check size={14} />} />
-              ))}
-            </FormPanel>
-          ))}
-        </div>
-        <WebTable
-          columns={['날짜', '내역', '결제 수단', '금액', '상태']}
-          rows={history.map((item) => [
-            item.date,
-            item.desc,
-            item.method,
-            <Money>{item.amount}</Money>,
-            <StatusBadge tone="success">결제완료</StatusBadge>,
-          ])}
-          template="1fr 1.6fr 1.4fr 1fr 0.8fr"
-        />
-      </div>
-    </OwnerWebShell>
-  );
-}
-
-export function OwnerPaymentCheckoutWeb({ theme = 'calm' }: AttendanceScreenProps) {
-  return (
-    <OwnerWebShell
-      activeId="payment"
-      subtitle="토스페이먼츠 결제 위젯 · 실제 결제 동작은 없는 정적 화면입니다."
-      theme={theme}
-      title="결제 위젯 (토스페이먼츠)"
-    >
-      <div style={{ display: 'grid', gap: 24, gridTemplateColumns: '1fr 380px', margin: '0 auto', maxWidth: 900 }}>
-        <FormPanel title="주문 요약">
-          <DetailRow label="Pro 플랜" value="39,000원" />
-          <DetailRow label="VAT (10%)" value="3,900원" />
-          <DetailRow label="현재 플랜 잔여분 공제" value={<span style={{ color: 'var(--att-success)' }}>-25,500원</span>} />
-          <div style={{ borderTop: '1px solid var(--att-border)', paddingTop: 16 }}>
-            <DetailRow label="오늘 결제 금액" value={<span style={{ color: 'var(--att-primary-readable)', fontSize: 18 }}>17,400원</span>} />
-          </div>
-          <ActionCard
-            caption="다음달부터 매월 1일 42,900원(VAT 포함)이 자동 결제됩니다."
-            icon={<ShieldCheck size={16} />}
-            title="정기결제 안내"
-          />
-          {['Pro 플랜 전체 기능', '근로계약서 자동 생성', '전용 고객센터', '데이터 엑셀 내보내기'].map((feature) => (
-            <DetailRow key={feature} label={feature} value={<Check size={14} />} />
-          ))}
-        </FormPanel>
-        <FormPanel
-          footer={<button className="att-button att-button--full" type="button">17,400원 결제하기</button>}
-          title="토스페이먼츠"
-          description="카드 · 계좌이체 · 가상계좌"
-        >
-          <div className="att-inline-actions">
-            {['카드', '계좌이체', '가상계좌'].map((method, index) => (
-              <button className={`att-button ${index === 0 ? '' : 'att-button--secondary'}`} key={method} type="button">{method}</button>
-            ))}
-          </div>
-          <Field focus label="카드 번호" value="신한  9411  ****  ****  1234" />
-          <div className="att-action-row">
-            <Field label="유효기간" value="12 / 27" />
-            <Field label="CVC" value="***" />
-          </div>
-          <Field label="할부" value="일시불" />
-          <ActionCard
-            caption="매월 1일 자동으로 구독료가 청구됩니다."
-            icon={<Check size={16} />}
-            title="정기결제 서비스 이용 및 자동결제 동의"
-          />
-          <p className="att-copy" style={{ textAlign: 'center' }}>SSL 보안 결제 · PCI DSS 인증</p>
-        </FormPanel>
       </div>
     </OwnerWebShell>
   );

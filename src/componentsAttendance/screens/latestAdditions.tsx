@@ -7,13 +7,11 @@ import {
   CheckCircle2,
   ClipboardList,
   Clock3,
-  CreditCard,
   Download,
   Ellipsis,
   FileText,
   Home,
   KeyRound,
-  Landmark,
   LineChart,
   Mail,
   MessageCircle,
@@ -23,7 +21,6 @@ import {
   Send,
   ShieldCheck,
   Store,
-  Upload,
   User,
   Users,
   WalletCards,
@@ -40,7 +37,6 @@ import {
   attendanceContracts,
   attendanceDashboardMetrics,
   attendanceEmployees,
-  attendancePlans,
   attendanceStores,
 } from '../data/attendanceSampleData';
 import {
@@ -96,9 +92,7 @@ const ownerWebNavItems: NavItem[] = [
   { id: 'attendance', label: '근태 현황', icon: <Clock3 size={17} /> },
   { id: 'memo', label: '메모', icon: <MessageCircle size={17} /> },
   { id: 'stats', label: '통계 리포트', icon: <LineChart size={17} /> },
-  { id: 'taxation', label: '세무사 연결', icon: <Landmark size={17} /> },
   { id: 'labor', label: '근로계약서', icon: <FileText size={17} /> },
-  { id: 'payment', label: '결제·구독', icon: <CreditCard size={17} /> },
   { id: 'profile', label: '내 계정', icon: <User size={17} /> },
   { id: 'todo', label: '할 일 관리', icon: <ClipboardList size={17} /> },
 ];
@@ -722,21 +716,6 @@ export function OwnerStatsMobile({ theme = 'calm' }: AttendanceScreenProps) {
   );
 }
 
-export function OwnerTaxationMobile({ theme = 'calm' }: AttendanceScreenProps) {
-  return (
-    <OwnerMobileShell activeTab="me" theme={theme} title="OM12 · 세무사 연결 (사장 모바일)">
-      <MobileHeader subtitle="급여·4대보험·원천세 자료 공유" title="세무사 연결" />
-      <main className="att-mobile-content">
-        <div className="att-stack att-stack--loose">
-          <ActionCard caption="김세무 세무회계 · 자료 공유중" icon={<Landmark size={16} />} right={<StatusBadge tone="success">연결됨</StatusBadge>} title="담당 세무사" />
-          <ActionCard caption="급여대장, 원천세 신고자료, 4대보험 내역" icon={<Upload size={16} />} title="이번 달 공유 자료" />
-          <button className="att-button att-button--full" type="button">자료 보내기</button>
-        </div>
-      </main>
-    </OwnerMobileShell>
-  );
-}
-
 export function OwnerLaborMobile({ theme = 'calm' }: AttendanceScreenProps) {
   return (
     <OwnerMobileShell activeTab="salary" theme={theme} title="OM13 · 근로계약서 (사장 모바일)">
@@ -752,28 +731,6 @@ export function OwnerLaborMobile({ theme = 'calm' }: AttendanceScreenProps) {
               title={contract.store}
             />
           ))}
-        </div>
-      </main>
-    </OwnerMobileShell>
-  );
-}
-
-export function OwnerPaymentMobile({ theme = 'calm' }: AttendanceScreenProps) {
-  return (
-    <OwnerMobileShell activeTab="me" theme={theme} title="OM14 · 결제·구독 (사장 모바일)">
-      <MobileHeader subtitle="현재 Pro 플랜 사용중" title="결제·구독" />
-      <main className="att-mobile-content">
-        <div className="att-stack att-stack--loose">
-          {attendancePlans.map((plan) => (
-            <ActionCard
-              caption={`${plan.stores} · ${plan.staff}`}
-              icon={<CreditCard size={16} />}
-              key={plan.id}
-              right={plan.id === 'pro' ? <StatusBadge tone="primary">현재</StatusBadge> : <StatusBadge>변경</StatusBadge>}
-              title={`${plan.name} · ${plan.price}`}
-            />
-          ))}
-          <ActionCard caption="다음 결제일 2026.06.01" icon={<ReceiptText size={16} />} title="정기결제 안내" />
         </div>
       </main>
     </OwnerMobileShell>

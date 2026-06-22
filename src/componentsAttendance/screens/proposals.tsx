@@ -3,7 +3,6 @@ import {
   BadgePercent,
   BellMinus,
   BriefcaseBusiness,
-  CreditCard,
   FileSignature,
   MessageSquareText,
 } from 'lucide-react';
@@ -40,12 +39,6 @@ const proposalItems: Array<{
     body: '근무 조건을 불러와 계약서를 만들고 서명 상태, PDF 보관, 재요청 흐름까지 관리합니다.',
     icon: <FileSignature size={20} />,
     tone: 'primary',
-  },
-  {
-    title: '결제·구독 관리',
-    body: '매장 수와 직원 수에 맞는 요금제를 보여주고 결제 수단, 영수증, 플랜 변경을 제공합니다.',
-    icon: <CreditCard size={20} />,
-    tone: 'neutral',
   },
   {
     title: '세무·노무 연결',

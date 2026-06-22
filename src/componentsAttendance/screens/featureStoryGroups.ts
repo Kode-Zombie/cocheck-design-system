@@ -267,16 +267,6 @@ export const attendanceFeatureStoryGroups: AttendanceFeatureStoryGroup[] = [
     screens: pickScreens('latest-owner-stats-mobile'),
   },
   {
-    feature: '경영주 세무사연결',
-    platform: '웹',
-    screens: pickScreens('owner-taxation-web'),
-  },
-  {
-    feature: '경영주 세무사연결',
-    platform: '앱',
-    screens: pickScreens('latest-owner-taxation-mobile'),
-  },
-  {
     feature: '경영주 계약서',
     platform: '웹',
     screens: pickScreens('owner-labor-web', 'owner-labor-create-web', 'owner-labor-preview-web'),
@@ -285,16 +275,6 @@ export const attendanceFeatureStoryGroups: AttendanceFeatureStoryGroup[] = [
     feature: '경영주 계약서',
     platform: '앱',
     screens: pickScreens('latest-owner-labor-mobile'),
-  },
-  {
-    feature: '경영주 결제구독',
-    platform: '웹',
-    screens: pickScreens('owner-payment-web', 'owner-payment-checkout-web'),
-  },
-  {
-    feature: '경영주 결제구독',
-    platform: '앱',
-    screens: pickScreens('latest-owner-payment-mobile'),
   },
   {
     feature: '경영주 프로필',

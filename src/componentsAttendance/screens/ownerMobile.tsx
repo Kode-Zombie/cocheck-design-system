@@ -1211,7 +1211,6 @@ export function OwnerMeMobile({ theme = 'calm' }: AttendanceScreenProps) {
     { icon: <Bell size={17} />, label: '알림 설정', sub: '근태 · 급여 알림' },
     { icon: <Settings size={17} />, label: '앱 설정', sub: '테마 · 언어 · 보안' },
     { icon: <FileText size={17} />, label: '근로계약서', sub: '4건 서명완료' },
-    { icon: <BriefcaseBusiness size={17} />, label: '세무사 연결', sub: '김민철 세무사 연결됨' },
   ];
 
   return (

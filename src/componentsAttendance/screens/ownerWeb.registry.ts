@@ -6,8 +6,6 @@ import {
   OwnerLaborWeb,
   OwnerMemoCreateWeb,
   OwnerMemoWeb,
-  OwnerPaymentCheckoutWeb,
-  OwnerPaymentWeb,
   OwnerPayrollWeb,
   OwnerPushMessageCreateWeb,
   OwnerScheduleCreateWeb,
@@ -15,7 +13,6 @@ import {
   OwnerStaffAddWeb,
   OwnerStaffWeb,
   OwnerStatsWeb,
-  OwnerTaxationWeb,
 } from './ownerWeb';
 import type { AttendanceScreen } from './screenTypes';
 
@@ -31,10 +28,7 @@ export const ownerWebScreens: AttendanceScreen[] = [
   { id: 'owner-memo-create-web', label: 'F5 · 메모 작성 (웹 모달)', group: '경영주 웹', width: 1280, height: 800, viewport: 'web', Component: OwnerMemoCreateWeb },
   { id: 'owner-push-message-create-web', label: 'F6 · 직원 알림 보내기 (웹 모달)', group: '경영주 웹', width: 1280, height: 800, viewport: 'web', Component: OwnerPushMessageCreateWeb },
   { id: 'owner-stats-web', label: '08 · 통계 리포트', group: '경영주 웹', width: 1280, height: 800, viewport: 'web', Component: OwnerStatsWeb },
-  { id: 'owner-taxation-web', label: 'D9 · 세무사 연결', group: '경영주 웹', width: 1280, height: 800, viewport: 'web', Component: OwnerTaxationWeb },
   { id: 'owner-labor-web', label: 'D10 · 근로계약서', group: '경영주 웹', width: 1280, height: 800, viewport: 'web', Component: OwnerLaborWeb },
   { id: 'owner-labor-create-web', label: 'D10b · 근로계약서 작성 폼', group: '경영주 웹', width: 1280, height: 800, viewport: 'web', Component: OwnerLaborCreateWeb },
   { id: 'owner-labor-preview-web', label: 'D10c · 계약서 미리보기·다운로드·업로드', group: '경영주 웹', width: 1280, height: 800, viewport: 'web', Component: OwnerLaborPreviewWeb },
-  { id: 'owner-payment-web', label: 'D11 · 결제·구독 관리', group: '경영주 웹', width: 1280, height: 800, viewport: 'web', Component: OwnerPaymentWeb },
-  { id: 'owner-payment-checkout-web', label: 'D11b · 결제 위젯 (토스페이먼츠)', group: '경영주 웹', width: 1280, height: 800, viewport: 'web', Component: OwnerPaymentCheckoutWeb },
 ];
