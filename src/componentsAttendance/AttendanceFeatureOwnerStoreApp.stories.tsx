@@ -7,11 +7,11 @@ import {
 import { getFeatureStoryGroup } from './screens/featureStoryGroups';
 import './attendance.css';
 
-const group = getFeatureStoryGroup('경영주 매장관리', '앱');
+const group = getFeatureStoryGroup('경영주 내 매장', '앱');
 const ScreenStory = createScreenStory(group.screens);
 
 const meta = {
-  title: 'Attendance/기능별/경영주 매장관리/앱',
+  title: 'Attendance/기능별/경영주 내 매장/앱',
   component: ScreenStory,
   args: { screenId: 'owner-stores-mobile', theme: 'calm' },
   argTypes: attendanceStoryArgTypes,

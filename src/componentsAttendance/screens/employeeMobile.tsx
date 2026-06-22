@@ -12,14 +12,12 @@ import {
   FileText,
   Home,
   LogOut,
-  MapPin,
   MessageCircle,
   MoreVertical,
   Pencil,
   Pin,
   Plus,
   Send,
-  Settings,
   Store,
   User,
   WalletCards,
@@ -61,10 +59,12 @@ const employeeTabs: NavItem[] = [
 type ScheduleRow = {
   day: string;
   date: string;
+  fullLabel: string;
   work?: string;
   store?: string;
   tag?: string;
   today?: boolean;
+  weekend?: boolean;
 };
 
 type EmployeeScheduleTodo = {
@@ -105,19 +105,17 @@ type MemoItem = {
 };
 
 const weekDays: ScheduleRow[] = [
-  { day: '일', date: '19' },
-  { day: '월', date: '20', work: '09:00-18:00', tag: '완료' },
-  { day: '화', date: '21', work: '14:00-22:00', today: true },
-  { day: '수', date: '22' },
-  { day: '목', date: '23', work: '09:00-18:00' },
-  { day: '금', date: '24' },
-  { day: '토', date: '25', work: '18:00-24:00', store: attendanceStores[1].name, tag: '야간' },
+  { day: '일', date: '19', fullLabel: '일요일', weekend: true },
+  { day: '월', date: '20', fullLabel: '월요일', work: '09:00-18:00', tag: '완료' },
+  { day: '화', date: '21', fullLabel: '화요일', work: '14:00-22:00', today: true },
+  { day: '수', date: '22', fullLabel: '수요일' },
+  { day: '목', date: '23', fullLabel: '목요일', work: '09:00-18:00' },
+  { day: '금', date: '24', fullLabel: '금요일' },
+  { day: '토', date: '25', fullLabel: '토요일', work: '18:00-24:00', store: attendanceStores[1].name, tag: '야간', weekend: true },
 ];
 
-const scheduleRows: ScheduleRow[] = weekDays;
-
-const timetableHours = Array.from({ length: 24 }, (_, hour) => `${String(hour).padStart(2, '0')}:00`);
-const employeeMobileTimetableRows = `48px repeat(${timetableHours.length}, var(--att-weekly-timetable-mobile-hour-height))`;
+const employeeRosterHours = Array.from({ length: 24 }, (_, hour) => String(hour).padStart(2, '0'));
+const employeeRosterRowsTemplate = `36px repeat(${employeeRosterHours.length}, var(--att-employee-roster-hour-height))`;
 
 function getWorkStartHour(work: string) {
   return Number(work.slice(0, 2));
@@ -127,7 +125,13 @@ function getWorkEndHour(work: string) {
   return Number(work.slice(6, 8));
 }
 
-function getMobileTimetableShiftSpan(row: ScheduleRow) {
+function getEmployeeScheduleTargetScreen(row: ScheduleRow) {
+  return row.tag === '완료'
+    ? 'employee-schedule-detail-completed-mobile'
+    : 'employee-schedule-detail-future-mobile';
+}
+
+function getEmployeeRosterShiftGridRow(row: ScheduleRow) {
   if (!row.work) {
     return undefined;
   }
@@ -136,10 +140,15 @@ function getMobileTimetableShiftSpan(row: ScheduleRow) {
   const endHour = getWorkEndHour(row.work);
   const normalizedEndHour = endHour <= startHour ? 24 : endHour;
 
-  return {
-    gridRow: `${startHour + 2} / span ${Math.max(1, normalizedEndHour - startHour)}`,
-    label: `${row.day} ${row.work} ${row.store ?? store.name} 근무`,
-  };
+  return `${startHour + 2} / span ${Math.max(1, normalizedEndHour - startHour)}`;
+}
+
+function getEmployeeRosterTimeLabel(row: ScheduleRow) {
+  if (!row.work) {
+    return '';
+  }
+
+  return `${row.work.slice(0, 2)}-${row.work.slice(6, 8)}`;
 }
 
 const futureScheduleDetail: EmployeeScheduleDetail = {
@@ -254,9 +263,6 @@ function MobileShell({
 function EmployeeAppHeader({ showNotificationLauncher = true }: { showNotificationLauncher?: boolean } = {}) {
   return (
     <header aria-label="직원 앱 헤더" className="att-employee-app-header">
-      <button aria-label="설정 열기" className="att-icon-button" type="button">
-        <Settings size={18} />
-      </button>
       <div className="att-employee-app-header__brand">
         <img alt="CoCheck" src="/cocheck-logo.png" />
         <span>CoCheck</span>
@@ -404,14 +410,6 @@ function PrimaryStatusCard() {
   );
 }
 
-function IconButton({ children, label }: { children: ReactNode; label: string }) {
-  return (
-    <button aria-label={label} className="att-icon-button" type="button">
-      {children}
-    </button>
-  );
-}
-
 function ContractDocument() {
   return (
     <DocumentPreview
@@ -538,101 +536,142 @@ export function EmployeeHomeMobile({ theme = 'calm' }: AttendanceScreenProps) {
 }
 
 export function EmployeeScheduleMobile({ theme = 'calm' }: AttendanceScreenProps) {
+  const scheduledDays = weekDays.filter((day) => day.work);
+  const totalHours = scheduledDays.reduce((sum, day) => {
+    if (!day.work) {
+      return sum;
+    }
+
+    const startHour = getWorkStartHour(day.work);
+    const endHour = getWorkEndHour(day.work);
+    const normalizedEndHour = endHour <= startHour ? 24 : endHour;
+
+    return sum + Math.max(1, normalizedEndHour - startHour);
+  }, 0);
+
   return (
     <MobileShell activeTab="schedule" theme={theme} title="03 · 일정">
       <PageHeader
         eyebrow="2026년 4월"
-        right={
-          <>
-            <IconButton label="날짜 선택"><CalendarDays size={18} /></IconButton>
-            <IconButton label="스케줄 더보기"><MoreVertical size={18} /></IconButton>
-          </>
-        }
         title="일정 목록 조회"
       />
-      <div className="att-date-strip">
-        {weekDays.map((day) => (
-          <div className={day.today ? 'att-date-pill att-date-pill--today' : 'att-date-pill'} key={day.date}>
-            <span>{day.day}</span>
-            <strong>{day.date}</strong>
-            {day.work ? <small /> : null}
-          </div>
-        ))}
-      </div>
       <main className="att-mobile-content att-mobile-content--flush-top" tabIndex={0}>
-        <section aria-label="직원 주간 시간표" className="att-card-section att-weekly-timetable att-weekly-timetable--mobile">
-          <div className="att-section-heading">
-            <h2>주간 시간표</h2>
-            <span>4월 19일-25일</span>
+        <div className="att-segmented" style={{ marginBottom: 16 }}>
+          <button className="att-segmented__item att-segmented__item--warning" type="button">주간</button>
+          <button className="att-segmented__item" type="button">월간</button>
+          <button className="att-segmented__item" type="button">교대</button>
+        </div>
+        <section className="att-card-section">
+          <div className="att-employee-roster-guide">
+            각 요일을 눌러 내 일정 상세를 볼 수 있습니다.
           </div>
-          <div className="att-weekly-timetable__matrix" style={{ gridTemplateRows: employeeMobileTimetableRows }}>
-            <div className="att-weekly-timetable__corner" style={{ gridColumn: 1, gridRow: 1 }}>시간</div>
+          <div className="att-employee-roster-day-actions">
+            {weekDays.map((day) => {
+              const count = day.work ? 1 : 0;
+              const targetScreen = day.work ? getEmployeeScheduleTargetScreen(day) : undefined;
+
+              return (
+                <button
+                  aria-controls={targetScreen}
+                  aria-disabled={day.work ? undefined : true}
+                  aria-label={`${day.fullLabel} 내 일정 열기, 일정 ${count}건`}
+                  className={[
+                    'att-employee-roster-day-action',
+                    day.today ? 'att-employee-roster-day-action--today' : '',
+                    day.weekend ? 'att-employee-roster-day-action--weekend' : '',
+                  ].filter(Boolean).join(' ')}
+                  data-target-screen={targetScreen}
+                  key={day.date}
+                  type="button"
+                >
+                  <strong>{day.day}</strong>
+                  <span>{count} <ChevronRight size={11} /></span>
+                </button>
+              );
+            })}
+          </div>
+        </section>
+        <section aria-label="직원 주간 24시간 일정표" className="att-card-section att-employee-roster-week">
+          <div className="att-section-heading">
+            <div>
+              <h2>이번 주 내 일정</h2>
+              <span>4월 19일-25일</span>
+            </div>
+            <StatusBadge tone="primary">{scheduledDays.length}건</StatusBadge>
+          </div>
+          <div className="att-employee-roster-week__calendar" style={{ gridTemplateRows: employeeRosterRowsTemplate }}>
+            <div className="att-employee-roster-week__corner" style={{ gridColumn: 1, gridRow: 1 }} />
             {weekDays.map((day, dayIndex) => (
               <div
-                className={`att-weekly-timetable__day-head${day.today ? ' att-weekly-timetable__day-today' : ''}`}
+                aria-label={`${day.fullLabel} 내 일정 시간표 열`}
+                className={[
+                  'att-employee-roster-week__day-head',
+                  day.today ? 'att-employee-roster-week__day-head--today' : '',
+                  day.weekend ? 'att-employee-roster-week__day-head--weekend' : '',
+                ].filter(Boolean).join(' ')}
                 key={`${day.day}-${day.date}`}
                 style={{ gridColumn: dayIndex + 2, gridRow: 1 }}
               >
-                <span className="att-weekly-timetable__day-label">{day.day}</span>
+                <span>{day.day}</span>
                 <strong>{day.date}</strong>
               </div>
             ))}
-            {timetableHours.map((hourLabel, hour) => (
-              <div className="att-weekly-timetable__hour-label" key={hourLabel} style={{ gridColumn: 1, gridRow: hour + 2 }}>{hourLabel}</div>
+            {employeeRosterHours.map((hour, hourIndex) => (
+              <div
+                aria-label={`${hour}시 시간대`}
+                className="att-employee-roster-week__hour"
+                key={hour}
+                style={{ gridColumn: 1, gridRow: hourIndex + 2 }}
+              >
+                {hour}
+              </div>
             ))}
-            {weekDays.flatMap((day, dayIndex) => (
-              timetableHours.map((hourLabel, hour) => (
-                <div
-                  aria-label={`${day.day} ${hourLabel} 시간표 칸`}
-                  className="att-weekly-timetable__cell"
-                  key={`${day.day}-${hourLabel}`}
-                  style={{ gridColumn: dayIndex + 2, gridRow: hour + 2 }}
-                />
-              ))
+            {weekDays.map((day, dayIndex) => (
+              <div
+                aria-hidden
+                className="att-employee-roster-week__day-column"
+                key={`${day.day}-column`}
+                style={{ gridColumn: dayIndex + 2, gridRow: `2 / span ${employeeRosterHours.length}` }}
+              />
             ))}
             {weekDays.map((day, dayIndex) => {
-              const shiftSpan = getMobileTimetableShiftSpan(day);
+              const gridRow = getEmployeeRosterShiftGridRow(day);
+              const targetScreen = day.work ? getEmployeeScheduleTargetScreen(day) : undefined;
 
-              if (!shiftSpan || !day.work) {
+              if (!gridRow || !day.work || !targetScreen) {
                 return null;
               }
 
+              const timeLabel = getEmployeeRosterTimeLabel(day);
+
               return (
                 <article
-                  aria-label={shiftSpan.label}
-                  className={`att-weekly-timetable__shift-block att-weekly-timetable__shift-block--${getScheduleTagTone(day.tag)}`}
+                  aria-controls={targetScreen}
+                  aria-label={`${day.fullLabel} ${timeLabel} ${day.store ?? store.name} 내 일정`}
+                  className={`att-employee-roster-shift att-employee-roster-shift--${getScheduleTagTone(day.tag)}`}
+                  data-target-screen={targetScreen}
                   key={`${day.day}-${day.date}-${day.work}`}
-                  style={{ gridColumn: dayIndex + 2, gridRow: shiftSpan.gridRow }}
+                  style={{ gridColumn: dayIndex + 2, gridRow }}
                 >
-                  <strong className="att-weekly-timetable__shift-store">{day.store ?? store.name}</strong>
+                  <strong>{day.store ?? store.name}</strong>
+                  <span>{timeLabel}</span>
                 </article>
               );
             })}
           </div>
         </section>
-        <div className="att-schedule-list">
-          {scheduleRows.map((row) => (
-            <div className="att-schedule-row" key={`${row.day}-${row.date}`}>
-              <div className="att-schedule-row__date">
-                <span>{row.day}</span>
-                <strong>{row.date}</strong>
-              </div>
-              {row.work ? (
-                <div className={`att-schedule-row__card${row.today ? ' att-schedule-row__card--today' : ''}`}>
-                  <div>
-                    <strong>{row.work}</strong>
-                    {row.tag ? <StatusBadge tone={getScheduleTagTone(row.tag)}>{row.tag}</StatusBadge> : null}
-                    {row.today ? <StatusBadge tone="primary">오늘</StatusBadge> : null}
-                    <ChevronRight size={15} />
-                  </div>
-                  <p><MapPin size={13} /> {row.store ?? store.name}</p>
-                </div>
-              ) : (
-                <div className="att-schedule-row__empty">휴무</div>
-              )}
-            </div>
-          ))}
-        </div>
+        <section className="att-card-section" style={{ marginTop: 16 }}>
+          <div className="att-section-heading">
+            <h2>이번 주 요약</h2>
+            <StatusBadge tone="success">내 일정</StatusBadge>
+          </div>
+          <div className="att-metric-grid att-metric-grid--two" style={{ marginBottom: 0 }}>
+            <MetricCard label="근무 일정" value={`${scheduledDays.length}건`} />
+            <MetricCard label="총 근무시간" value={`${totalHours}h`} />
+            <MetricCard label="다음 근무" value="화 14:00" />
+            <MetricCard label="휴무" value={`${weekDays.length - scheduledDays.length}일`} />
+          </div>
+        </section>
       </main>
     </MobileShell>
   );

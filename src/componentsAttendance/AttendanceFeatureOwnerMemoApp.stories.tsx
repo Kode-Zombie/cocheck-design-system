@@ -27,3 +27,5 @@ const story = (screenId: string): Story => ({
 });
 
 export const OwnerMemoMobile = story('owner-memo-mobile');
+export const OwnerMemoDetailMobile = story('owner-memo-detail-mobile');
+export const OwnerMemoCreateMobile = story('owner-memo-create-mobile');

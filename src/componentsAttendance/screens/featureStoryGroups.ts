@@ -217,7 +217,7 @@ export const attendanceFeatureStoryGroups: AttendanceFeatureStoryGroup[] = [
     screens: pickScreens('store-manage-web'),
   },
   {
-    feature: '경영주 매장관리',
+    feature: '경영주 내 매장',
     platform: '앱',
     screens: pickScreens('owner-stores-mobile'),
   },
@@ -239,7 +239,7 @@ export const attendanceFeatureStoryGroups: AttendanceFeatureStoryGroup[] = [
   {
     feature: '경영주 메모',
     platform: '앱',
-    screens: pickScreens('owner-memo-mobile'),
+    screens: pickScreens('owner-memo-mobile', 'owner-memo-detail-mobile', 'owner-memo-create-mobile'),
   },
   {
     feature: '경영주 메모',

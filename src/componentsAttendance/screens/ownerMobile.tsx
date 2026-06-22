@@ -69,15 +69,50 @@ const ownerStoreStatus = attendanceStores.map((store, index) => ({
   type: ['편의점', '카페', '베이커리'][index] ?? '매장',
 }));
 
-const ownerRosterRows = attendanceEmployees.map((employee, index) => ({
-  name: employee.name,
-  role: employee.role,
-  cells: [
-    [1, 1, 0, 1, 1, 0, 0],
-    [0, 1, 1, 1, 0, 1, 0],
-    [1, 0, 1, 0, 1, 1, 1],
-  ][index] ?? [1, 0, 1, 0, 1, 0, 0],
-}));
+const ownerRosterDaySummaries = [
+  { day: '월', fullLabel: '월요일', count: 3 },
+  { day: '화', fullLabel: '화요일', count: 4 },
+  { day: '수', fullLabel: '수요일', count: 2 },
+  { day: '목', fullLabel: '목요일', count: 5 },
+  { day: '금', fullLabel: '금요일', count: 3 },
+  { day: '토', fullLabel: '토요일', count: 4, weekend: true },
+  { day: '일', fullLabel: '일요일', count: 1, weekend: true },
+];
+
+const ownerRosterHours = Array.from({ length: 24 }, (_, hour) => String(hour).padStart(2, '0'));
+const ownerRosterRowsTemplate = `36px repeat(${ownerRosterHours.length}, var(--att-owner-roster-hour-height))`;
+
+type OwnerRosterShift = {
+  dayIndex: number;
+  employee: string;
+  endHour: number;
+  role: string;
+  startHour: number;
+  tone: Exclude<StatusTone, 'neutral' | 'danger'> | 'danger';
+};
+
+const ownerRosterShifts: OwnerRosterShift[] = [
+  { dayIndex: 0, employee: '최지우', role: '오픈', startHour: 9, endHour: 13, tone: 'primary' },
+  { dayIndex: 0, employee: '이준호', role: '마감', startHour: 17, endHour: 22, tone: 'warning' },
+  { dayIndex: 1, employee: '최지우', role: '오픈', startHour: 8, endHour: 12, tone: 'primary' },
+  { dayIndex: 1, employee: '박민아', role: '미들', startHour: 12, endHour: 17, tone: 'success' },
+  { dayIndex: 1, employee: '이준호', role: '마감', startHour: 18, endHour: 22, tone: 'warning' },
+  { dayIndex: 2, employee: '박민아', role: '미들', startHour: 13, endHour: 18, tone: 'success' },
+  { dayIndex: 2, employee: '최지우', role: '지원', startHour: 18, endHour: 22, tone: 'danger' },
+  { dayIndex: 3, employee: '이준호', role: '오픈', startHour: 8, endHour: 14, tone: 'primary' },
+  { dayIndex: 3, employee: '박민아', role: '미들', startHour: 13, endHour: 18, tone: 'success' },
+  { dayIndex: 3, employee: '최지우', role: '마감', startHour: 18, endHour: 22, tone: 'warning' },
+  { dayIndex: 4, employee: '박민아', role: '오픈', startHour: 9, endHour: 13, tone: 'primary' },
+  { dayIndex: 4, employee: '이준호', role: '마감', startHour: 17, endHour: 22, tone: 'warning' },
+  { dayIndex: 5, employee: '최지우', role: '주말', startHour: 10, endHour: 16, tone: 'danger' },
+  { dayIndex: 5, employee: '박민아', role: '지원', startHour: 16, endHour: 20, tone: 'success' },
+  { dayIndex: 5, employee: '이준호', role: '마감', startHour: 20, endHour: 23, tone: 'warning' },
+  { dayIndex: 6, employee: '박민아', role: '주말', startHour: 12, endHour: 17, tone: 'success' },
+];
+
+function getOwnerRosterShiftGridRow(shift: OwnerRosterShift) {
+  return `${shift.startHour + 2} / span ${Math.max(1, shift.endHour - shift.startHour)}`;
+}
 
 const ownerAttendanceRows = [
   { name: attendanceEmployees[0].name, sched: '09:00-18:00', actual: '08:58-', status: '근무중', tone: 'primary' },
@@ -515,9 +550,89 @@ export function OwnerMemoMobile({ theme = 'calm' }: AttendanceScreenProps) {
   );
 }
 
-export function OwnerRosterMobile({ theme = 'calm' }: AttendanceScreenProps) {
-  const days = ['월', '화', '수', '목', '금', '토', '일'];
+export function OwnerMemoDetailMobile({ theme = 'calm' }: AttendanceScreenProps) {
+  const memo = ownerMemoRows[0];
 
+  return (
+    <MobileShell height={844} theme={theme} title="OM2b · 메모 상세·댓글 (경영주)" width={390}>
+      <PageHeader back right={<MoreVertical size={19} />} title="메모 상세" />
+      <main className="att-mobile-content att-mobile-content--with-input" tabIndex={0}>
+        <article className="att-memo-detail">
+          <div className="att-memo-card__meta">
+            <StatusBadge tone={memo.tone}>{memo.tag}</StatusBadge>
+            <span><Pin size={12} /> 고정</span>
+            <span>{memo.store}</span>
+          </div>
+          <h1>{memo.title}</h1>
+          <p>{memo.body} 처리 완료하면 사진도 함께 남겨주세요.</p>
+          <footer>
+            <span>{memo.author}</span>
+            <span>{memo.store}</span>
+            <span>{memo.time}</span>
+          </footer>
+        </article>
+        <section className="att-stack" style={{ marginTop: 22 }}>
+          <div className="att-section-heading">
+            <h2>댓글 {memo.comments}개</h2>
+          </div>
+          {[
+            ['김성호', '기사님 오시면 작업 사진 남겨주세요.', '11:22'],
+            ['최지우', '유제품은 임시 냉장고로 옮겨두었습니다.', '11:35'],
+          ].map(([author, text, time]) => (
+            <ActionCard caption={text} icon={<User size={16} />} key={`${author}-${time}`} meta={time} title={author} />
+          ))}
+        </section>
+      </main>
+      <footer className="att-comment-composer">
+        <span>댓글을 입력하세요...</span>
+        <button aria-label="댓글 전송" className="att-button" type="button"><Send size={16} /></button>
+      </footer>
+    </MobileShell>
+  );
+}
+
+export function OwnerMemoCreateMobile({ theme = 'calm' }: AttendanceScreenProps) {
+  return (
+    <MobileShell theme={theme} title="F3 · 메모 작성 (경영주 모바일)">
+      <PageHeader
+        back
+        right={<button className="att-button" type="button">게시하기</button>}
+        title="메모 작성"
+      />
+      <main className="att-mobile-content" tabIndex={0}>
+        <FormPanel title="게시글 작성">
+          <div>
+            <span className="att-field__label">유형 *</span>
+            <div className="att-inline-actions" style={{ marginTop: 8 }}>
+              <Chip active tone="success">공지</Chip>
+              <Chip>인수인계</Chip>
+              <Chip tone="danger">이슈</Chip>
+            </div>
+          </div>
+          <Field label="대상 매장" value="전체 매장" />
+          <Field focus label="제목 *" value="이번 주말 행사 프로모션 안내" />
+          <Field
+            label="내용 *"
+            tall
+            value="토·일 맥주 4캔 9,900원 행사가 진행됩니다. 매대 앞쪽 POP 위치와 재고 보충 기준을 확인해 주세요."
+          />
+          <div>
+            <span className="att-field__label">알림 보낼 대상</span>
+            <div className="att-inline-actions" style={{ marginTop: 8 }}>
+              <Chip active>전 직원</Chip>
+              <Chip>오늘 근무자</Chip>
+              <Chip>매장별</Chip>
+            </div>
+          </div>
+          <ActionCard icon={<Bell size={16} />} right={<span className="att-toggle att-toggle--on" />} title="직원 알림 보내기" />
+          <ActionCard caption="중요 메모를 목록 상단에 표시합니다." icon={<Pin size={16} />} right={<span className="att-toggle" />} title="상단 고정" />
+        </FormPanel>
+      </main>
+    </MobileShell>
+  );
+}
+
+export function OwnerRosterMobile({ theme = 'calm' }: AttendanceScreenProps) {
   return (
     <MobileShell activeTab="schedule" theme={theme} title="02 · 스케줄 편성">
       <PageHeader
@@ -532,30 +647,76 @@ export function OwnerRosterMobile({ theme = 'calm' }: AttendanceScreenProps) {
           <button className="att-segmented__item" type="button">교환 1</button>
         </div>
         <section className="att-card-section">
-          <div style={{ display: 'grid', gap: 6 }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '76px repeat(7, minmax(0, 1fr))', gap: 4 }}>
-              <span />
-              {days.map((day) => (
-                <span className="att-field__label" key={day} style={{ textAlign: 'center' }}>{day}</span>
-              ))}
-            </div>
-            {ownerRosterRows.map((row) => (
-              <div key={row.name} style={{ display: 'grid', gridTemplateColumns: '76px repeat(7, minmax(0, 1fr))', gap: 4, alignItems: 'center' }}>
-                <div style={{ minWidth: 0 }}>
-                  <strong style={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 12 }}>{row.name}</strong>
-                  <span className="att-field__label">{row.role}</span>
-                </div>
-                {row.cells.map((cell, index) => (
-                  <div
-                    className={cell ? 'att-week-cell att-week-cell--active' : 'att-week-cell'}
-                    key={`${row.name}-${days[index]}`}
-                    style={{ minHeight: 36, padding: 4 }}
-                  >
-                    <small>{cell ? '8h' : ''}</small>
-                  </div>
-                ))}
+          <div className="att-owner-roster-guide">
+            각 요일을 눌러 그날의 일정을 볼 수 있습니다.
+          </div>
+          <div className="att-owner-roster-day-actions">
+            {ownerRosterDaySummaries.map((day) => (
+              <button
+                aria-controls="owner-schedule-management-mobile"
+                aria-label={`${day.fullLabel} 일정 관리 열기, 일정 ${day.count}건`}
+                className={`att-owner-roster-day-action${day.weekend ? ' att-owner-roster-day-action--weekend' : ''}`}
+                data-target-screen="owner-schedule-management-mobile"
+                key={day.day}
+                type="button"
+              >
+                <strong>{day.day}</strong>
+                <span>{day.count} <ChevronRight size={11} /></span>
+              </button>
+            ))}
+          </div>
+        </section>
+        <section aria-label="주간 24시간 일정표" className="att-card-section att-owner-roster-week">
+          <div className="att-section-heading">
+            <h2>이번 주 일정</h2>
+            <StatusBadge tone="success">22건</StatusBadge>
+          </div>
+          <div className="att-owner-roster-week__calendar" style={{ gridTemplateRows: ownerRosterRowsTemplate }}>
+            <div className="att-owner-roster-week__corner" style={{ gridColumn: 1, gridRow: 1 }} />
+            {ownerRosterDaySummaries.map((day, dayIndex) => (
+              <div
+                aria-label={`${day.fullLabel} 시간표 열`}
+                className={`att-owner-roster-week__day-head${day.weekend ? ' att-owner-roster-week__day-head--weekend' : ''}`}
+                key={`${day.day}-head`}
+                style={{ gridColumn: dayIndex + 2, gridRow: 1 }}
+              >
+                {day.day}
               </div>
             ))}
+            {ownerRosterHours.map((hour, hourIndex) => (
+              <div
+                aria-label={`${hour}시 시간대`}
+                className="att-owner-roster-week__hour"
+                key={hour}
+                style={{ gridColumn: 1, gridRow: hourIndex + 2 }}
+              >
+                {hour}
+              </div>
+            ))}
+            {ownerRosterDaySummaries.map((day, dayIndex) => (
+              <div
+                aria-hidden
+                className="att-owner-roster-week__day-column"
+                key={`${day.day}-column`}
+                style={{ gridColumn: dayIndex + 2, gridRow: `2 / span ${ownerRosterHours.length}` }}
+              />
+            ))}
+            {ownerRosterShifts.map((shift) => {
+              const day = ownerRosterDaySummaries[shift.dayIndex];
+              const timeLabel = `${String(shift.startHour).padStart(2, '0')}-${String(shift.endHour).padStart(2, '0')}`;
+
+              return (
+                <article
+                  aria-label={`${day.fullLabel} ${shift.employee} ${timeLabel} ${shift.role} 일정`}
+                  className={`att-owner-roster-shift att-owner-roster-shift--${shift.tone}`}
+                  key={`${day.day}-${shift.employee}-${timeLabel}-${shift.role}`}
+                  style={{ gridColumn: shift.dayIndex + 2, gridRow: getOwnerRosterShiftGridRow(shift) }}
+                >
+                  <strong>{shift.employee}</strong>
+                  <span>{timeLabel}</span>
+                </article>
+              );
+            })}
           </div>
         </section>
         <section className="att-card-section" style={{ marginTop: 16 }}>
@@ -660,31 +821,62 @@ export function OwnerPayrollPublishMobile({ theme = 'calm' }: AttendanceScreenPr
 }
 
 export function OwnerStoresMobile({ theme = 'calm' }: AttendanceScreenProps) {
+  const store = ownerStoreStatus[0];
+  const activeStaffCount = ownerAttendanceRows.filter((row) => row.status === '근무중').length;
+  const lateStaffCount = ownerAttendanceRows.filter((row) => row.status === '지각').length;
+
   return (
-    <MobileShell activeTab="me" theme={theme} title="04 · 매장 관리">
+    <MobileShell activeTab="me" theme={theme} title="04 · 내 매장">
       <PageHeader
-        eyebrow={`${ownerStoreStatus.length}개 매장 · 직원 ${ownerStoreStatus.reduce((sum, store) => sum + store.total, 0)}명`}
-        right={<IconButton label="매장 추가"><Plus size={18} /></IconButton>}
-        title="매장 관리"
+        eyebrow={`${store.name} · 직원 ${store.total}명`}
+        right={<IconButton label="매장 정보 수정"><Edit3 size={18} /></IconButton>}
+        title="내 매장"
       />
       <main className="att-mobile-content att-mobile-content--flush-top" tabIndex={0}>
-        <div className="att-stack">
-          {ownerStoreStatus.map((store) => (
-            <section className="att-card-section" key={store.id}>
-              <div className="att-section-heading">
-                <h2>{store.name}</h2>
-                <IconButton label={`${store.name} 메뉴`}><MoreVertical size={17} /></IconButton>
-              </div>
-              <DetailRow label="주소" value={store.address} />
-              <DetailRow label="업종 · 직원" value={`${store.type} · ${store.total}명`} />
-              <div className="att-inline-actions" style={{ marginTop: 12 }}>
-                <Chip active>{store.auth}</Chip>
-                <Chip>시급 10,030원</Chip>
-                <Chip>24시간</Chip>
-              </div>
-            </section>
-          ))}
-        </div>
+        <section className="att-card-section">
+          <div className="att-section-heading">
+            <h2>매장 정보</h2>
+            <StatusBadge tone="success">운영중</StatusBadge>
+          </div>
+          <DetailRow label="매장명" value={store.name} />
+          <DetailRow label="주소" value={store.address} />
+          <DetailRow label="업종" value={store.type} />
+          <DetailRow label="출퇴근 인증" value={store.auth} />
+          <div className="att-inline-actions" style={{ marginTop: 12 }}>
+            <Chip active>{store.name}</Chip>
+            <Chip>시급 10,030원</Chip>
+            <Chip>24시간</Chip>
+          </div>
+        </section>
+        <section className="att-card-section" style={{ marginTop: 16 }}>
+          <div className="att-section-heading">
+            <h2>직원 관리 요약</h2>
+            <StatusBadge tone="primary">총 {store.total}명</StatusBadge>
+          </div>
+          <div className="att-metric-grid att-metric-grid--single" style={{ marginBottom: 0 }}>
+            <MetricCard icon={<Users size={18} />} label="전체 직원" value={`${store.total}명`} />
+            <MetricCard icon={<CheckCircle2 size={18} />} label="근무중" value={`${activeStaffCount}명`} />
+            <MetricCard icon={<CalendarDays size={18} />} label="지각" value={`${lateStaffCount}명`} />
+            <MetricCard icon={<Send size={18} />} label="초대 대기" value="1명" />
+          </div>
+          <div className="att-stack" style={{ marginTop: 16 }}>
+            <ActionCard
+              caption="직원 정보, 초대, 근무 매장을 관리합니다."
+              icon={<Users size={16} />}
+              right={<ChevronRight size={17} />}
+              title="직원 관리로 이동"
+            />
+            {attendanceEmployees.slice(0, 3).map((employee, index) => (
+              <ActionCard
+                caption={`${employee.role} · ${store.name}`}
+                icon={<User size={16} />}
+                key={employee.id}
+                right={<StatusBadge tone={index === 1 ? 'warning' : 'primary'}>{index === 1 ? '지각' : '근무중'}</StatusBadge>}
+                title={employee.name}
+              />
+            ))}
+          </div>
+        </section>
       </main>
     </MobileShell>
   );
@@ -1015,8 +1207,7 @@ export function OwnerPushMessageCreateMobile({ theme = 'calm' }: AttendanceScree
 
 export function OwnerMeMobile({ theme = 'calm' }: AttendanceScreenProps) {
   const menuItems = [
-    { icon: <Store size={17} />, label: '매장 관리', sub: '3개 매장 운영 중' },
-    { icon: <Users size={17} />, label: '직원 관리', sub: '총 12명' },
+    { icon: <Store size={17} />, label: '내 매장', sub: '매장 정보 · 직원 관리', targetScreen: 'owner-stores-mobile' },
     { icon: <Bell size={17} />, label: '알림 설정', sub: '근태 · 급여 알림' },
     { icon: <Settings size={17} />, label: '앱 설정', sub: '테마 · 언어 · 보안' },
     { icon: <FileText size={17} />, label: '근로계약서', sub: '4건 서명완료' },
@@ -1045,13 +1236,30 @@ export function OwnerMeMobile({ theme = 'calm' }: AttendanceScreenProps) {
         </section>
         <section className="att-stack" style={{ marginTop: 16 }}>
           {menuItems.map((item) => (
-            <ActionCard
-              caption={item.sub}
-              icon={item.icon}
-              key={item.label}
-              right={<ChevronRight size={17} />}
-              title={item.label}
-            />
+            item.targetScreen ? (
+              <button
+                aria-controls={item.targetScreen}
+                className="att-action-card att-action-card--button"
+                data-target-screen={item.targetScreen}
+                key={item.label}
+                type="button"
+              >
+                <div className="att-action-card__icon">{item.icon}</div>
+                <div className="att-action-card__body">
+                  <strong>{item.label}</strong>
+                  <span>{item.sub}</span>
+                </div>
+                <div className="att-action-card__right"><ChevronRight size={17} /></div>
+              </button>
+            ) : (
+              <ActionCard
+                caption={item.sub}
+                icon={item.icon}
+                key={item.label}
+                right={<ChevronRight size={17} />}
+                title={item.label}
+              />
+            )
           ))}
         </section>
         <button className="att-button att-button--secondary att-button--full" style={{ marginTop: 16 }} type="button">
